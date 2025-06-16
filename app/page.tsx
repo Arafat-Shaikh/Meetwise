@@ -1,7 +1,7 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useSpring, useTransform } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,12 @@ import {
   ArrowRight,
   BarChart3,
   Calendar,
+  Check,
   ChevronDown,
   Clock,
   FileText,
   MessageSquare,
+  Star,
   Users,
 } from "lucide-react";
 
@@ -43,30 +45,62 @@ const Home = () => {
   const [scrolled, setScrolled] = useState(false);
   const featuresRef = useRef(null);
   const heroRef = useRef(null);
+  const testimonialsRef = useRef(null);
   const howItWorksRef = useRef(null);
+  const ctaRef = useRef(null);
   const [hideNav, setHideNav] = useState(false);
+  const lastScrollYRef = useRef(0);
 
   const smoothScrollProgress = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001,
   });
-  console.log(session.data?.user);
+  // console.log(session.data?.user);
+
+  useEffect(() => {
+    let ticking = false;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const lastY = lastScrollYRef.current;
+          if (currentScrollY > lastY && currentScrollY > 100) {
+            setHideNav(true);
+          } else {
+            setHideNav(false);
+          }
+
+          setScrolled(currentScrollY > 20);
+
+          lastScrollYRef.current = currentScrollY;
+          ticking = false;
+        });
+
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <div className="relative flex flex-col min-h-screen overflow-hidden">
       {/* {"background animation"} */}
       <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-gradient-to-b from-violet-600 via-blue-600 to-cyan-500" />
         {/* main gradient background  */}
-        {/* <div className="absolute inset-0 bg-gradient-to-b from-violet-600 via-blue-600 to-cyan-500" /> */}
+        <div className="absolute inset-0 bg-gradient-to-b from-violet-600 via-blue-600 to-cyan-500" />
+
         {/* {"animated overlay"} */}
-        <motion.div
+        {/* <motion.div
           className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(255,255,255,0.15),transparent_70%)]"
           style={{
-            y: useTransform(smoothScrollProgress, [0, 1], ["0%", "30%"]),
+            y: useTransform(smoothScrollProgress, [0, 1], ["0%", "40%"]),
           }}
-        />
+        /> */}
         {/* Subtle wave patter */}
         <motion.div
           className="absolute inset-0 opacity-20"
@@ -92,8 +126,8 @@ const Home = () => {
       </div>
 
       {/* Navigation */}
-      <motion.header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      <motion.div
+        className={`fixed top-0 left-0 right-0 z-50 ${
           scrolled ? "bg-white/10 backdrop-blur-md shadow-lg" : "bg-transparent"
         } `}
         initial={{ y: 0, opacity: 1 }}
@@ -132,7 +166,7 @@ const Home = () => {
                       href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}
                       className={`text-${
                         scrolled ? "gray-800" : "white"
-                      } hover:text-blue-300 transition-colors`}
+                      } hover:text-gray-200 transition-colors`}
                     >
                       {item}
                     </Link>
@@ -148,9 +182,9 @@ const Home = () => {
             >
               <Button
                 variant={scrolled ? "secondary" : "outline"}
-                className={`hidden bg-gray-300/50 text-gray-800 md:inline-flex border-white/20 ${
+                className={`hidden bg-gray-100 text-gray-800 md:inline-flex border-white/20 ${
                   scrolled ? "" : ""
-                } hover:bg-white/20`}
+                } hover:bg-gray-200`}
               >
                 Log in
               </Button>
@@ -164,7 +198,7 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-      </motion.header>
+      </motion.div>
 
       <main className="flex-1 pt-20">
         {/* Hero Section  */}
@@ -173,7 +207,7 @@ const Home = () => {
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8">
               <motion.div
                 className="flex flex-col justify-center"
-                initial={{ opacity: 0, y: -50 }}
+                initial={{ opacity: 0, x: -50 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
               >
@@ -193,6 +227,7 @@ const Home = () => {
                     experience with our AI-powered scheduling platform.
                   </p>
                 </motion.div>
+
                 <motion.div
                   className="mt-10 flex flex-col sm:flex-row gap-4"
                   initial={{ opacity: 0, y: 20 }}
@@ -205,14 +240,23 @@ const Home = () => {
                   >
                     <span className="">Get Started</span>
 
-                    <span className="absolute right-2 group-hover:right-1 duration-200 transition-all">
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </span>
+                    <motion.span
+                      className="inline-block"
+                      animate={{ x: 0 }}
+                      initial={{ x: 0 }}
+                      whileInView={{ x: 0 }}
+                      whileHover={undefined}
+                      transition={{ type: "spring", stiffness: 300 }}
+                    >
+                      <span className="block group-hover:translate-x-1 transition-transform duration-200">
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                      </span>
+                    </motion.span>
                   </Button>
                   <Button
                     size={"lg"}
                     variant={"outline"}
-                    className="border-white text-black hover:bg-white/10"
+                    className="border-blue-400 hover:bg-white/20 transition hover:text-white duration-300 text-white bg-white/10"
                   >
                     See Demo
                   </Button>
@@ -226,7 +270,7 @@ const Home = () => {
                 transition={{ duration: 0.8, delay: 0.4 }}
                 whileHover={{ y: -5 }}
               >
-                <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl">
+                <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl space-y-1 ">
                   <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 p-4 text-white">
                     <h3 className="text-xl font-semibold">
                       Welcome to your calendar!
@@ -235,7 +279,7 @@ const Home = () => {
                       Events that your customers book will appear here.
                     </p>
                   </div>
-                  <div className="bg-white/90 backdrop-blur-sm rounded-b-xl p-4">
+                  <div className="bg-white/90 backdrop-blur-sm rounded-lg p-4">
                     <div className="mt-2 grid grid-cols-7 gap-2 text-center text-sm font-medium">
                       {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
                         <div key={i} className="py-2 text-gray-500">
@@ -497,7 +541,7 @@ const Home = () => {
                 transition={{ duration: 0.5, delay: 0.5 }}
                 whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.15)" }}
               >
-                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
+                <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-lg bg-blue-500/20 text-blue-100">
                   <Users className="h-7 w-7" />
                 </div>
                 <h3 className="text-xl font-bold text-white mb-3">
@@ -509,7 +553,7 @@ const Home = () => {
                 </p>
                 <div className="mt-6 flex items-center">
                   <motion.div
-                    className="text-blue-300 flex items-center font-medium cursor-pointer"
+                    className="text-blue-100 flex items-center font-medium cursor-pointer"
                     whileHover={{ x: 5 }}
                   >
                     Learn more <ArrowRight className="ml-2 h-4 w-4" />
@@ -573,7 +617,457 @@ const Home = () => {
             </div>
           </div>
         </section>
+
+        {/* pricing section  */}
+
+        <section id="pricing" className="py-32 relative">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div
+              className="text-center mb-20"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-4xl font-bold text-white sm:text-5xl mb-4">
+                Simple Pricing
+              </h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-blue-400 to-purple-500 mx-auto rounded-full mb-6"></div>
+              <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
+                Choose the plan that works best for your business
+              </p>
+            </motion.div>
+            {/* <div className="grid grid-cols-1 gap-10 md:grid-cols-3"> */}
+            {/* starter plan  */}
+            {/* <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5 }}
+                whileHover={{
+                  y: -10,
+                  boxShadow:
+                    "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                }}
+                className="rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 overflow-hidden flex flex-col"
+              >
+                <div className="p-8 flex-1">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Starter
+                  </h3>
+                  <div className="flex items-baseline mt-4">
+                    <span className="text-5xl font-extrabold text-white">
+                      $19
+                    </span>
+                    <span className="ml-1 text-xl text-blue-200">/month</span>
+                  </div>
+                  <p className="mt-5 text-blue-100">
+                    Perfect for individuals just getting started.
+                  </p>
+
+                  <ul className="mt-8 space-y-4">
+                    {[
+                      "Up to 50 appointments/month",
+                      "Basic AI assistant",
+                      "Email notifications",
+                      "1 service type",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-center">
+                        <Check className="h-5 w-5 text-blue-400 mr-3" />
+                        <span className="text-blue-100">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-6 bg-white/5 border-t border-white/10">
+                  <div className="w-full">
+                    <Button className="w-full bg-white text-blue-700 hover:bg-blue-50">
+                      Get Started
+                    </Button>
+                  </div>
+                </div>
+              </motion.div> */}
+
+            {/* pro plan  */}
+            {/* <motion.div
+                className="rounded-2xl relative"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ y: -10 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-violet-600 rounded-2xl"></div>
+                <div className="absolute inset-0.5 bg-gradient-to-b from-white/10 to-white/5 rounded-2xl"></div>
+                <div className="absolute -top-4 left-0 right-0 flex justify-center">
+                  <span className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-1 rounded-full text-sm font-medium">
+                    Most Popular
+                  </span>
+                </div>
+                <div className="p-8 relative">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Professional
+                  </h3>
+                  <div className="flex items-baseline mt-4">
+                    <span className="text-5xl font-extrabold text-white">
+                      $49
+                    </span>
+                    <span className="ml-1 text-xl text-blue-200">/month</span>
+                  </div>
+                  <p className="mt-5 text-blue-100">
+                    For growing businesses and professionals.
+                  </p>
+                  <ul className="mt-8 space-y-4">
+                    {[
+                      "Unlimited appointments",
+                      "Advanced AI assistant",
+                      "SMS notifications",
+                      "5 service types",
+                      "Document intelligence",
+                      "Analytics dashboard",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-center">
+                        <Check className="h-5 w-5 text-blue-300 mr-3" />
+                        <span className="text-blue-100">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-6 relative border-t border-white/10">
+                  <Button className="w-full bg-white text-blue-700 hover:bg-blue-50 shadow-lg">
+                    Get Started
+                  </Button>
+                </div>
+              </motion.div> */}
+
+            {/* enterprise plan  */}
+
+            {/* <motion.div
+                className="rounded-2xl bg-white/5 backdrop-blur-sm border border-white/10 overflow-hidden"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{
+                  y: -10,
+                  boxShadow:
+                    "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                }}
+              >
+                <div className="p-8">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Enterprise
+                  </h3>
+                  <div className="flex items-baseline mt-4">
+                    <span className="text-5xl font-extrabold text-white">
+                      $99
+                    </span>
+                    <span className="ml-1 text-xl text-blue-200">/month</span>
+                  </div>
+                  <p className="mt-5 text-blue-100">
+                    For larger teams and organizations.
+                  </p>
+
+                  <ul className="mt-8 space-y-4">
+                    {[
+                      "Unlimited everything",
+                      "Custom AI training",
+                      "Priority support",
+                      "Unlimited service types",
+                      "Advanced analytics",
+                      "White labeling",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-center">
+                        <Check className="h-5 w-5 text-blue-300 mr-3" />
+                        <span className="text-blue-100">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-6 bg-white/5 border-t border-white/10">
+                  <Button className="w-full bg-white text-blue-700 hover:bg-blue-50">
+                    Contact Sales
+                  </Button>
+                </div>
+              </motion.div> */}
+            {/* </div> */}
+
+            <div className="flex items-center justify-center">
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5 }}
+                whileHover={{
+                  y: -10,
+                  boxShadow:
+                    "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+                }}
+                className="rounded-2xl bg-gradient-to-r from-blue-600 to-violet-600  border border-white/10 overflow-hidden flex flex-col"
+              >
+                <div className="p-8 flex-1">
+                  <h3 className="text-xl font-semibold text-white mb-2">
+                    Starter
+                  </h3>
+                  <div className="flex items-baseline mt-4">
+                    <span className="text-5xl font-extrabold text-white">
+                      $19
+                    </span>
+                    <span className="ml-1 text-xl text-blue-200">/month</span>
+                  </div>
+                  <p className="mt-5 text-blue-100">
+                    Perfect for individuals just getting started.
+                  </p>
+
+                  <ul className="mt-8 space-y-4">
+                    {[
+                      "Up to 50 appointments/month",
+                      "AI assistant",
+                      "Email notifications",
+                      "1 service type",
+                      "Document intelligence",
+                      "Analytics dashboard",
+                    ].map((feature) => (
+                      <li key={feature} className="flex items-center">
+                        <Check className="h-5 w-5 text-blue-400 mr-3" />
+                        <span className="text-blue-100">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="p-6 bg-white/5 border-t border-white/10">
+                  <div className="w-full">
+                    <Button className="w-full bg-white text-blue-700 hover:bg-blue-50">
+                      Get Started
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+        </section>
+
+        {/* testimonials  */}
+
+        <section
+          id="testimonials"
+          ref={testimonialsRef}
+          className="py-32 relative"
+        >
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <motion.div
+              className="text-center mb-20"
+              initial={{ opacity: 1, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-4xl font-bold text-white sm:text-5xl mb-4">
+                What Our Users Say
+              </h2>
+              <div className="h-1 w-20 bg-gradient-to-r from-blue-400 to-purple-500 mx-auto rounded-full mb-6"></div>
+              <p className="mt-4 text-xl text-blue-100 max-w-3xl mx-auto">
+                Join thousands of satisfied providers and clients
+              </p>
+            </motion.div>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3 ">
+              {[
+                {
+                  name: "Sarah Johnson",
+                  role: "Life Coach",
+                  initial: "S",
+                  rating: 5,
+                  testimonial:
+                    "AppointAI has transformed my coaching business. The AI assistant helps my clients book the right sessions, and I love how it uses my uploaded materials to answer questions.",
+                  style:
+                    "bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-pink-500/30",
+                },
+                {
+                  name: "Michael Chen",
+                  role: "Financial Consultant",
+                  initial: "M",
+                  rating: 5,
+                  testimonial:
+                    "The analytics dashboard gives me incredible insights into my business. I can see which services are most popular and optimize my schedule accordingly.",
+                  style:
+                    "bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-blue-500/30",
+                },
+                {
+                  name: "Jessica Williams",
+                  role: "Fitness Trainer",
+                  initial: "J",
+                  rating: 5,
+                  testimonial:
+                    "My clients love how easy it is to book sessions with me. The availability management feature lets me offer different time slots for different types of training.",
+                  style:
+                    "bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30",
+                },
+              ].map((item, i) => (
+                <motion.div
+                  key={item.name}
+                  className={`rounded-2xl backdrop-blur-sm p-8 h-full ${item.style} `}
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-100px" }}
+                  transition={{ duration: 0.5, delay: i * 0.2 }}
+                  whileHover={{ y: -5 }}
+                >
+                  <div className="flex items-center mb-6">
+                    <div
+                      className={`h-14 w-14 rounded-full bg-gradient-to-r ${
+                        i === 0
+                          ? "from-pink-500 to-purple-500"
+                          : i === 1
+                          ? "from-blue-500 to-cyan-500"
+                          : "from-amber-500 to-orange-500"
+                      } flex items-center justify-center text-white font-bold text-xl shadow-lg `}
+                    >
+                      {item.initial}
+                    </div>
+                    <div className="ml-4">
+                      <h4 className="text-lg font-bold text-white">
+                        {item.name}
+                      </h4>
+                      <p className="text-blue-200">{item.role}</p>
+                    </div>
+                  </div>
+                  <div className="flex mb-4">
+                    {Array.from({ length: item.rating }).map((_, i) => (
+                      <Star
+                        key={i}
+                        className="h-5 w-5 text-yellow-400 fill-yellow-500 "
+                      />
+                    ))}
+                  </div>
+                  <p className="text-blue-100">{item.testimonial}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* cta section  */}
+
+        <section ref={ctaRef} className="py-32 relative">
+          <div className="container mx-auto px-4 sm:px-5 lg:px-8 relative z-10">
+            <motion.div
+              className="mx-auto max-w-4xl text-center"
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-100px" }}
+              transition={{ duration: 0.8 }}
+            >
+              <h2 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+                Ready to Transform Your Scheduling Experience?
+              </h2>
+              <p className="mt-6 text-xl text-blue-100 mb-10">
+                Join thousands of professionals who are saving time and
+                delighting clients with our AI-powered platform.
+              </p>
+              <motion.div
+                className="flex flex-col sm:flex-row justify-center gap-6"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+              >
+                <Button
+                  size="lg"
+                  className="group bg-white hover:bg-white text-blue-700  group relative text-lg h-14 px-8"
+                >
+                  <span className="relative z-10">Start Free Trial</span>
+
+                  <motion.span
+                    className="inline-block"
+                    initial={{ x: 0 }}
+                    animate={{ x: 0 }}
+                    whileInView={{ x: 0 }}
+                    whileHover={undefined}
+                    transition={{ type: "spring", stiffness: 300 }}
+                  >
+                    <span className="block group-hover:translate-x-1 transition-transform duration-300">
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </span>
+                  </motion.span>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="border-blue-400 bg-white/10 transition-all hover:text-white duration-500 text-white hover:bg-white/20 text-lg h-14 px-8"
+                >
+                  Schedule a Demo
+                </Button>
+              </motion.div>
+              <motion.p
+                className="mt-8 text-sm text-blue-200"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+              >
+                No credit card required. 14-day free trial.
+              </motion.p>
+            </motion.div>
+          </div>
+        </section>
       </main>
+
+      {/* Footer  */}
+
+      <footer className="relative bg-gradient-to-b from-blue-900/80 to-gray-900/90  text-gray-300 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+            <div>
+              <h3 className="text-xl font-bold text-white">AppointAI</h3>
+              <p className="mt-4">
+                AI-powered scheduling platform for service providers and their
+                clients.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold text-white">Product</h4>
+              <ul className="mt-4 space-y-2">
+                {["Features", "Pricing", "Integrations", "FAQ"].map((item) => (
+                  <motion.li key={item} whileHover={{ x: 5 }}>
+                    <Link href="#" className="hover:text-white">
+                      {item}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold text-white">Company</h4>
+              <ul className="mt-4 space-y-2">
+                {["About", "Blog", "Careers", "Contact"].map((item) => (
+                  <motion.li key={item} whileHover={{ x: 5 }}>
+                    <Link href="#" className="hover:text-white">
+                      {item}
+                    </Link>
+                  </motion.li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold text-white">Legal</h4>
+              <ul className="mt-4 space-y-2">
+                {["Privacy Policy", "Terms of Service", "Cookie Policy"].map(
+                  (item) => (
+                    <motion.li key={item} whileHover={{ x: 5 }}>
+                      <Link href="#" className="hover:text-white">
+                        {item}
+                      </Link>
+                    </motion.li>
+                  )
+                )}
+              </ul>
+            </div>
+          </div>
+          <div className="mt-12 border-t border-gray-800/50 pt-8 text-center">
+            <p>© {new Date().getFullYear()} AppointAI. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
