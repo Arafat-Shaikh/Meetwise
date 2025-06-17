@@ -6,6 +6,62 @@
   .text-balance {
     text-wrap: balance;
   }
+
+  /* animations  */
+  @keyframes marquee-left{
+    0% {
+      transform: translateX(0%);
+    }
+    100%{
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes marquee-right{
+   0%{
+    transform: translateX(-100%);
+   }
+  100%{
+    transform:translateX(0%)
+  }
+}
+
+
+.animate-marquee-left{
+animation: marquee-left linear infinite;
+}
+
+.animate-marquee-right{
+animation: marquee-right linear infinite;
+}
+
+.marquee-slow{
+  animation-duration:30s;
+
+}
+
+.marquee-medium{
+  animation-duration:20s;
+}
+
+.marquee-fast{
+  animation-duration:12s;
+}
+
+.pause-on-hover:hover,
+.pause-on-hover:active{
+  animation-play-state:paused
+}
+.fade-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
+  mask-size: 100% 100%;
+}
+
+
 }
 
 

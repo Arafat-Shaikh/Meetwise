@@ -47,7 +47,7 @@ export const authOptions = {
     },
 
     async redirect({}) {
-      return "/dashboard";
+      return "/profile-setup";
     },
   },
 } satisfies NextAuthOptions;
