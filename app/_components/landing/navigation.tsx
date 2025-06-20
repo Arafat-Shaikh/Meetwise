@@ -67,7 +67,7 @@ const Navigation = ({ scrolled, hideNav }: NavigationProps) => {
             transition={{ duration: 0.5 }}
           >
             <Button
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/dashboard")}
               variant={scrolled ? "secondary" : "outline"}
               className={`hidden bg-gray-100 text-gray-800 md:inline-flex border-white/20 ${
                 scrolled ? "" : ""
@@ -76,7 +76,7 @@ const Navigation = ({ scrolled, hideNav }: NavigationProps) => {
               Log in
             </Button>
             <Button
-              onClick={() => router.push("/login")}
+              onClick={() => router.push("/dashboard")}
               className={`bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white border-0 ${
                 scrolled ? "shadow-md" : "shadow-lg shadow-blue-500/30"
               } `}
