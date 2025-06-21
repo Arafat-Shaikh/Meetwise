@@ -138,7 +138,29 @@ animation: marquee-right linear infinite;
   }
 }
 
+/* custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 10px;
+}
 
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+
+/* for smooth scrolling */
+html{
+  scroll-behavior: smooth;
+}
 
 @layer base {
   * {

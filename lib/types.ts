@@ -22,3 +22,30 @@ export interface CreateEventData {
     }>;
   };
 }
+
+export interface TimeSlot {
+  startTime: string;
+  endTime: string;
+}
+
+export interface DayAvailability {
+  enabled: boolean;
+  timeSlots: TimeSlot[];
+}
+
+export interface FormData {
+  username: string;
+  fullName: string;
+  timezone: string;
+  connectCalendar: boolean;
+  integrations: {
+    googleMeet: boolean;
+    zoom: boolean;
+    teams: boolean;
+  };
+  availability: {
+    [key: string]: DayAvailability;
+  };
+  profilePicture: string;
+  bio: string;
+}
