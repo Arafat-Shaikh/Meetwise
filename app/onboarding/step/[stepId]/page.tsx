@@ -2,15 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { defaultFormData, steps, timezones } from "@/lib/const";
+import { Textarea } from "@/components/ui/textarea";
+import { defaultFormData, steps, timezones, weekDays } from "@/lib/const";
 import { FormData } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
   Calendar,
+  Camera,
   Check,
   ChevronDown,
+  Clock,
+  Plus,
+  Trash2,
+  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
@@ -39,7 +45,7 @@ const OnboardingStepPage = () => {
   console.log(watchedData);
 
   const getContainerWidth = () => {
-    return currentStep === 4 ? "max-w-3xl" : "max-w-md";
+    return currentStep === 4 ? "max-w-xl" : "max-w-md";
   };
 
   const renderStepContent = () => {
@@ -175,9 +181,358 @@ const OnboardingStepPage = () => {
             </div>
 
             <div className="bg-white/10 rounded-xl p-6 border border-white/20">
-              div 2
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 bg-violet-950 rounded-lg flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Google Calendar</h4>
+                    <p className="text-white/70 text-sm">
+                      Sync your existing calendar
+                    </p>
+                  </div>
+                </div>
+                <Controller
+                  name="connectCalendar"
+                  control={control}
+                  render={({ field }) => (
+                    <button
+                      type="button"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`relative inline-flex h-6 w-11 shadow-lg items-center rounded-full transition-colors ${
+                        field.value ? "bg-violet-950/90" : "bg-white/20"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 shadow-sm transform rounded-full bg-white transition-transform ${
+                          field.value ? "translate-x-6" : "translate-x-1"
+                        } `}
+                      />
+                    </button>
+                  )}
+                />
+              </div>
             </div>
-            <div>div 3</div>
+
+            {watchedData.connectCalendar && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="bg-violet-300/10 border border-violet-400/10 rounded-xl p-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <Check className="h-5 w-5 text-violet-200" />
+                  <span className="text-green-100">
+                    Calendar connection will be set up after onboarding
+                  </span>
+                </div>{" "}
+              </motion.div>
+            )}
+          </motion.div>
+        );
+
+      case 3:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
+            <div className="text-center">
+              <Video className="h-16 w-16 text-purple-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Meeting Integrations
+              </h3>
+              <p className="text-blue-100">
+                Choose which video conferencing tools you'd like to use for
+                meetings.
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {[
+                {
+                  key: "googleMeet" as const,
+                  name: "Google Meet",
+                  description: "Integrated with Google Calendar",
+                  color: "bg-green-500",
+                },
+                {
+                  key: "zoom" as const,
+                  name: "Zoom",
+                  description: "Professional video conferencing",
+                  color: "bg-blue-500",
+                },
+                {
+                  key: "teams" as const,
+                  name: "Microsoft Teams",
+                  description: "Enterprise collaboration",
+                  color: "bg-purple-500",
+                },
+              ].map((integration) => (
+                <div
+                  key={integration.key}
+                  className="bg-white/10 rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-colors"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div
+                        className={`h-10 w-10 ${integration.color} rounded-lg flex items-center justify-center`}
+                      >
+                        <Video className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <h4 className="text-white font-medium">
+                          {integration.name}
+                        </h4>
+                        <p className="text-blue-200 text-sm">
+                          {integration.description}
+                        </p>
+                      </div>
+                    </div>
+                    <Controller
+                      name={`integrations.${integration.key}`}
+                      control={control}
+                      render={({ field }) => (
+                        <button
+                          type="button"
+                          onClick={() => field.onChange(!field.value)}
+                          className={`relative inline-flex h-6 w-11 shadow-sm items-center rounded-full transition-colors ${
+                            field.value ? "bg-violet-950/60" : "bg-white/20"
+                          }`}
+                        >
+                          <span
+                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                              field.value ? "translate-x-6" : "translate-x-1"
+                            }`}
+                          />
+                        </button>
+                      )}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+
+      case 4:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
+            <div className="text-center">
+              <Clock className="h-16 w-16 text-green-300 mx-auto mb-4" />
+              <h3 className="text-2xl font-semibold text-white mb-2">
+                Set Your Availability
+              </h3>
+              <p className="text-blue-100 text-lg">
+                Define ranges of time when you are available
+              </p>
+              <p className="text-blue-200 text-sm mt-2">
+                You can customize all of this later in the availability page.
+              </p>
+            </div>
+
+            <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+              {weekDays.map((day, i) => (
+                <div
+                  key={day}
+                  className="bg-white/5 rounded-xl border border-white/10 "
+                >
+                  <div className="p-4">
+                    {/* day header with toggle  */}
+                    <div className="flex items-center space-x-4 mb-3">
+                      <button
+                        type="button"
+                        onClick={() => {}}
+                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
+                          watchedData.availability[day]?.enabled
+                            ? "bg-violet-800/80"
+                            : "bg-white/20"
+                        }`}
+                      >
+                        <motion.span
+                          className="inline-block h-4 w-4 transform rounded-full bg-white"
+                          animate={{
+                            x: watchedData.availability[day]?.enabled ? 24 : 4,
+                          }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30,
+                          }}
+                        />
+                      </button>
+                      <span
+                        className={`font-semibold text-lg min-w-[100px] ${
+                          watchedData.availability[day]?.enabled
+                            ? "text-white"
+                            : "text-white/60"
+                        } `}
+                      >
+                        {day}
+                      </span>
+
+                      {/* time slots for enabled days  */}
+
+                      {watchedData.availability[day]?.enabled && (
+                        <div className="flex-1 space-y-2">
+                          {watchedData.availability[day].timeSlots.map(
+                            (slot, index) => (
+                              <motion.div
+                                key={index}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="flex items-center space-x-3"
+                              >
+                                <div className="flex items-center space-x-2">
+                                  <Controller
+                                    name={`availability.${day}.timeSlots.${index}.startTime`}
+                                    control={control}
+                                    render={({ field }) => (
+                                      <motion.input
+                                        {...field}
+                                        type="time"
+                                        className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20 transition-all"
+                                        whileFocus={{ scale: 1.02 }}
+                                      />
+                                    )}
+                                  />
+                                  <span className="text-white/60 font-medium">
+                                    -
+                                  </span>
+                                  <Controller
+                                    name={`availability.${day}.timeSlots.${index}.endTime`}
+                                    control={control}
+                                    render={({ field }) => (
+                                      <motion.input
+                                        {...field}
+                                        type="time"
+                                        className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20 transition-all"
+                                        whileFocus={{ scale: 1.02 }}
+                                      />
+                                    )}
+                                  />
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <motion.button
+                                    type="button"
+                                    onClick={() => {}}
+                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-green-100 transition-colors"
+                                    title="Add time slot"
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.95 }}
+                                  >
+                                    <Plus className="h-4 w-4" />
+                                  </motion.button>
+
+                                  {watchedData.availability[day].timeSlots
+                                    .length > 1 && (
+                                    <motion.button
+                                      type="button"
+                                      onClick={() => {}}
+                                      className="w-8 h-8 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-lg flex items-center justify-center text-red-300 transition-colors"
+                                      title="Remove time slot"
+                                      whileHover={{ scale: 1.1 }}
+                                      whileTap={{ scale: 0.95 }}
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </motion.button>
+                                  )}
+                                </div>
+                              </motion.div>
+                            )
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* show placeholder for disabled days  */}
+                    {!watchedData.availability[day]?.enabled && (
+                      <div className="ml-[76px] text-white/40 text-sm">
+                        Unavailable
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        );
+
+      case 5:
+        return (
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            className="space-y-6"
+          >
+            <div className="text-center">
+              <Camera className="h-16 w-16 text-violet-300 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-white mb-2">
+                Complete Your Profile
+              </h3>
+              <p className="text-blue-100">
+                Add a photo and bio to help clients connect with you.
+              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-3">
+                Profile Picture
+              </label>
+              <div className="flex items-center space-x-4">
+                <div className="h-20 w-20 bg-white/10 rounded-full flex items-center justify-center border border-dashed border-white/30 ">
+                  {watchedData.profilePicture ? (
+                    <img
+                      src={watchedData.profilePicture || "/placeholder.svg"}
+                      alt="Profile"
+                      className="h-full w-full rounded-full object-cover"
+                    />
+                  ) : (
+                    <Camera className="h-8 w-8 text-white/60" />
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="border-white/20 text-black hover:bg-white/90"
+                >
+                  Upload Photo
+                </Button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-white mb-2">
+                Bio
+              </label>
+              <Controller
+                name="bio"
+                control={control}
+                rules={{ required: "Bio is required" }}
+                render={({ field }) => (
+                  <Textarea
+                    {...field}
+                    placeholder="Hi, I'm John! I'm passionate about helping people achieve their goals through personalized coaching sessions. Let's connect and make great things happen together!"
+                    className="bg-white/10 border-white/20 hover:border-white/50 text-white transition-all duration-200 placeholder:text-white/60 focus-visible:ring-0 min-h-[120px] focus:outline-none focus-visible:outline-none resize-none"
+                  />
+                )}
+              />
+              {errors.bio && (
+                <p className="text-red-300 text-sm mt-1">
+                  {errors.bio.message}
+                </p>
+              )}
+            </div>
           </motion.div>
         );
     }
