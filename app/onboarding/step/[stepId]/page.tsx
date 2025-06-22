@@ -327,10 +327,10 @@ const OnboardingStepPage = () => {
             className="space-y-6"
           >
             <div className="text-center">
-              <Clock className="h-16 w-16 text-green-300 mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold text-white mb-2">
+              <Clock className="h-8 w-8 text-green-300 mx-auto mb-4" />
+              {/* <h3 className="text-2xl font-semibold text-white mb-2">
                 Set Your Availability
-              </h3>
+              </h3> */}
               <p className="text-blue-100 text-lg">
                 Define ranges of time when you are available
               </p>
@@ -339,45 +339,49 @@ const OnboardingStepPage = () => {
               </p>
             </div>
 
-            <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+            <div className="space-y-3 md:max-h-96 md:overflow-y-auto pr-2">
               {weekDays.map((day, i) => (
                 <div
                   key={day}
-                  className="bg-white/5 rounded-xl border border-white/10 "
+                  className="bg-white/5 rounded-xl border border-white/10"
                 >
-                  <div className="p-4">
+                  <div className="p-2">
                     {/* day header with toggle  */}
-                    <div className="flex items-center space-x-4 mb-3">
-                      <button
-                        type="button"
-                        onClick={() => {}}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                          watchedData.availability[day]?.enabled
-                            ? "bg-violet-800/80"
-                            : "bg-white/20"
-                        }`}
-                      >
-                        <motion.span
-                          className="inline-block h-4 w-4 transform rounded-full bg-white"
-                          animate={{
-                            x: watchedData.availability[day]?.enabled ? 24 : 4,
-                          }}
-                          transition={{
-                            type: "spring",
-                            stiffness: 500,
-                            damping: 30,
-                          }}
-                        />
-                      </button>
-                      <span
-                        className={`font-semibold text-lg min-w-[100px] ${
-                          watchedData.availability[day]?.enabled
-                            ? "text-white"
-                            : "text-white/60"
-                        } `}
-                      >
-                        {day}
-                      </span>
+                    <div className="flex flex-col items-start gap-y-4 md:space-x-4 mb-3">
+                      <div className="space-x-4">
+                        <button
+                          type="button"
+                          onClick={() => {}}
+                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
+                            watchedData.availability[day]?.enabled
+                              ? "bg-violet-800/80"
+                              : "bg-white/20"
+                          }`}
+                        >
+                          <motion.span
+                            className="inline-block h-4 w-4 transform rounded-full bg-white"
+                            animate={{
+                              x: watchedData.availability[day]?.enabled
+                                ? 24
+                                : 4,
+                            }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 30,
+                            }}
+                          />
+                        </button>
+                        <span
+                          className={`font-semibold text-lg min-w-[100px] ${
+                            watchedData.availability[day]?.enabled
+                              ? "text-white"
+                              : "text-white/60"
+                          } `}
+                        >
+                          {day}
+                        </span>
+                      </div>
 
                       {/* time slots for enabled days  */}
 
@@ -541,7 +545,7 @@ const OnboardingStepPage = () => {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-t from-black/90 to-violet-950 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-t pt-6 from-black/90 to-violet-950 relative overflow-hidden">
         {/* background decoration */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-72 h-72 bg-purple-900/20 rounded-full blur-3xl"></div>
@@ -549,16 +553,51 @@ const OnboardingStepPage = () => {
         </div>
 
         <div className="relative z-10 min-h-screen flex flex-col">
-          <header className="p-6">
-            <Link href={"/"} className="text-2xl font-bold text-white">
-              AppointAI
-            </Link>
-          </header>
-
           {/* progress bar  */}
+
           <div className="px-6 mb-8">
             <div className="max-w-4xl mx-auto">
-              <div className="flex items-center justify-between mb-4">
+              {/* mobile progress bar */}
+              <div className="md:hidden mb-6">
+                <div className="flex items-center justify-between text-white text-sm mb-3">
+                  <span className="font-medium">
+                    Step {currentStep} of {steps.length}
+                  </span>
+                </div>
+                <div className="relative">
+                  <div className="flex justify-between mt-2">
+                    {steps.map((step, index) => (
+                      <div key={step.id} className="flex flex-row items-center">
+                        <div
+                          className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                            currentStep >= step.id
+                              ? "bg-white text-blue-600 border-white shadow-lg"
+                              : "border-white/40 text-white/60"
+                          }`}
+                        >
+                          {currentStep > step.id ? (
+                            <Check className="h-3 w-3" />
+                          ) : (
+                            <step.icon className="h-3 w-3" />
+                          )}
+                        </div>
+                        {steps.length - 1 !== index && (
+                          <div
+                            className={`w-14 h-0.5 ${
+                              currentStep > index + 1
+                                ? "bg-violet-600/80"
+                                : "bg-violet-800/30"
+                            }`}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* desktop progress bar  */}
+              <div className="hidden md:flex items-center justify-between mb-4">
                 {steps.map((step, index) => (
                   <div key={step.id} className="flex items-center">
                     <div
@@ -576,7 +615,7 @@ const OnboardingStepPage = () => {
                     </div>
                     {index < steps.length - 1 && (
                       <div
-                        className={`w-16 h-0.5 mx-2 transition-colors ${
+                        className={`w-40 h-0.5 mx-2 transition-colors ${
                           currentStep > step.id ? "bg-white" : "bg-white/30"
                         }`}
                       />
@@ -597,9 +636,9 @@ const OnboardingStepPage = () => {
 
           {/* main content  */}
 
-          <div className="flex-1 flex items-center justify-center px-6">
+          <div className="flex-1 flex items-center justify-center px-0 sm:px-6">
             <div className={`w-full ${getContainerWidth()}`}>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border-none border-white/20 shadow-2xl">
                 <AnimatePresence mode="wait">
                   {renderStepContent()}
                 </AnimatePresence>
@@ -610,12 +649,12 @@ const OnboardingStepPage = () => {
                     type="button"
                     variant={"outline"}
                     disabled={currentStep === 1}
-                    className="border-white/20 text-black hover:bg-white/10 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-gradient-to-t from-white/50 text-black to-white border-none shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Previous
                   </Button>
-                  <Button>
+                  <Button className="bg-gradient-to-t from-violet-950  to-violet-950/70 shadow-sm border border-violet-600/10">
                     {currentStep === 5 ? "Finish Setup" : "Next"}
                     {currentStep < 5 && (
                       <motion.span
@@ -632,13 +671,6 @@ const OnboardingStepPage = () => {
               </div>
             </div>
           </div>
-
-          <footer className="p-6 text-center">
-            <p className="text-white/60 text-sm">
-              Step {currentStep} of {steps.length} • Your data is secure and
-              encrypted
-            </p>
-          </footer>
         </div>
       </div>
     </>
