@@ -195,7 +195,7 @@ export const defaultFormData: FormData = {
   username: "",
   fullName: "",
   timezone: "America/New_York",
-  connectCalendar: false,
+  connectCalendar: true,
   integrations: {
     googleMeet: false,
     zoom: false,
@@ -204,31 +204,31 @@ export const defaultFormData: FormData = {
   availability: {
     Monday: {
       enabled: true,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
     Tuesday: {
       enabled: true,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
     Wednesday: {
       enabled: true,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
     Thursday: {
       enabled: true,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
     Friday: {
       enabled: true,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
     Saturday: {
       enabled: false,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
     Sunday: {
       enabled: false,
-      timeSlots: [{ startTime: "09:00", endTime: "17:00" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
   },
   profilePicture: "",

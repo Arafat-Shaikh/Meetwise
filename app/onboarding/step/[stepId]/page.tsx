@@ -1,5 +1,6 @@
 "use client";
 
+import TimePicker, { convertTo24Hour } from "@/app/_components/time-picker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -15,12 +16,11 @@ import {
   ChevronDown,
   Clock,
   Plus,
-  Trash2,
+  Trash,
   Video,
 } from "lucide-react";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 
 const OnboardingStepPage = () => {
@@ -29,6 +29,9 @@ const OnboardingStepPage = () => {
   const currentStep = Number.parseInt(params.stepId as string);
 
   const [isTimezoneOpen, setIsTimezoneOpen] = useState(false);
+  const [timeValidationErrors, setTimeValidationErrors] = useState<{
+    [key: string]: string;
+  }>({});
 
   const {
     control,
@@ -41,8 +44,109 @@ const OnboardingStepPage = () => {
   } = useForm<FormData>({ defaultValues: defaultFormData });
 
   const watchedData = watch();
+  console.log("availability for monday", watchedData.availability["Monday"]);
+  console.log(timeValidationErrors);
 
-  console.log(watchedData);
+  // detect timezone
+  useEffect(() => {
+    const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setValue("timezone", detectedTimezone);
+  }, [setValue]);
+
+  // load data from localstorage
+  useEffect(() => {
+    const savedData = localStorage.getItem("onboarding-data");
+    if (savedData) {
+      const parsedData = JSON.parse(savedData);
+      Object.keys(parsedData).forEach((key) => {
+        console.log(key);
+        console.log(parsedData[key]);
+        setValue(key as keyof FormData, parsedData[key]);
+      });
+    }
+  }, [setValue]);
+
+  // save data to localStorage
+  useEffect(() => {
+    setTimeout(() => {
+      localStorage.setItem("onboarding-data", JSON.stringify(watchedData));
+    }, 200);
+  }, [watchedData]);
+
+  const handlePrevious = () => {
+    if (currentStep > 1) {
+      router.push(`/onboarding/step/${currentStep - 1}`);
+    }
+  };
+
+  const toggleDayAvailability = (day: string) => {
+    const currentAvailability = getValues(`availability.${day}`);
+    setValue(`availability.${day}.enabled`, !currentAvailability.enabled);
+  };
+
+  const addTimeSlot = (day: string) => {
+    const daySlots = getValues(`availability.${day}.timeSlots`);
+    console.log(daySlots);
+    setValue(`availability.${day}.timeSlots`, [
+      ...daySlots,
+      { startTime: "9:00am", endTime: "5:00pm" },
+    ]);
+  };
+
+  const removeDaySlot = (day: string, index: number) => {
+    const daySlotToRemove = getValues(`availability.${day}.timeSlots`);
+    const filteredSlots = daySlotToRemove.filter((item, i) => i !== index);
+    setValue(`availability.${day}.timeSlots`, filteredSlots);
+  };
+
+  // "validate time slots here"
+  const validateTimeSlots = () => {
+    const errors: { [key: string]: string } = {};
+
+    Object.keys(watchedData.availability).forEach((day) => {
+      const dayData = watchedData.availability[day];
+      if (dayData.enabled) {
+        dayData.timeSlots.forEach((slot, index) => {
+          const startTime24 = convertTo24Hour(slot.startTime);
+          const endTime24 = convertTo24Hour(slot.endTime);
+
+          if (startTime24 >= endTime24) {
+            errors[`${day}-${index}`] = "End time must be after start time";
+          }
+        });
+      }
+    });
+
+    setTimeValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const validateStep = async (step: number): Promise<boolean> => {
+    switch (step) {
+      case 1:
+        return await trigger(["username", "fullName", "timezone"]);
+      case 4:
+        return validateTimeSlots();
+      case 5:
+        return await trigger(["bio"]);
+      default:
+        return true;
+    }
+  };
+
+  const handleNext = async () => {
+    const isValid = await validateStep(currentStep);
+    if (isValid) {
+      if (currentStep < 5) {
+        router.push(`/onboarding/step/${currentStep + 1}`);
+      } else {
+        const finalData = getValues();
+        console.log("Onboarding completed:", finalData);
+        localStorage.removeItem("onboarding-data");
+        router.push("/dashboard");
+      }
+    }
+  };
 
   const getContainerWidth = () => {
     return currentStep === 4 ? "max-w-xl" : "max-w-md";
@@ -339,19 +443,16 @@ const OnboardingStepPage = () => {
               </p>
             </div>
 
-            <div className="space-y-3 md:max-h-96 md:overflow-y-auto pr-2">
+            <div className="space-y-2 border-0 rounded-lg p-4 bg-black/20 border-white/20 ">
               {weekDays.map((day, i) => (
-                <div
-                  key={day}
-                  className="bg-white/5 rounded-xl border border-white/10"
-                >
-                  <div className="p-2">
+                <div key={day} className="">
+                  <div className="p-0">
                     {/* day header with toggle  */}
-                    <div className="flex flex-col items-start gap-y-4 md:space-x-4 mb-3">
+                    <div className="flex flex-col md:flex-row items-start  md:justify-between gap-y-4 md:space-x-4 mb-3">
                       <div className="space-x-4">
                         <button
                           type="button"
-                          onClick={() => {}}
+                          onClick={() => toggleDayAvailability(day)}
                           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
                             watchedData.availability[day]?.enabled
                               ? "bg-violet-800/80"
@@ -386,73 +487,110 @@ const OnboardingStepPage = () => {
                       {/* time slots for enabled days  */}
 
                       {watchedData.availability[day]?.enabled && (
-                        <div className="flex-1 space-y-2">
+                        <div className="space-y-2">
                           {watchedData.availability[day].timeSlots.map(
-                            (slot, index) => (
-                              <motion.div
-                                key={index}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.95 }}
-                                className="flex items-center space-x-3"
-                              >
-                                <div className="flex items-center space-x-2">
-                                  <Controller
-                                    name={`availability.${day}.timeSlots.${index}.startTime`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <motion.input
-                                        {...field}
-                                        type="time"
-                                        className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20 transition-all"
-                                        whileFocus={{ scale: 1.02 }}
-                                      />
-                                    )}
-                                  />
-                                  <span className="text-white/60 font-medium">
-                                    -
-                                  </span>
-                                  <Controller
-                                    name={`availability.${day}.timeSlots.${index}.endTime`}
-                                    control={control}
-                                    render={({ field }) => (
-                                      <motion.input
-                                        {...field}
-                                        type="time"
-                                        className="bg-white/10 border border-white/20 text-white rounded-lg px-3 py-2 text-sm focus:border-violet-400 focus:outline-none focus:ring-2 focus:ring-violet-400/20 transition-all"
-                                        whileFocus={{ scale: 1.02 }}
-                                      />
-                                    )}
-                                  />
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                  <motion.button
-                                    type="button"
-                                    onClick={() => {}}
-                                    className="w-8 h-8 rounded-lg flex items-center justify-center text-green-100 transition-colors"
-                                    title="Add time slot"
-                                    whileHover={{ scale: 1.1 }}
-                                    whileTap={{ scale: 0.95 }}
-                                  >
-                                    <Plus className="h-4 w-4" />
-                                  </motion.button>
+                            (slot, index) => {
+                              const errorKey = `${day}-${index}`;
+                              const hasError = timeValidationErrors[errorKey];
 
-                                  {watchedData.availability[day].timeSlots
-                                    .length > 1 && (
-                                    <motion.button
-                                      type="button"
-                                      onClick={() => {}}
-                                      className="w-8 h-8 bg-red-500/20 hover:bg-red-500/30 border border-red-500/30 rounded-lg flex items-center justify-center text-red-300 transition-colors"
-                                      title="Remove time slot"
-                                      whileHover={{ scale: 1.1 }}
-                                      whileTap={{ scale: 0.95 }}
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                    </motion.button>
-                                  )}
-                                </div>
-                              </motion.div>
-                            )
+                              return (
+                                <motion.div
+                                  key={index}
+                                  initial={{ opacity: 0, scale: 0.95 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  exit={{ opacity: 0, scale: 0.95 }}
+                                  className="space-y-2"
+                                >
+                                  <div className="flex items-center gap-3">
+                                    <div className="flex items-center space-x-2 flex-1">
+                                      <div className="w-full sm:w-auto">
+                                        <Controller
+                                          name={`availability.${day}.timeSlots.${index}.startTime`}
+                                          control={control}
+                                          render={({ field }) => (
+                                            <TimePicker
+                                              value={field.value}
+                                              onChange={(value) => {
+                                                field.onChange(value);
+
+                                                if (
+                                                  timeValidationErrors[errorKey]
+                                                ) {
+                                                  const newErrors = {
+                                                    ...timeValidationErrors,
+                                                  };
+                                                  delete newErrors[errorKey];
+                                                  setTimeValidationErrors(
+                                                    newErrors
+                                                  );
+                                                }
+                                              }}
+                                            />
+                                          )}
+                                        />
+                                      </div>
+                                      <span className="text-white/60 font-medium px-1 flex-shrink-0">
+                                        -
+                                      </span>
+                                      <div className="w-full sm:w-auto">
+                                        <Controller
+                                          name={`availability.${day}.timeSlots.${index}.endTime`}
+                                          control={control}
+                                          render={({ field }) => (
+                                            <TimePicker
+                                              value={field.value}
+                                              onChange={(value) => {
+                                                field.onChange(value);
+
+                                                if (
+                                                  timeValidationErrors[errorKey]
+                                                ) {
+                                                  const newErrors = {
+                                                    ...timeValidationErrors,
+                                                  };
+                                                  delete newErrors[errorKey];
+                                                  setTimeValidationErrors(
+                                                    newErrors
+                                                  );
+                                                }
+                                              }}
+                                              minTime={slot.startTime}
+                                            />
+                                          )}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center justify-start space-x-2 flex-shrink-0">
+                                      {index === 0 ? (
+                                        <motion.button
+                                          type="button"
+                                          onClick={() => addTimeSlot(day)}
+                                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/10 transition-colors"
+                                          title="Add time slot"
+                                          whileHover={{ scale: 1.1 }}
+                                          whileTap={{ scale: 0.95 }}
+                                        >
+                                          <Plus className="h-4 w-4" />
+                                        </motion.button>
+                                      ) : (
+                                        <motion.button
+                                          type="button"
+                                          onClick={() =>
+                                            removeDaySlot(day, index)
+                                          }
+                                          className="text-white/80 hover:bg-red-500/30 p-2 rounded-lg"
+                                          whileHover={{ scale: 1.1 }}
+                                          whileTap={{ scale: 0.95 }}
+                                          title="remove a time slot"
+                                        >
+                                          <Trash className="h-4 w-4" />
+                                        </motion.button>
+                                      )}
+                                    </div>
+                                  </div>
+                                </motion.div>
+                              );
+                            }
                           )}
                         </div>
                       )}
@@ -549,7 +687,7 @@ const OnboardingStepPage = () => {
         {/* background decoration */}
         <div className="absolute inset-0">
           <div className="absolute top-0 left-0 w-72 h-72 bg-purple-900/20 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-900/20 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-950/10 rounded-full blur-3xl"></div>
         </div>
 
         <div className="relative z-10 min-h-screen flex flex-col">
@@ -638,7 +776,7 @@ const OnboardingStepPage = () => {
 
           <div className="flex-1 flex items-center justify-center px-0 sm:px-6">
             <div className={`w-full ${getContainerWidth()}`}>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border-none border-white/20 shadow-2xl">
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
                 <AnimatePresence mode="wait">
                   {renderStepContent()}
                 </AnimatePresence>
@@ -648,13 +786,17 @@ const OnboardingStepPage = () => {
                   <Button
                     type="button"
                     variant={"outline"}
+                    onClick={() => handlePrevious()}
                     disabled={currentStep === 1}
                     className="bg-gradient-to-t from-white/50 text-black to-white border-none shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Previous
                   </Button>
-                  <Button className="bg-gradient-to-t from-violet-950  to-violet-950/70 shadow-sm border border-violet-600/10">
+                  <Button
+                    onClick={() => handleNext()}
+                    className="bg-gradient-to-t from-violet-950  to-violet-950/70 shadow-sm border border-violet-600/10"
+                  >
                     {currentStep === 5 ? "Finish Setup" : "Next"}
                     {currentStep < 5 && (
                       <motion.span
