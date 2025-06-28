@@ -37,6 +37,7 @@ import Footer from "./_components/landing/footer";
 
 const Home = () => {
   const session = useSession();
+
   const [scrolled, setScrolled] = useState(false);
   // const featuresRef = useRef(null);
   // const heroRef = useRef(null);

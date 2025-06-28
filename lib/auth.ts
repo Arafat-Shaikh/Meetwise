@@ -90,6 +90,7 @@ export const authOptions = {
 
       // add access token and error to session
       session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
       session.error = token.error as string;
 
       return session;

@@ -1,11 +1,12 @@
 "use client";
 
 import TimePicker, { convertTo24Hour } from "@/app/_components/time-picker";
+import { UploadPhotoButton } from "@/app/_components/upload-photo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { defaultFormData, steps, timezones, weekDays } from "@/lib/const";
-import { FormData } from "@/lib/types";
+import { MultiStepFormData } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -19,14 +20,18 @@ import {
   Trash,
   Video,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const OnboardingStepPage = () => {
   const router = useRouter();
   const params = useParams();
   const currentStep = Number.parseInt(params.stepId as string);
+  const [loading, setLoading] = useState(false);
+  const { data } = useSession();
 
   const [isTimezoneOpen, setIsTimezoneOpen] = useState(false);
   const [timeValidationErrors, setTimeValidationErrors] = useState<{
@@ -41,7 +46,7 @@ const OnboardingStepPage = () => {
     getValues,
     formState: { errors },
     trigger,
-  } = useForm<FormData>({ defaultValues: defaultFormData });
+  } = useForm<MultiStepFormData>({ defaultValues: defaultFormData });
 
   const watchedData = watch();
   console.log("availability for monday", watchedData.availability["Monday"]);
@@ -51,6 +56,10 @@ const OnboardingStepPage = () => {
   useEffect(() => {
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     setValue("timezone", detectedTimezone);
+    console.log(data?.user.name);
+    if (data?.user.name) {
+      setValue("fullName", data.user.name);
+    }
   }, [setValue]);
 
   // load data from localstorage
@@ -61,16 +70,18 @@ const OnboardingStepPage = () => {
       Object.keys(parsedData).forEach((key) => {
         console.log(key);
         console.log(parsedData[key]);
-        setValue(key as keyof FormData, parsedData[key]);
+        setValue(key as keyof MultiStepFormData, parsedData[key]);
       });
     }
   }, [setValue]);
 
   // save data to localStorage
   useEffect(() => {
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       localStorage.setItem("onboarding-data", JSON.stringify(watchedData));
-    }, 200);
+    }, 100);
+
+    return () => clearTimeout(timeout);
   }, [watchedData]);
 
   const handlePrevious = () => {
@@ -143,7 +154,7 @@ const OnboardingStepPage = () => {
         const finalData = getValues();
         console.log("Onboarding completed:", finalData);
         localStorage.removeItem("onboarding-data");
-        router.push("/dashboard");
+        console.log(finalData);
       }
     }
   };
@@ -363,18 +374,6 @@ const OnboardingStepPage = () => {
                   description: "Integrated with Google Calendar",
                   color: "bg-green-500",
                 },
-                {
-                  key: "zoom" as const,
-                  name: "Zoom",
-                  description: "Professional video conferencing",
-                  color: "bg-blue-500",
-                },
-                {
-                  key: "teams" as const,
-                  name: "Microsoft Teams",
-                  description: "Enterprise collaboration",
-                  color: "bg-purple-500",
-                },
               ].map((integration) => (
                 <div
                   key={integration.key}
@@ -455,7 +454,7 @@ const OnboardingStepPage = () => {
                           onClick={() => toggleDayAvailability(day)}
                           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
                             watchedData.availability[day]?.enabled
-                              ? "bg-violet-800/80"
+                              ? "bg-[#251542]"
                               : "bg-white/20"
                           }`}
                         >
@@ -643,13 +642,32 @@ const OnboardingStepPage = () => {
                     <Camera className="h-8 w-8 text-white/60" />
                   )}
                 </div>
-                <Button
-                  type="button"
-                  variant={"outline"}
-                  className="border-white/20 text-black hover:bg-white/90"
-                >
-                  Upload Photo
-                </Button>
+                <UploadPhotoButton
+                  loading={loading}
+                  onImageSelect={async (file) => {
+                    console.log("Selected file:", file);
+                    setLoading(true);
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    const res = await fetch("/api/upload", {
+                      method: "POST",
+                      body: formData,
+                    });
+
+                    if (!res.ok) {
+                      toast.error("Can't upload the image");
+                    }
+
+                    const data = await res.json();
+                    if (data.url) {
+                      console.log("cloudinary image url: ", data.url);
+                      setValue("profilePicture", data.url);
+                      toast.success("Image uploaded");
+                    }
+                    setLoading(false);
+                  }}
+                />
               </div>
             </div>
 

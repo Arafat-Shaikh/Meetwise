@@ -1,7 +1,6 @@
 import { authOptions } from "@/lib/auth";
 import { dummyEventData } from "@/lib/const";
 import { GoogleCalendarService } from "@/lib/googleCalendar";
-import { CreateEventData } from "@/lib/types";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 

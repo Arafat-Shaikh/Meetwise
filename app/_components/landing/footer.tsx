@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
-            <h3 className="text-xl font-bold text-white">AppointAI</h3>
+            <h3 className="text-xl font-bold text-white">Meetwise</h3>
             <p className="mt-4">
               AI-powered scheduling platform for service providers and their
               clients.

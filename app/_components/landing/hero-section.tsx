@@ -78,7 +78,7 @@ const HeroSection = () => {
             whileHover={{ y: -5 }}
           >
             <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl space-y-1 ">
-              <div className="rounded-xl bg-gradient-to-br from-blue-600 to-blue-500 p-4 text-white">
+              <div className="rounded-xl bg-gradient-to-br from-violet-600 to-violet-500 p-4 text-white">
                 <h3 className="text-xl font-semibold">
                   Welcome to your calendar!
                 </h3>

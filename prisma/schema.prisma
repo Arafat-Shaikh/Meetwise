@@ -15,14 +15,53 @@ datasource db {
 }
 
 model User {
-  id    String  @id @default(cuid())
-  name  String?
-  email String? @unique
+  id             String  @id @default(cuid())
+  email          String? @unique
+  name           String?
+  fullName       String?
+  username       String? @unique
+  timezone       String?
+  profilePicture String?
+  bio            String?
+  integrations   Json    @default("{}")
 
   googleCalendarConnected Boolean   @default(false)
   calendarConnectedAt     DateTime?
+  hashedPassword          String?
+  emailVerified           DateTime?
 
-  hashedPassword String?
-  emailVerified  DateTime?
-  image          String?
+  availability Availability[]
+}
+
+model Availability {
+  id      String     @id @default(cuid())
+  day     DayOfWeek
+  enabled Boolean    @default(false)
+  userId  String
+  user    User       @relation(fields: [userId], references: [id])
+  slots   TimeSlot[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TimeSlot {
+  id             String       @id @default(cuid())
+  startTime      String // i will DateTime here if needed
+  endTime        String
+  availabilityId String
+  availability   Availability @relation(fields: [availabilityId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum DayOfWeek {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+  Sunday
 }

@@ -3,14 +3,53 @@ import { calendar_v3, google } from "googleapis";
 export class GoogleCalendarService {
   private calendar: calendar_v3.Calendar;
 
-  constructor(accessToken: string) {
+  constructor(accessToken: string, refreshToken?: string) {
     const auth = new google.auth.OAuth2();
-    auth.setCredentials({ access_token: accessToken });
+    auth.setCredentials({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    });
 
     this.calendar = google.calendar({
       version: "v3",
       auth: auth,
     });
+  }
+
+  async createCalendarEvent({
+    summary,
+    description,
+    attendeeEmail,
+    startDateTime,
+    endDateTime,
+  }: any) {
+    const event = await this.calendar.events.insert({
+      calendarId: "primary",
+      conferenceDataVersion: 1,
+      requestBody: {
+        summary,
+        description,
+        start: {
+          dateTime: startDateTime,
+          timeZone: "Asia/Kolkata",
+        },
+        end: {
+          dateTime: endDateTime,
+          timeZone: "Asia/Kolkata",
+        },
+        attendees: [{ email: attendeeEmail }],
+        conferenceData: {
+          createRequest: {
+            requestId: Math.random().toString(36).substring(2),
+            conferenceSolutionKey: {
+              type: "hangoutsMeet",
+            },
+          },
+        },
+      },
+    });
+
+    return { event };
   }
 
   async getCalendars() {

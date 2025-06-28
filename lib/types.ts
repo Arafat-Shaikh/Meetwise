@@ -33,15 +33,13 @@ export interface DayAvailability {
   timeSlots: TimeSlot[];
 }
 
-export interface FormData {
+export interface MultiStepFormData {
   username: string;
   fullName: string;
   timezone: string;
   connectCalendar: boolean;
   integrations: {
     googleMeet: boolean;
-    zoom: boolean;
-    teams: boolean;
   };
   availability: {
     [key: string]: DayAvailability;

@@ -32,7 +32,7 @@ const Navigation = ({ scrolled, hideNav }: NavigationProps) => {
             transition={{ duration: 0.5 }}
           >
             <span className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent ">
-              AppointAI
+              Meetwise
             </span>
           </motion.div>
           <motion.nav
