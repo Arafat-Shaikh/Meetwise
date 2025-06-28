@@ -47,7 +47,7 @@ model Availability {
 
 model TimeSlot {
   id             String       @id @default(cuid())
-  startTime      String // i will DateTime here if needed
+  startTime      String // i will use DateTime here if needed
   endTime        String
   availabilityId String
   availability   Availability @relation(fields: [availabilityId], references: [id])

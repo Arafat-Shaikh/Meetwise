@@ -1,5 +1,7 @@
 "use client";
 
+import { getUniqueUsername } from "@/action/generate-username";
+import { saveOnboardingUserData } from "@/action/user";
 import TimePicker, { convertTo24Hour } from "@/app/_components/time-picker";
 import { UploadPhotoButton } from "@/app/_components/upload-photo";
 import { Button } from "@/components/ui/button";
@@ -31,7 +33,7 @@ const OnboardingStepPage = () => {
   const params = useParams();
   const currentStep = Number.parseInt(params.stepId as string);
   const [loading, setLoading] = useState(false);
-  const { data } = useSession();
+  const { data: session } = useSession();
 
   const [isTimezoneOpen, setIsTimezoneOpen] = useState(false);
   const [timeValidationErrors, setTimeValidationErrors] = useState<{
@@ -54,13 +56,12 @@ const OnboardingStepPage = () => {
 
   // detect timezone
   useEffect(() => {
+    if (session?.user.name) {
+      setValue("fullName", session.user.name);
+    }
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     setValue("timezone", detectedTimezone);
-    console.log(data?.user.name);
-    if (data?.user.name) {
-      setValue("fullName", data.user.name);
-    }
-  }, [setValue]);
+  }, [session?.user?.name, setValue]);
 
   // load data from localstorage
   useEffect(() => {
@@ -76,6 +77,16 @@ const OnboardingStepPage = () => {
   }, [setValue]);
 
   // save data to localStorage
+
+  useEffect(() => {
+    const getUsername = async () => {
+      const fullName = getValues("fullName");
+      const uniqueUsername = await getUniqueUsername({ fullName });
+      setValue("username", uniqueUsername);
+    };
+    getUsername();
+  }, []);
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       localStorage.setItem("onboarding-data", JSON.stringify(watchedData));
@@ -153,8 +164,13 @@ const OnboardingStepPage = () => {
       } else {
         const finalData = getValues();
         console.log("Onboarding completed:", finalData);
-        localStorage.removeItem("onboarding-data");
-        console.log(finalData);
+        const result = await saveOnboardingUserData(finalData);
+        if (result.success) {
+          toast.success("Setup completed!");
+          localStorage.removeItem("onboarding-data");
+        } else {
+          toast.error("Something went wrong");
+        }
       }
     }
   };

@@ -97,7 +97,7 @@ export const authOptions = {
     },
 
     async redirect({}) {
-      return "/profile-setup";
+      return "/onboarding";
     },
   },
 } satisfies NextAuthOptions;

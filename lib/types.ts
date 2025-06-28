@@ -44,6 +44,6 @@ export interface MultiStepFormData {
   availability: {
     [key: string]: DayAvailability;
   };
-  profilePicture: string;
+  profilePicture?: string;
   bio: string;
 }
