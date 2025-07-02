@@ -23,6 +23,10 @@ export async function generateUniqueUsername(
   const existing = await prisma.user.findUnique({
     where: { username: base },
   });
+
+  // const myName = "arafat-shaikh";
+  // const existing = true; // yeah same name
+
   if (!existing) return base;
 
   let username = "";
@@ -30,7 +34,7 @@ export async function generateUniqueUsername(
 
   while (exists) {
     const suffix = nanoid(6);
-    username = `${base}-${suffix}`;
+    username = `${base}${suffix}`;
     const user = await prisma.user.findUnique({ where: { username } });
     exists = !!user;
   }

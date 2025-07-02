@@ -60,3 +60,13 @@ export async function saveOnboardingUserData(rawData: any) {
 
   return { success: true };
 }
+
+export async function checkUsernameExists(username: string) {
+  const exists = await prisma.user.findUnique({
+    where: {
+      username,
+    },
+  });
+
+  return !!exists;
+}

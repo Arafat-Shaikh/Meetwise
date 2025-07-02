@@ -1,7 +1,7 @@
 "use client";
 
 import { getUniqueUsername } from "@/action/generate-username";
-import { saveOnboardingUserData } from "@/action/user";
+import { checkUsernameExists, saveOnboardingUserData } from "@/action/user";
 import TimePicker, { convertTo24Hour } from "@/app/_components/time-picker";
 import { UploadPhotoButton } from "@/app/_components/upload-photo";
 import { Button } from "@/components/ui/button";
@@ -69,8 +69,6 @@ const OnboardingStepPage = () => {
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       Object.keys(parsedData).forEach((key) => {
-        console.log(key);
-        console.log(parsedData[key]);
         setValue(key as keyof MultiStepFormData, parsedData[key]);
       });
     }
@@ -79,11 +77,17 @@ const OnboardingStepPage = () => {
   // save data to localStorage
 
   useEffect(() => {
+    const currentUser = getValues("username");
+    if (currentUser) return;
+
     const getUsername = async () => {
       const fullName = getValues("fullName");
-      const uniqueUsername = await getUniqueUsername({ fullName });
-      setValue("username", uniqueUsername);
+      if (fullName) {
+        const uniqueUsername = await getUniqueUsername({ fullName });
+        setValue("username", uniqueUsername);
+      }
     };
+
     getUsername();
   }, []);
 
@@ -203,6 +207,12 @@ const OnboardingStepPage = () => {
                       minLength: {
                         value: 3,
                         message: "Username must be at least 3 characters",
+                      },
+                      validate: async (value) => {
+                        if (!value) return true;
+
+                        const exists = await checkUsernameExists(value);
+                        return exists ? "Username is already taken" : true;
                       },
                     }}
                     render={({ field }) => (
