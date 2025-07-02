@@ -47,3 +47,5 @@ export interface MultiStepFormData {
   profilePicture?: string;
   bio: string;
 }
+
+export type EventTypes = "Upcoming" | "Canceled";
