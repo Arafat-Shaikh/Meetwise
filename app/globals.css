@@ -170,6 +170,8 @@ animation: marquee-right linear infinite;
   will-change: transform;
 }
 
+
+
 /* for smooth scrolling */
 html{
   scroll-behavior: smooth;

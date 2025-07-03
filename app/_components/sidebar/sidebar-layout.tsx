@@ -13,9 +13,9 @@ interface SidebarLayoutProps {
 const SidebarLayout = ({ children }: SidebarLayoutProps) => {
   return (
     <>
-      <div className="min-h-screen flex bg-gradient-to-t bg-[#000814] ">
+      <div className="min-h-screen flex bg-[#1e1e24] px-8">
         <Sidebar />
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 w-full flex flex-col">
           <div className="h-14 border-b border-gray-800 flex items-center px-4 lg:hidden">
             <button className="text-gray-400 hover:text-white">
               <Menu className="h-6 w-6" />
@@ -79,7 +79,7 @@ const Sidebar = () => {
         isCollapsed ? "w-20" : "w-64"
       } lg:relative ${"-translate-x-full lg:translate-x-0 "}`}
     >
-      <div className="w-64 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent  rounded-xl">
+      <div className="w-64 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent rounded-xl">
         <div className="px-4 py-3 text-2xl font-bold">
           <h1 className="">Meetwise</h1>
         </div>

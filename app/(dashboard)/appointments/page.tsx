@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { bookings, dummyBookings } from "@/lib/const";
+import { bookings, darkButtonStyles, dummyBookings } from "@/lib/const";
 import { EventTypes } from "@/lib/types";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -14,16 +14,10 @@ import {
   MapPin,
   MoreHorizontal,
   Phone,
+  Plus,
   Video,
   X,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 const tabs = ["Upcoming", "Completed", "Canceled"];
 
@@ -43,34 +37,36 @@ const AppointmentsPage = () => {
     }
   };
   return (
-    <div className="h-full w-full bg-gradient-to-t bg-[#000814] flex flex-col lg:p-10 p-2 sm:p-6 md:p-8 gap-y-4 max-h-screen overflow-y-auto">
+    <div className="h-full w-full bg-gradient-to-t bg-[#1e1e24] flex flex-col gap-y-12 lg:p-10 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
       <div className="flex items-center justify-between w-full px-4">
-        <div className="rounded-lg px-3 py-2 flex justify-between items-center gap-x-20 ">
+        <div className="rounded-lg py-2 flex justify-between items-center gap-x-20 ">
           <h2 className="text-2xl text-white font-semibold">Bookings</h2>
-          <div className="flex w-full justify-between gap-x-4 items-center">
-            <p className="text-sm  bg-violet-50/80 rounded-full py-3 px-5 space-x-1">
-              <span className="text-2xl font-medium">260</span>
+          <div className={`${darkButtonStyles} px-6 gap-x-10`}>
+            <p className={`inline-flex text-center gap-x-1 flex-col`}>
+              <span className="text-lg lg:text-xl font-medium">260</span>
               <span className="text-gray-500">Total</span>
             </p>
-            <p className="text-sm  bg-violet-50/80 rounded-full py-3 px-5 space-x-1">
-              <span className="text-2xl font-medium">400</span>
+            <p className={`inline-flex gap-x-1 text-center flex-col`}>
+              <span className="text-lg lg:text-xl font-medium">400</span>
               <span className="text-gray-500">Completed</span>
             </p>
-            <p className="text-sm  bg-violet-50/80 rounded-full py-3 px-5 space-x-1">
-              <span className="text-2xl font-medium">113</span>
+            <p className={`inline-flex text-center gap-x-1 flex-col`}>
+              <span className="text-lg lg:text-xl font-medium">113</span>
               <span className="text-gray-500">Cancelled</span>
             </p>
           </div>
         </div>
         <div>
-          <Button className="rounded-full">New +</Button>
+          <Button className="rounded-full bg-black border-gray-600/50 border">
+            New <Plus className="h-3 w-3" />
+          </Button>
         </div>
       </div>
       <div
-        className=" w-full rounded-xl p-6 shadow-xl shadow-white border-2 border-[#343a40] bg-[#0a0908]"
-        style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
+        className="w-full rounded-xl p-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-[#111116]"
+        // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
       >
-        <div className="w-fit rounded-xl bg-[#161a1d] px-0.5 py-0.5">
+        <div className="w-fit rounded-xl bg-[#161411] px-0.5 py-0.5">
           <div className="relative flex space-x-1 m-0.5">
             {tabs.map((tab) => {
               const isActive = eventType === tab;
@@ -88,7 +84,7 @@ const AppointmentsPage = () => {
                   {isActive && (
                     <motion.div
                       layoutId="tabBackground"
-                      className="absolute inset-0 z-[-1] rounded-lg bg-gradient-to-t from-[#212529] to-gray-300/20"
+                      className="absolute inset-0 z-[-1] rounded-lg bg-gradient-to-t from-black/20 to-white/10"
                       transition={{
                         type: "spring",
                         stiffness: 300,
@@ -101,16 +97,16 @@ const AppointmentsPage = () => {
             })}
           </div>
         </div>
-        <div className="pb-4 pt-8">
-          <Card className="bg-[#161a1d] border-gray-700/10 shadow-inner border-[3px]">
+        <div className="pb-4 pt-8 w-full">
+          <Card className="bg-[#0d0d12] border-gray-700/30 shadow-inner border-[2px]">
             <CardContent className="p-4">
               {bookings.map((booking, index) => (
-                <div key={booking.id}>
-                  <div className="group hover:bg-gray-750 transition-all duration-200 px-4 py-5 rounded-lg">
+                <div key={booking.id} className="">
+                  <div className="group hover:bg-gray-750 transition-all duration-200 px-4 py-5 rounded-lg lg:w-fit lg:flex items-center justify-center w-full overflow-hidden">
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 flex-1">
+                      <div className="flex flex-col-reverse md:flex-row items-center md:items-start space-x-4 flex-1 text-center md:text-left gap-y-2">
                         {/* Date and Time */}
-                        <div className="flex flex-col items-center justify-center bg-gradient-to-t from-[#212529] to-gray-300/20 rounded-lg p-3 min-w-[100px]">
+                        <div className="flex flex-col items-center justify-center bg-gradient-to-t from-black/20 to-white/10 rounded-lg p-3 min-w-[220px]">
                           <div className="text-sm font-medium text-gray-100">
                             {booking.date.split(" ")[0]}{" "}
                             {booking.date.split(" ")[1]}
@@ -138,9 +134,14 @@ const AppointmentsPage = () => {
                         </div>
 
                         {/* Meeting Details */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center space-x-2 mb-2">
-                            <h3 className="text-lg font-semibold text-gray-100 truncate">
+                        <div className="flex-1 flex flex-col md:items-start items-center">
+                          <div className="flex items-center justify-start mb-2">
+                            <h3 className="text-lg md:hidden font-semibold text-gray-100 truncate">
+                              {booking.title.length > 30
+                                ? `${booking.title.slice(0, 20)}...`
+                                : booking.title}
+                            </h3>
+                            <h3 className="hidden md:block text-lg font-semibold text-gray-100 truncate">
                               {booking.title}
                             </h3>
                           </div>
@@ -154,11 +155,6 @@ const AppointmentsPage = () => {
                                 </div>
                                 <div className="text-xs text-gray-400">
                                   {booking.client.email}
-                                </div>
-                                <div className="text-xs text-gray-500 mt-1">
-                                  {booking.client.company.name} •{" "}
-                                  {booking.client.location.city},{" "}
-                                  {booking.client.location.state}
                                 </div>
                               </div>
                             </div>
@@ -217,7 +213,7 @@ const AppointmentsPage = () => {
                   {/* Separator line - don't show after the last item */}
                   {index < bookings.length - 1 && (
                     <div className="flex justify-center py-2">
-                      <div className="w-3/4 border-b border-gray-600"></div>
+                      <div className="w-2/4 border-b border-gray-600/40 md:border-gray-600/20"></div>
                     </div>
                   )}
                 </div>

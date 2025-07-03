@@ -41,8 +41,8 @@ const FeaturesSection = () => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5 }}
-            whileHover={{ y: -5 }}
+            transition={{ duration: 1 }}
+            whileHover={{ y: -8 }}
           >
             <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-blue-500 to-cyan-400 opacity-75 blur-sm group-hover:opacity-100 transition duration-300"></div>
             <div className="relative rounded-xl backdrop-blur-sm bg-white/10 p-8 h-full flex flex-col">
@@ -71,7 +71,7 @@ const FeaturesSection = () => {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 1, delay: 0.1 }}
             whileHover={{ scale: 1.03 }}
           >
             <div className="mb-6 inline-flex h-14 w-14 items-center justify-center rounded-full bg-white/20 text-white">
