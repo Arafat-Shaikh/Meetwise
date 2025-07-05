@@ -75,9 +75,8 @@ const Sidebar = () => {
 
   return (
     <div
-      className={`fixed inset-y-0 left-0 z-50 flex flex-col border-gray-800 transition-all duration-300 bg-gradient-to-t  ${
-        isCollapsed ? "w-20" : "w-64"
-      } lg:relative ${"-translate-x-full lg:translate-x-0 "}`}
+      className={`fixed inset-y-0 left-0 z-50 flex flex-col border-gray-800 transition-all duration-300 bg-gradient-to-t  ${isCollapsed ? "w-20" : "w-64"
+        } lg:relative ${"-translate-x-full lg:translate-x-0 "}`}
     >
       <div className="w-64 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent rounded-xl">
         <div className="px-4 py-3 text-2xl font-bold">
@@ -86,12 +85,12 @@ const Sidebar = () => {
         <div className="py-10 px-3 flex flex-col gap-y-2">
           {["Dashboard", "Appointments", "Availability"].map((item) => (
             <Link
+              key={item}
               href={`/${item.toLocaleLowerCase()}`}
-              className={`text-lg  transition-all duration-300 cursor-pointer whitespace-nowrap py-2 px-6 rounded-full font-semibold w-fit  ${
-                item.toLocaleLowerCase() === currentPage
+              className={`text-lg  transition-all duration-300 cursor-pointer whitespace-nowrap py-2 px-6 rounded-full font-semibold w-fit  ${item.toLocaleLowerCase() === currentPage
                   ? "bg-gradient-to-t from-gray-700/10 to-gray-600/20 shadow-lg"
                   : "hover:text-gray-500"
-              }`}
+                }`}
             >
               {item}
             </Link>

@@ -27,131 +27,127 @@ interface DayAvailability {
 
 const AvailabilityPage = () => {
   const [timezone, setTimezone] = useState(timezones[0]);
-    const [bufferTime, setBufferTime] = useState("15");
-    const [maxBookings, setMaxBookings] = useState(5);
-    const [advanceNotice, setAdvanceNotice] = useState(2);
+  const [bufferTime, setBufferTime] = useState("15");
+  const [maxBookings, setMaxBookings] = useState(5);
+  const [advanceNotice, setAdvanceNotice] = useState(2);
 
-   const [availability, setAvailability] = useState<DayAvailability[]>([
-      {
-        id: "monday",
-        name: "Monday",
-        enabled: true,
-        slots: [{ id: "monday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-      {
-        id: "tuesday",
-        name: "Tuesday",
-        enabled: true,
-        slots: [{ id: "tuesday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-      {
-        id: "wednesday",
-        name: "Wednesday",
-        enabled: true,
-        slots: [{ id: "wednesday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-      {
-        id: "thursday",
-        name: "Thursday",
-        enabled: true,
-        slots: [{ id: "thursday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-      {
-        id: "friday",
-        name: "Friday",
-        enabled: true,
-        slots: [{ id: "friday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-      {
-        id: "saturday",
-        name: "Saturday",
-        enabled: false,
-        slots: [{ id: "saturday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-      {
-        id: "sunday",
-        name: "Sunday",
-        enabled: false,
-        slots: [{ id: "sunday-1", startTime: "9:00am", endTime: "5:00pm" }],
-      },
-    ]);
+  const [availability, setAvailability] = useState<DayAvailability[]>([
+    {
+      id: "monday",
+      name: "Monday",
+      enabled: true,
+      slots: [{ id: "monday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+    {
+      id: "tuesday",
+      name: "Tuesday",
+      enabled: true,
+      slots: [{ id: "tuesday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+    {
+      id: "wednesday",
+      name: "Wednesday",
+      enabled: true,
+      slots: [{ id: "wednesday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+    {
+      id: "thursday",
+      name: "Thursday",
+      enabled: true,
+      slots: [{ id: "thursday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+    {
+      id: "friday",
+      name: "Friday",
+      enabled: true,
+      slots: [{ id: "friday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+    {
+      id: "saturday",
+      name: "Saturday",
+      enabled: false,
+      slots: [{ id: "saturday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+    {
+      id: "sunday",
+      name: "Sunday",
+      enabled: false,
+      slots: [{ id: "sunday-1", startTime: "9:00am", endTime: "5:00pm" }],
+    },
+  ]);
 
+  const toggleDay = (dayId: string) => {
+    setAvailability((prev) =>
+      prev.map((day) =>
+        day.id === dayId ? { ...day, enabled: !day.enabled } : day
+      )
+    );
+  };
 
+  const addTimeSlot = (dayId: string) => {
+    setAvailability((prev) =>
+      prev.map((day) => {
+        if (day.id === dayId) {
+          const newSlot = {
+            id: `${dayId}-${Date.now()}`,
+            startTime: "9:00",
+            endTime: "17:00",
+          };
+          return { ...day, slots: [...day.slots, newSlot] };
+        }
+        return day;
+      })
+    );
+  };
 
-    const toggleDay = (dayId: string) => {
-      setAvailability((prev) =>
-        prev.map((day) =>
-          day.id === dayId ? { ...day, enabled: !day.enabled } : day
-        )
-      );
-    };
-  
-    const addTimeSlot = (dayId: string) => {
-      setAvailability((prev) =>
-        prev.map((day) => {
-          if (day.id === dayId) {
-            const newSlot = {
-              id: `${dayId}-${Date.now()}`,
-              startTime: "9:00",
-              endTime: "17:00",
-            };
-            return { ...day, slots: [...day.slots, newSlot] };
-          }
-          return day;
-        })
-      );
-    };
-  
-    const removeTimeSlot = (dayId: string, slotId: string) => {
-      setAvailability((prev) =>
-        prev.map((day) => {
-          if (day.id === dayId) {
-            return {
-              ...day,
-              slots: day.slots.filter((slot) => slot.id !== slotId),
-            };
-          }
-          return day;
-        })
-      );
-    };
-  
-    const updateTime = (
-      dayId: string,
-      slotId: string,
-      timeType: "startTime" | "endTime",
-      value: string
-    ) => {
-      setAvailability((prev) =>
-        prev.map((day) => {
-          if (day.id === dayId) {
-            return {
-              ...day,
-              slots: day.slots.map((slot) =>
-                slot.id === slotId ? { ...slot, [timeType]: value } : slot
-              ),
-            };
-          }
-          return day;
-        })
-      );
-    };
+  const removeTimeSlot = (dayId: string, slotId: string) => {
+    setAvailability((prev) =>
+      prev.map((day) => {
+        if (day.id === dayId) {
+          return {
+            ...day,
+            slots: day.slots.filter((slot) => slot.id !== slotId),
+          };
+        }
+        return day;
+      })
+    );
+  };
 
+  const updateTime = (
+    dayId: string,
+    slotId: string,
+    timeType: "startTime" | "endTime",
+    value: string
+  ) => {
+    setAvailability((prev) =>
+      prev.map((day) => {
+        if (day.id === dayId) {
+          return {
+            ...day,
+            slots: day.slots.map((slot) =>
+              slot.id === slotId ? { ...slot, [timeType]: value } : slot
+            ),
+          };
+        }
+        return day;
+      })
+    );
+  };
 
-    const handleSave = ()=>{
-      console.log("Availability saved:", availability);
-      console.log("timezone saved:", timezone);
-      console.log("bufferTime saved:", bufferTime);
-      console.log("maxBookings saved:", maxBookings);
-      console.log("advanceNotice saved:", advanceNotice);
-    }
-
+  const handleSave = () => {
+    console.log("Availability saved:", availability);
+    console.log("timezone saved:", timezone);
+    console.log("bufferTime saved:", bufferTime);
+    console.log("maxBookings saved:", maxBookings);
+    console.log("advanceNotice saved:", advanceNotice);
+  };
 
   return (
     <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-12 lg:p-10 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
       <div
-        className="w-full rounded-xl py-6 px-2 md:px-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-[#212429] h-fit md:h-full"
-        // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
+        className="w-full rounded-xl py-6 px-2 md:px-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-[#212429] h-fit"
+      // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
       >
         {/* <div className="w-fit rounded-xl bg-[#161411] px-0.5 py-0.5">
           <div className="relative flex space-x-1 m-0.5">
@@ -188,17 +184,38 @@ const AvailabilityPage = () => {
           <div className="flex flex-col lg:flex-row gap-8">
             {/* left side availability schedule  */}
             <div className="flex-1 lg:max-w-2xl">
-              <AvailabilityScheduler availability={availability} toggleDay={toggleDay} addTimeSlot={addTimeSlot} removeTimeSlot={removeTimeSlot} updateTime={updateTime} />
+              <AvailabilityScheduler
+                availability={availability}
+                toggleDay={toggleDay}
+                addTimeSlot={addTimeSlot}
+                removeTimeSlot={removeTimeSlot}
+                updateTime={updateTime}
+              />
             </div>
 
             <div className="flex-1 lg:max-w-lg">
               <div className="space-y-6">
-                <TimezoneSelector timezone={timezone} setTimezone={setTimezone} />
-                <BookingSettings bufferTime={bufferTime} maxBookings={maxBookings} advanceNotice={advanceNotice} setBufferTime={setBufferTime} setMaxBookings={setMaxBookings} setAdvanceNotice={setAdvanceNotice} />
+                <TimezoneSelector
+                  timezone={timezone}
+                  setTimezone={setTimezone}
+                />
+                <BookingSettings
+                  bufferTime={bufferTime}
+                  maxBookings={maxBookings}
+                  advanceNotice={advanceNotice}
+                  setBufferTime={setBufferTime}
+                  setMaxBookings={setMaxBookings}
+                  setAdvanceNotice={setAdvanceNotice}
+                />
               </div>
             </div>
           </div>
-          <Button onClick={() => handleSave()} className="w-full mt-8 bg-teal-600">Save</Button>
+          <Button
+            onClick={() => handleSave()}
+            className="w-full mt-8 bg-teal-600"
+          >
+            Save
+          </Button>
         </div>
       </div>
     </div>
