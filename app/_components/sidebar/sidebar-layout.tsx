@@ -13,7 +13,7 @@ interface SidebarLayoutProps {
 const SidebarLayout = ({ children }: SidebarLayoutProps) => {
   return (
     <>
-      <div className="min-h-screen flex bg-[#1e1e24] px-8">
+      <div className="min-h-screen flex bg-[#151a1d] md:px-8">
         <Sidebar />
         <div className="flex-1 w-full flex flex-col">
           <div className="h-14 border-b border-gray-800 flex items-center px-4 lg:hidden">

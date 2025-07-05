@@ -28,7 +28,7 @@ export interface TimeSlot {
   endTime: string;
 }
 
-export interface DayAvailability {
+interface DayAvailability {
   enabled: boolean;
   timeSlots: TimeSlot[];
 }

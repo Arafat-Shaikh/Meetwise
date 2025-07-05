@@ -576,3 +576,13 @@ export const dummyBookings = [
     notes: "Clarification on contract terms.",
   },
 ];
+
+export const bufferOptions = [
+  { value: "0", label: "No buffer time" },
+  { value: "5", label: "5 min" },
+  { value: "10", label: "10 min" },
+  { value: "15", label: "15 min" },
+  { value: "30", label: "30 min" },
+  { value: "45", label: "45 min" },
+  { value: "60", label: "1 hour" },
+];

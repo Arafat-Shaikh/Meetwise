@@ -147,20 +147,15 @@ const TimePicker = ({
   console.log(filteredOptions);
 
   return (
-    <div className="relative" ref={dropdownRef}>
+    <div className="relative min-w-[90px]" ref={dropdownRef}>
       <button
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-          w-full bg-white/10 border border-white/20 text-white rounded-lg px-4 py-1.5 text-sm 
-          flex items-center justify-between transition-all duration-200
-          ${
-            disabled
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-white/15 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/20"
-          }
-          ${isOpen ? "border-blue-400 ring-2 ring-blue-400/20" : ""}
+             bg-[#2e2d2d] hover:bg-[#1f1f1f] border border-gray-600 rounded-lg px-3 py-2 text-gray-100 text-sm font-medium transition-all duration-200 min-w-[90px]
+      
+    
         `}
       >
         <span className="font-medium">{value || "Select time"}</span>
@@ -173,7 +168,7 @@ const TimePicker = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute z-50 w-full mt-1 bg-gray-900/95 backdrop-blur-md border border-white/20 rounded-lg shadow-2xl max-h-60 overflow-hidden"
+            className="absolute z-50 w-full mt-1 bg-[#161a1d] backdrop-blur-md border border-white/10 rounded-lg shadow-2xl max-h-60 overflow-hidden"
           >
             <div
               ref={listRef}
