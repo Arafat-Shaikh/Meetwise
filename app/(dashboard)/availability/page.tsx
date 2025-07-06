@@ -146,7 +146,7 @@ const AvailabilityPage = () => {
   return (
     <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-12 lg:p-10 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
       <div
-        className="w-full rounded-xl py-6 px-2 md:px-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-[#212429] h-fit"
+        className="w-full rounded-xl py-6 px-2 md:px-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-gradient-to-br from-[#161a1d] via-[#212529] to-[#161a1d] h-fit"
       // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
       >
         {/* <div className="w-fit rounded-xl bg-[#161411] px-0.5 py-0.5">

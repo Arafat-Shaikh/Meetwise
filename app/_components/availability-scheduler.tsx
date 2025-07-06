@@ -68,9 +68,8 @@ const AvailabilityScheduler = ({
                 className="data-[state=checked]:bg-teal-600 data-[state=unchecked]:bg-gray-600"
               />
               <span
-                className={`font-medium text-sm ${
-                  day.enabled ? "text-gray-100" : "text-gray-500"
-                }`}
+                className={`font-medium text-sm ${day.enabled ? "text-gray-100" : "text-gray-500"
+                  }`}
               >
                 {day.name}
               </span>

@@ -88,8 +88,8 @@ const Sidebar = () => {
               key={item}
               href={`/${item.toLocaleLowerCase()}`}
               className={`text-lg  transition-all duration-300 cursor-pointer whitespace-nowrap py-2 px-6 rounded-full font-semibold w-fit  ${item.toLocaleLowerCase() === currentPage
-                  ? "bg-gradient-to-t from-gray-700/10 to-gray-600/20 shadow-lg"
-                  : "hover:text-gray-500"
+                ? "bg-gradient-to-t from-gray-700/10 to-gray-600/20 shadow-lg"
+                : "hover:text-gray-500"
                 }`}
             >
               {item}
@@ -105,7 +105,7 @@ const Sidebar = () => {
           </Link>
           <Link
             className="text-lg bg-gradient-to-t from-black/10 to-gray-600/10 hover:bg-gray-700/10 transition-all duration-300 cursor-pointer py-2 px-6 rounded-full font-semibold w-full block"
-            href={`Settings`}
+            href={`settings`}
           >
             Settings
           </Link>

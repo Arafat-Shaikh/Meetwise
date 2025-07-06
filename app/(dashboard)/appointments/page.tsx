@@ -37,7 +37,7 @@ const AppointmentsPage = () => {
     }
   };
   return (
-    <div className="h-full w-full bg-gradient-to-t bg-[#1e1e24] flex flex-col gap-y-12 lg:p-10 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
+    <div className="h-full w-full bg-gradient-to-t bg-[#151a1d] flex flex-col gap-y-12 lg:p-10 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
       <div className="flex items-center justify-between w-full px-4">
         <div className="rounded-lg py-2 flex justify-between items-center gap-x-20 ">
           <h2 className="text-2xl text-white font-semibold">Bookings</h2>
@@ -63,8 +63,8 @@ const AppointmentsPage = () => {
         </div>
       </div>
       <div
-        className="w-full rounded-xl p-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-[#111116]"
-        // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
+        className="w-full rounded-xl p-6 shadow-xl shadow-white/10 border-2 border-[#343a40]  bg-gradient-to-br from-[#161a1d] via-[#212529] to-[#161a1d"
+      // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
       >
         <div className="w-fit rounded-xl bg-[#161411] px-0.5 py-0.5">
           <div className="relative flex space-x-1 m-0.5">
@@ -74,11 +74,10 @@ const AppointmentsPage = () => {
                 <button
                   key={tab}
                   onClick={() => setEventType(tab)}
-                  className={`relative z-10 text-base text-gray-300 w-fit rounded-lg px-4 py-0.5 border shadow-lg transition-all duration-300 ${
-                    isActive
-                      ? "border-slate-600/10"
-                      : "bg-transparent border-slate-800/10"
-                  }`}
+                  className={`relative z-10 text-base text-gray-300 w-fit rounded-lg px-4 py-0.5 border shadow-lg transition-all duration-300 ${isActive
+                    ? "border-slate-600/10"
+                    : "bg-transparent border-slate-800/10"
+                    }`}
                 >
                   {tab}
                   {isActive && (
@@ -98,7 +97,7 @@ const AppointmentsPage = () => {
           </div>
         </div>
         <div className="pb-4 pt-8 w-full">
-          <Card className="bg-[#0d0d12] border-gray-700/30 shadow-inner border-[2px]">
+          <Card className="bg-[#161a1d] border-gray-700/30 shadow-inner border-[2px]">
             <CardContent className="p-4">
               {bookings.map((booking, index) => (
                 <div key={booking.id} className="">

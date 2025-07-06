@@ -26,3 +26,29 @@ export const onboardingSchema = z.object({
 });
 
 export type OnboardingDataTypes = z.infer<typeof onboardingSchema>;
+
+export const settingsSchema = z.object({
+  profileName: z.string().min(2, "Name must be at least 2 characters"),
+  profileImage: z.string().optional(),
+  profileEmail: z.string().email(),
+  meetingType: z.enum(["googleMeet", "phone", "inPerson"], {
+    required_error: "Please select a meeting type",
+  }),
+  bookingSlug: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .regex(
+      /^[a-z0-9-]+$/,
+      "Username can only contain lowercase letters, numbers, and hyphens"
+    )
+    .refine(
+      (val) => !["admin", "api", "www", "mail"].includes(val),
+      "This username is not available"
+    ),
+  welcomeMessage: z
+    .string()
+    .min(10, "Welcome message must be at least 10 characters"),
+  googleCalendarConnected: z.boolean(),
+  connectedCalendar: z.string().optional(),
+});
+export type SettingsFormData = z.infer<typeof settingsSchema>;
