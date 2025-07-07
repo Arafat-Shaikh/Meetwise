@@ -1,6 +1,7 @@
 import { useRef } from "react";
 import { Button } from "@/components/ui/button";
 import Loader from "./loader";
+import { Plus } from "lucide-react";
 
 export function UploadPhotoButton({
   onImageSelect,
@@ -24,22 +25,22 @@ export function UploadPhotoButton({
 
   return (
     <>
-      <input
-        type="file"
-        accept="image/*"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={handleFileChange}
-      />
-      <Button
-        type="button"
-        variant="outline"
-        className="border-white/20 text-black hover:bg-white/90"
-        onClick={handleClick}
-      >
-        Upload Photo
-        <span>{loading && <Loader borderColor="border-black/80" />}</span>
-      </Button>
+      <div className="absolute top-0 right-0">
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          className="hidden"
+          onChange={handleFileChange}
+        />
+        <Plus
+          type="button"
+          onClick={handleClick}
+          className="text-white bg-gradient-to-t from-green-400 to-green-500 border border-white/20 cursor-pointer hover:bg-green-300 p-1 rounded-full hover:text-lg "
+        >
+          <span>{loading && <Loader borderColor="border-black/80" />}</span>
+        </Plus>
+      </div>
     </>
   );
 }

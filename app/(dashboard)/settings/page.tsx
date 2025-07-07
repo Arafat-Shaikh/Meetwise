@@ -137,7 +137,6 @@ export default function SettingsPage() {
     const handleDeleteAccount = () => {
         if (deleteConfirmText !== "DELETE") return;
 
-        // In real app, this would call your delete API
         toast({
             title: "Account deleted",
             description:
@@ -145,7 +144,6 @@ export default function SettingsPage() {
             variant: "destructive",
         });
         setDeleteConfirmOpen(false);
-        // Redirect logic would go here
     };
 
     const copyBookingLink = () => {

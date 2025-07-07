@@ -192,7 +192,7 @@ const OnboardingStepPage = () => {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -20 }}
-              className="space-y-6"
+              className="space-y-6 flex-grow"
             >
               <div>
                 <label className="block text-sm font-medium text-white mb-2">
@@ -220,7 +220,7 @@ const OnboardingStepPage = () => {
                         {...field}
                         type="text"
                         placeholder="alpha"
-                        className="bg-white/10 border-white/20 text-white placeholder:text-white/60 hover:border-white/30 focus:ring-0 focus-visible:ring-0"
+                        className="bg-[#151a1d] border-white/20 text-white placeholder:text-white/60 hover:border-white/30 focus:ring-0 focus-visible:ring-0"
                       />
                     )}
                   />
@@ -248,7 +248,7 @@ const OnboardingStepPage = () => {
                       {...field}
                       type="text"
                       placeholder="John Doe"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/60 hover:border-white/30 focus-visible:ring-0"
+                      className="bg-[#151a1d] border-white/20 text-white placeholder:text-white/60 hover:border-white/30 focus-visible:ring-0"
                     />
                   )}
                 />
@@ -267,7 +267,7 @@ const OnboardingStepPage = () => {
                   <button
                     type="button"
                     onClick={() => setIsTimezoneOpen(!isTimezoneOpen)}
-                    className="w-full bg-white/10 border border-white/20 text-white rounded-md px-3 py-2 text-left flex items-center justify-between focus-visible:ring-0 focus:outline-none hover:border-white/30"
+                    className="w-full bg-[#151a1d] border border-white/20 text-white rounded-md px-3 py-2 text-left flex items-center justify-between focus-visible:ring-0 focus:outline-none hover:border-white/30"
                   >
                     <span>{watchedData.timezone}</span>
                     <ChevronDown className="h-4 w-4" />
@@ -278,7 +278,7 @@ const OnboardingStepPage = () => {
                         initial={{ opacity: 0, y: -10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className="absolute z-10 w-full mt-1 bg-white/60 backdrop-blur-md border border-white/20 rounded-md shadow-lg max-h-60 overflow-auto"
+                        className="absolute z-10 w-full mt-1 bg-[#151a1d] backdrop-blur-md border border-white/20 rounded-md shadow-lg max-h-60 overflow-auto"
                       >
                         {timezones.map((tz) => (
                           <button
@@ -288,7 +288,7 @@ const OnboardingStepPage = () => {
                               setValue("timezone", tz);
                               setIsTimezoneOpen(false);
                             }}
-                            className="w-full px-3 py-2 text-left text-black/90 font-medium hover:bg-white/10 transition-colors"
+                            className="w-full px-3 py-2 text-left text-gray-100 font-medium hover:bg-white/10 transition-colors"
                           >
                             {tz}
                           </button>
@@ -311,7 +311,7 @@ const OnboardingStepPage = () => {
             className="space-y-6"
           >
             <div className="text-center">
-              <Calendar className="h-16 w-16 text-violet-300 mx-auto mb-4" />
+              <Calendar className="h-16 w-16 text-white mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
                 Connect Your Calendar
               </h3>
@@ -324,7 +324,7 @@ const OnboardingStepPage = () => {
             <div className="bg-white/10 rounded-xl p-6 border border-white/20">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="h-10 w-10 bg-violet-950 rounded-lg flex items-center justify-center">
+                  <div className="h-10 w-10 bg-green-500 rounded-lg flex items-center justify-center">
                     <Calendar className="h-5 w-5 text-white" />
                   </div>
                   <div>
@@ -342,7 +342,7 @@ const OnboardingStepPage = () => {
                       type="button"
                       onClick={() => field.onChange(!field.value)}
                       className={`relative inline-flex h-6 w-11 shadow-lg items-center rounded-full transition-colors ${
-                        field.value ? "bg-violet-950/90" : "bg-white/20"
+                        field.value ? "bg-green-500" : "bg-white/20"
                       }`}
                     >
                       <span
@@ -360,10 +360,10 @@ const OnboardingStepPage = () => {
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="bg-violet-300/10 border border-violet-400/10 rounded-xl p-4"
+                className="bg-green-300/10 border border-green-400/10 rounded-xl p-4"
               >
                 <div className="flex items-center space-x-2">
-                  <Check className="h-5 w-5 text-violet-200" />
+                  <Check className="h-5 w-5 text-green-200" />
                   <span className="text-green-100">
                     Calendar connection will be set up after onboarding
                   </span>
@@ -382,7 +382,7 @@ const OnboardingStepPage = () => {
             className="space-y-6"
           >
             <div className="text-center">
-              <Video className="h-16 w-16 text-purple-300 mx-auto mb-4" />
+              <Video className="h-16 w-16 text-white mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
                 Meeting Integrations
               </h3>
@@ -429,7 +429,7 @@ const OnboardingStepPage = () => {
                           type="button"
                           onClick={() => field.onChange(!field.value)}
                           className={`relative inline-flex h-6 w-11 shadow-sm items-center rounded-full transition-colors ${
-                            field.value ? "bg-violet-950/60" : "bg-white/20"
+                            field.value ? "bg-green-500" : "bg-white/20"
                           }`}
                         >
                           <span
@@ -456,7 +456,7 @@ const OnboardingStepPage = () => {
             className="space-y-6"
           >
             <div className="text-center">
-              <Clock className="h-8 w-8 text-green-300 mx-auto mb-4" />
+              <Clock className="h-8 w-8 text-white mx-auto mb-4" />
               {/* <h3 className="text-2xl font-semibold text-white mb-2">
                 Set Your Availability
               </h3> */}
@@ -468,7 +468,7 @@ const OnboardingStepPage = () => {
               </p>
             </div>
 
-            <div className="space-y-2 border-0 rounded-lg p-4 bg-black/20 border-white/20 ">
+            <div className="space-y-2 border-0 rounded-xl p-4 bg-[#161a1d] border-white/20">
               {weekDays.map((day, i) => (
                 <div key={day} className="">
                   <div className="p-0">
@@ -480,7 +480,7 @@ const OnboardingStepPage = () => {
                           onClick={() => toggleDayAvailability(day)}
                           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
                             watchedData.availability[day]?.enabled
-                              ? "bg-[#251542]"
+                              ? "bg-green-600/80"
                               : "bg-white/20"
                           }`}
                         >
@@ -643,7 +643,7 @@ const OnboardingStepPage = () => {
             className="space-y-6"
           >
             <div className="text-center">
-              <Camera className="h-16 w-16 text-violet-300 mx-auto mb-4" />
+              <Camera className="h-16 w-16 text-white mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
                 Complete Your Profile
               </h3>
@@ -652,12 +652,12 @@ const OnboardingStepPage = () => {
               </p>
             </div>
 
-            <div>
+            <div className="text-center">
               <label className="block text-sm font-medium text-white mb-3">
                 Profile Picture
               </label>
-              <div className="flex items-center space-x-4">
-                <div className="h-20 w-20 bg-white/10 rounded-full flex items-center justify-center border border-dashed border-white/30 ">
+              <div className="flex items-center justify-center space-x-4">
+                <div className="h-20 w-20 bg-white/10 rounded-full flex items-center justify-center relative border border-dashed border-white/30 ">
                   {watchedData.profilePicture ? (
                     <img
                       src={watchedData.profilePicture || "/placeholder.svg"}
@@ -667,33 +667,33 @@ const OnboardingStepPage = () => {
                   ) : (
                     <Camera className="h-8 w-8 text-white/60" />
                   )}
+                  <UploadPhotoButton
+                    loading={loading}
+                    onImageSelect={async (file) => {
+                      console.log("Selected file:", file);
+                      setLoading(true);
+                      const formData = new FormData();
+                      formData.append("file", file);
+
+                      const res = await fetch("/api/upload", {
+                        method: "POST",
+                        body: formData,
+                      });
+
+                      if (!res.ok) {
+                        toast.error("Can't upload the image");
+                      }
+
+                      const data = await res.json();
+                      if (data.url) {
+                        console.log("cloudinary image url: ", data.url);
+                        setValue("profilePicture", data.url);
+                        toast.success("Image uploaded");
+                      }
+                      setLoading(false);
+                    }}
+                  />
                 </div>
-                <UploadPhotoButton
-                  loading={loading}
-                  onImageSelect={async (file) => {
-                    console.log("Selected file:", file);
-                    setLoading(true);
-                    const formData = new FormData();
-                    formData.append("file", file);
-
-                    const res = await fetch("/api/upload", {
-                      method: "POST",
-                      body: formData,
-                    });
-
-                    if (!res.ok) {
-                      toast.error("Can't upload the image");
-                    }
-
-                    const data = await res.json();
-                    if (data.url) {
-                      console.log("cloudinary image url: ", data.url);
-                      setValue("profilePicture", data.url);
-                      toast.success("Image uploaded");
-                    }
-                    setLoading(false);
-                  }}
-                />
               </div>
             </div>
 
@@ -724,13 +724,14 @@ const OnboardingStepPage = () => {
     }
     return <div>render step content</div>;
   };
-
+  // bg-[#151a1d]
+  // bg-gradient-to-br from-[#161a1d] via-[#212529] to-[#161a1d]
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-t pt-6 from-black/90 to-violet-950 relative overflow-hidden">
+      <div className="min-h-screen bg-gradient-to-t pt-6 bg-[#151a1d]  relative overflow-hidden">
         {/* background decoration */}
         <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-72 h-72 bg-purple-900/20 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 left-0 w-72 h-72 bg-green-950/20 rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 right-0 w-72 h-72 bg-cyan-950/10 rounded-full blur-3xl"></div>
         </div>
 
@@ -753,7 +754,7 @@ const OnboardingStepPage = () => {
                         <div
                           className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
                             currentStep >= step.id
-                              ? "bg-white text-blue-600 border-white shadow-lg"
+                              ? "bg-white text-green-600 border-white shadow-lg"
                               : "border-white/40 text-white/60"
                           }`}
                         >
@@ -767,8 +768,8 @@ const OnboardingStepPage = () => {
                           <div
                             className={`w-14 h-0.5 ${
                               currentStep > index + 1
-                                ? "bg-violet-600/80"
-                                : "bg-violet-800/30"
+                                ? "bg-green-600/80"
+                                : "bg-green-800/30"
                             }`}
                           />
                         )}
@@ -785,7 +786,7 @@ const OnboardingStepPage = () => {
                     <div
                       className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
                         currentStep >= step.id
-                          ? "bg-white text-blue-600 border-white"
+                          ? "bg-white text-green-600 border-white"
                           : "border-white/30 text-white/60"
                       }`}
                     >
@@ -819,27 +820,39 @@ const OnboardingStepPage = () => {
           {/* main content  */}
 
           <div className="flex-1 flex items-center justify-center px-0 sm:px-6">
-            <div className={`w-full ${getContainerWidth()}`}>
-              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
+            <div className={`w-full h-full ${getContainerWidth()}`}>
+              <div
+                className={`bg-gradient-to-br from-[#161a1d] via-[#212529] to-[#161a1d] backdrop-blur-md rounded-2xl mx-2 sm:mx-0 border border-white/20 shadow-2xl flex flex-col ${
+                  currentStep === 4 ? "p-2 py-6 sm:p-8" : "px-8 py-6"
+                }`}
+              >
                 <AnimatePresence mode="wait">
                   {renderStepContent()}
                 </AnimatePresence>
 
                 {/* navigation buttons */}
-                <div className="flex justify-between mt-8 pt-6 border-t border-white/20">
-                  <Button
-                    type="button"
-                    variant={"outline"}
-                    onClick={() => handlePrevious()}
-                    disabled={currentStep === 1}
-                    className="bg-gradient-to-t from-white/50 text-black to-white border-none shadow-md disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Previous
-                  </Button>
+                <div
+                  className={`flex mt-8 pt-6 border-t border-white/20 ${
+                    currentStep === 1 ? "justify-end" : "justify-between"
+                  }`}
+                >
+                  {currentStep === 1 ? (
+                    ""
+                  ) : (
+                    <Button
+                      type="button"
+                      variant={"outline"}
+                      onClick={() => handlePrevious()}
+                      disabled={currentStep === 1}
+                      className="bg-gradient-to-t bg-transparent text-white rounded-full border-white/20 border shadow-md hover:bg-white/10 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Previous
+                    </Button>
+                  )}
                   <Button
                     onClick={() => handleNext()}
-                    className="bg-gradient-to-t from-violet-950  to-violet-950/70 shadow-sm border border-violet-600/10"
+                    className="bg-gradient-to-t bg-white hover:bg-white/80 transition-all duration-200 rounded-full text-black shadow-sm border border-green-600/10"
                   >
                     {currentStep === 5 ? "Finish Setup" : "Next"}
                     {currentStep < 5 && (
