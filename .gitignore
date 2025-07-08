@@ -17,6 +17,7 @@
 
 # production
 /build
+app/background/
 
 # misc
 .DS_Store

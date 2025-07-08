@@ -16,7 +16,7 @@ const TestimonialsSection = ({
 }: TestimonialsSectionProps) => {
   return (
     <section id="testimonials" ref={testimonialsRef} className="py-32 relative">
-      <div className="container overflow-hidden mx-auto px-4 sm:px-6 lg:px-8 relative z-10 ">
+      <div className="container overflow-hidden mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           className="text-center mb-20"
           initial={{ opacity: 1, y: 50 }}
