@@ -13,18 +13,18 @@ const BackgroundStyles = () => {
   return (
     <div className="fixed inset-0 -z-10">
       {/* main gradient background  */}
-      {/* <div className="absolute inset-0 bg-gradient-to-b from-violet-900 via-violet-800 to-violet-950" /> */}
+      <div className="absolute inset-0 bg-gradient-to-b from-violet-900 via-violet-800 to-violet-950" />
       <div className="absolute bg-[#151a1d] inset-0" />
 
       {/* Subtle wave patter */}
-      <motion.div
+      {/* <motion.div
         className="absolute inset-0 opacity-20"
         style={{
           backgroundImage: wave_image,
           backgroundSize: "cover",
           y: useTransform(smoothScrollProgress, [0, 1], ["0%", "-20%"]),
         }}
-      />
+      /> */}
     </div>
   );
 };

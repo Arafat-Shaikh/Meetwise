@@ -77,8 +77,8 @@ const Navigation = ({ scrolled, hideNav }: NavigationProps) => {
             </Button>
             <Button
               onClick={() => router.push("/dashboard")}
-              className={`bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white border-0 ${
-                scrolled ? "shadow-md" : "shadow-lg shadow-blue-500/30"
+              className={`bg-gradient-to-r from-gray-600 to-emerald-600 hover:from-gray-700 transition duration-300 hover:to-emerald-700 text-white border-0 ${
+                scrolled ? "shadow-md" : "shadow-lg shadow-emerald-500/30"
               } `}
             >
               Sign up

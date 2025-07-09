@@ -34,7 +34,7 @@ import PricingSection from "./_components/landing/pricing-section";
 import TestimonialsSection from "./_components/landing/testimonials-section";
 import CtaSection from "./_components/landing/cta-section";
 import Footer from "./_components/landing/footer";
-import AnimatedFeatureCards from "./background/_components/animated-feature-cards";
+import AnimatedFeatureCards from "./background/_components/black-card";
 
 const Home = () => {
   const session = useSession();
@@ -112,9 +112,8 @@ const Home = () => {
 
         {/* Powerful features section */}
 
-        {/* <FeaturesSection /> */}
-        {/* <AnimatedFeatureCards /> */}
-        <AnimatedFeatureCards />
+        <FeaturesSection />
+
         {/* how it works section  */}
 
         <HowItWorksSection />
