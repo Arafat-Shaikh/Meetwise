@@ -123,6 +123,84 @@ const StepCard = ({
           {/* <div className="w-5/12" /> */}
         </div>
       </div>
+
+      {/* mobile layout  */}
+
+      <div className="block md:hidden">
+        <div className="flex flex-col items-center">
+          {/* Number circle */}
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={
+              stepInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }
+            }
+            whileTap={{ scale: 1.1 }}
+            transition={{ duration: 0.6, delay: index * 0.2 }}
+          >
+            <div className="w-12 h-12 bg-emerald-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg z-10 relative">
+              {step.number}
+            </div>
+          </motion.div>
+
+          {/* Connecting line from circle to content */}
+          <motion.div
+            className="w-0.5 h-8 bg-emerald-600"
+            initial={{ scaleY: 0 }}
+            animate={stepInView ? { scaleY: 1 } : { scaleY: 0 }}
+            transition={{ duration: 0.5, delay: index * 0.2 + 0.3 }}
+            style={{ transformOrigin: "top" }}
+          />
+
+          {/* Content Block */}
+          <motion.div
+            className="w-full max-w-sm mx-4"
+            initial={{ opacity: 0, y: 30 }}
+            animate={stepInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
+          >
+            <div className="bg-gray-100/90 backdrop-blur-sm rounded-lg p-6 shadow-md border border-emerald-100/50 relative">
+              {/* Icon */}
+              <motion.div
+                className="mb-4 inline-flex p-2 bg-emerald-100 rounded-md"
+                initial={{ scale: 0 }}
+                animate={stepInView ? { scale: 1 } : { scale: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.2 + 0.6 }}
+              >
+                <step.icon className="w-5 h-5 text-emerald-600" />
+              </motion.div>
+
+              <motion.h3
+                className="text-lg font-bold text-gray-800 mb-2"
+                initial={{ opacity: 0 }}
+                animate={stepInView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 + 0.7 }}
+              >
+                {step.title}
+              </motion.h3>
+
+              <motion.p
+                className="text-gray-600 text-sm leading-relaxed"
+                initial={{ opacity: 0 }}
+                animate={stepInView ? { opacity: 1 } : { opacity: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.2 + 0.8 }}
+              >
+                {step.description}
+              </motion.p>
+            </div>
+          </motion.div>
+
+          {/* connecting line from content to next step */}
+          {index < howItWorksSteps.length - 1 && (
+            <motion.div
+              className="w-0.5 h-12 bg-emerald-600"
+              initial={{ scaleY: 0 }}
+              animate={stepInView ? { scaleY: 1 } : { scaleY: 0 }}
+              transition={{ duration: 0.5, delay: index * 0.2 + 0.9 }}
+              style={{ transformOrigin: "top" }}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
