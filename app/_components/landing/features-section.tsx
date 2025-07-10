@@ -303,8 +303,6 @@ export default function FeaturesSection() {
                         <ArrowRight className="w-4 h-4" />
                       </motion.button>
                     </div>
-
-                    {/* Premium white ambient glow */}
                   </motion.div>
                 )}
                 {/* <motion.div

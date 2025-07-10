@@ -1,4 +1,12 @@
-import { Calendar, Camera, Clock, User, Video } from "lucide-react";
+import {
+  Calendar,
+  Camera,
+  Clock,
+  Share2,
+  User,
+  UserPlus,
+  Video,
+} from "lucide-react";
 import { CreateEventData, MultiStepFormData } from "./types";
 
 export const wave_image =
@@ -9,22 +17,25 @@ export const darkButtonStyles =
 
 export const howItWorksSteps = [
   {
-    step: 1,
+    number: 1,
     title: "Create Your Profile",
     description:
       "Sign up and set up your provider profile with your services and expertise.",
+    icon: UserPlus,
   },
   {
-    step: 2,
+    number: 2,
     title: "Set Your Availability",
     description:
       "Define when you're available for appointments and which services you offer.",
+    icon: Calendar,
   },
   {
-    step: 3,
+    number: 3,
     title: "Start Accepting Bookings",
     description:
       "Share your booking link with clients and let our AI assistant help them book.",
+    icon: Share2,
   },
 ];
 
