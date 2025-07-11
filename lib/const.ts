@@ -223,84 +223,36 @@ export const bookings = [
 ];
 export const testimonials = [
   {
-    name: "Sarah Johnson",
-    role: "Life Coach",
-    initial: "S",
-    rating: 5,
-    testimonial:
-      "Meetwise has transformed my coaching business. The AI assistant helps my clients book the right sessions, and I love how it uses my uploaded materials to answer questions.",
-    style:
-      "bg-gradient-to-br from-pink-500/20 to-purple-500/20 border border-pink-500/30",
+    id: 1,
+    text: "This product has completely transformed how we work. The intuitive design and powerful features have increased our productivity by 300%. I can't imagine going back to our old workflow.",
+    name: "Sarah Chen",
+    role: "Product Manager at TechCorp",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
   },
   {
-    name: "Michael Chen",
-    role: "Financial Consultant",
-    initial: "M",
-    rating: 5,
-    testimonial:
-      "The analytics dashboard gives me incredible insights into my business. I can see which services are most popular and optimize my schedule accordingly.",
-    style:
-      "bg-gradient-to-br from-blue-600/20 to-cyan-500/20 border border-blue-500/30",
+    id: 2,
+    text: "Outstanding support and incredible attention to detail. The team went above and beyond to ensure our implementation was seamless. This is exactly what we were looking for.",
+    name: "Marcus Rodriguez",
+    role: "CTO at StartupXYZ",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
   },
   {
-    name: "Jessica Williams",
-    role: "Fitness Trainer",
-    initial: "J",
-    rating: 5,
-    testimonial:
-      "My clients love how easy it is to book sessions with me. The availability management feature lets me offer different time slots for different types of training.",
-    style:
-      "bg-gradient-to-br from-amber-500/20 to-orange-500/20 border border-amber-500/30",
+    id: 3,
+    text: "The best investment we've made this year. The ROI has been incredible, and our team absolutely loves using it. Highly recommend to anyone looking to scale their operations.",
+    name: "Emily Johnson",
+    role: "CEO at GrowthCo",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
   },
   {
-    name: "Carlos Rivera",
-    role: "Therapist",
-    initial: "C",
-    rating: 5,
-    testimonial:
-      "Scheduling has always been a pain point for me. AppointAI has simplified the process and even reduced no-shows thanks to automated reminders.",
-    style:
-      "bg-gradient-to-br from-green-500/20 to-emerald-500/20 border border-green-500/30",
-  },
-  {
-    name: "Priya Mehta",
-    role: "Career Counselor",
-    initial: "P",
-    rating: 5,
-    testimonial:
-      "The ability to customize my booking page and offer various session types makes my job easier and more professional. Clients love the smooth experience.",
-    style:
-      "bg-gradient-to-br from-fuchsia-500/20 to-rose-500/20 border border-fuchsia-500/30",
-  },
-  {
-    name: "Liam O'Connor",
-    role: "Nutritionist",
-    initial: "L",
-    rating: 5,
-    testimonial:
-      "AppointAI has helped me manage recurring appointments and track client progress effortlessly. It’s exactly what my practice needed.",
-    style:
-      "bg-gradient-to-br from-indigo-500/20 to-violet-500/20 border border-indigo-500/30",
-  },
-  {
-    name: "Amina Yusuf",
-    role: "Mental Wellness Coach",
-    initial: "A",
-    rating: 5,
-    testimonial:
-      "The AI assistant is like having a full-time receptionist. It understands context and responds intelligently to client queries.",
-    style:
-      "bg-gradient-to-br from-yellow-500/20 to-lime-500/20 border border-yellow-500/30",
-  },
-  {
-    name: "David Smith",
-    role: "Business Mentor",
-    initial: "D",
-    rating: 5,
-    testimonial:
-      "As someone managing multiple mentees, AppointAI helps me keep things organized without back-and-forth emails. Absolute time-saver.",
-    style:
-      "bg-gradient-to-br from-red-500/20 to-pink-500/20 border border-red-500/30",
+    id: 4,
+    text: "Exceptional quality and reliability. We've been using this for over a year now, and it has never let us down. The continuous updates and improvements show real commitment to excellence.",
+    name: "David Park",
+    role: "Lead Developer at DevStudio",
+    avatar:
+      "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face",
   },
 ];
 
