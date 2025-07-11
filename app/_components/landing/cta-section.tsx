@@ -13,9 +13,14 @@ const CtaSection = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-4xl font-bold text-white sm:text-5xl mb-6">
+          <motion.h2
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl glitch font-bold text-white sm:text-5xl mb-6"
+          >
             Ready to Transform Your Scheduling Experience?
-          </h2>
+          </motion.h2>
           <p className="mt-6 text-xl text-blue-100 mb-10">
             Join thousands of professionals who are saving time and delighting
             clients with our AI-powered platform.
