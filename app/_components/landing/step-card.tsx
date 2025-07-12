@@ -158,7 +158,7 @@ const StepCard = ({
             animate={stepInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
             transition={{ duration: 0.6, delay: index * 0.2 + 0.4 }}
           >
-            <div className="bg-gray-100/90 backdrop-blur-sm rounded-lg p-6 shadow-md border border-emerald-100/50 relative">
+            <div className="bg-gray-100/90 backdrop-blur-sm rounded-lg p-6 shadow-md border border-emerald-100/50 relative text-pink-500">
               {/* Icon */}
               <motion.div
                 className="mb-4 inline-flex p-2 bg-emerald-100 rounded-md"

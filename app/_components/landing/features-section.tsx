@@ -11,58 +11,113 @@ import {
   Users,
   ArrowRight,
 } from "lucide-react";
+import Headings from "./headings";
+
+// const cardVariants = {
+// fadeUp: {
+//   hidden: { opacity: 0, x: -60, rotate: 20, y: 40 },
+//   visible: {
+//     opacity: 1,
+//     x: 0,
+//     y: 0,
+//     rotate: 0,
+//     transition: { duration: 1.5, ease: "easeOut", delay: 1 * 0.2 },
+//   },
+// },
+// scaleIn: {
+//   hidden: { opacity: 0, scale: 0.8 },
+//   visible: {
+//     opacity: 1,
+//     scale: 1,
+//     transition: { duration: 1.5, ease: "easeOut", delay: 2 * 0.2 },
+//   },
+// },
+// slideLeft: {
+//   hidden: { opacity: 0, x: -80 },
+//   visible: {
+//     opacity: 1,
+//     x: 0,
+//     transition: { duration: 1.5, ease: "easeOut", delay: 3 * 0.2 },
+//   },
+// },
+// slideRight: {
+//   hidden: { opacity: 0, rotate: 20, x: -60, y: 40 },
+//   visible: {
+//     opacity: 1,
+//     rotate: 0,
+//     y: 0,
+//     x: 0,
+//     transition: { duration: 1.5, ease: "easeOut", delay: 2 * 0.2 },
+//   },
+// },
+// rotateFromLeft: {
+//   hidden: { opacity: 0, y: 120, scale: 0.9 },
+//   visible: {
+//     opacity: 1,
+//     y: 0,
+//     scale: 1,
+//     transition: { duration: 1.5, ease: "easeOut", delay: 6 * 0.2 },
+//   },
+// },
+// rotateIn: {
+//   hidden: { opacity: 0, x: 100, rotate: 20, scale: 0.9 },
+//   visible: {
+//     opacity: 1,
+//     rotate: 0,
+//     x: 0,
+//     scale: 1,
+//     transition: { duration: 1.5, ease: "easeOut", delay: 6 * 0.2 },
+//   },
+// },
+// };
 
 const cardVariants = {
   fadeUp: {
-    hidden: { opacity: 0, y: 60 },
+    hidden: { opacity: 0, y: 120 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 1.5, ease: "easeOut", delay: 1 * 0.2 },
+      transition: { duration: 1, ease: "easeOut", delay: 1 * 0.2 },
     },
   },
   scaleIn: {
-    hidden: { opacity: 0, scale: 0.8 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: { duration: 1.5, ease: "easeOut", delay: 2 * 0.2 },
-    },
-  },
-  slideLeft: {
-    hidden: { opacity: 0, x: -80 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 1.5, ease: "easeOut", delay: 3 * 0.2 },
-    },
-  },
-  slideRight: {
-    hidden: { opacity: 0, rotate: 40, x: -150 },
-    visible: {
-      opacity: 1,
-      rotate: 0,
-      x: 0,
-      transition: { duration: 1.5, ease: "easeOut", delay: 4 * 0.2 },
-    },
-  },
-  rotateFromLeft: {
-    hidden: { opacity: 0, y: 120, scale: 0.9 },
+    hidden: { opacity: 0, y: 120 },
     visible: {
       opacity: 1,
       y: 0,
-      scale: 1,
-      transition: { duration: 1.5, ease: "easeOut", delay: 6 * 0.2 },
+      transition: { duration: 1, ease: "easeOut", delay: 2 * 0.2 },
+    },
+  },
+  slideLeft: {
+    hidden: { opacity: 0, y: 120 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1, ease: "easeOut", delay: 1 * 0.2 },
+    },
+  },
+  slideRight: {
+    hidden: { opacity: 0, y: 120 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1, ease: "easeOut", delay: 4 * 0.2 },
+    },
+  },
+  rotateFromLeft: {
+    hidden: { opacity: 0, y: 120 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 1, ease: "easeOut", delay: 5 * 0.2 },
     },
   },
   rotateIn: {
-    hidden: { opacity: 0, x: 100, rotate: -40, scale: 0.9 },
+    hidden: { opacity: 0, y: 120 },
     visible: {
       opacity: 1,
-      rotate: 0,
-      x: 0,
-      scale: 1,
-      transition: { duration: 1.5, ease: "easeOut", delay: 6 * 0.2 },
+      y: 0,
+      transition: { duration: 1, ease: "easeOut", delay: 4 * 0.2 },
     },
   },
 };
@@ -148,13 +203,14 @@ export default function FeaturesSection() {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const headingWords = "Premium Features".split(" ");
 
   return (
     <div className="min-h-screen overflow-hidden">
       {/* Premium black background with subtle white glows */}
       <div className="absolute inset-0">
         {/* Subtle animated grid pattern */}
-        <div className="absolute inset-0 opacity-[0.20]">
+        <div className="absolute inset-0 opacity-[0.15]">
           <div
             className="absolute inset-0"
             style={{
@@ -175,28 +231,10 @@ export default function FeaturesSection() {
           transition={{ duration: 1, ease: "easeOut" }}
           className="text-center mb-20"
         >
-          <motion.h2
-            className="text-4xl md:text-6xl font-black text-white mb-8 tracking-tight"
-            style={{
-              background:
-                "linear-gradient(135deg, #ffffff 0%, #e5e7eb 50%, #ffffff 100%)",
-              backgroundClip: "text",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              textShadow: "0 0 40px rgba(255,255,255,0.1)",
-            }}
-          >
-            Premium Features
-          </motion.h2>
-          <motion.p
-            className="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed font-light"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5, duration: 0.8 }}
-          >
-            Enterprise-grade solutions crafted for sophisticated business
-            management
-          </motion.p>
+          <Headings
+            heading="Premium Features"
+            subHeading="Enterprise-grade solutions crafted for sophisticated business management"
+          />
         </motion.div>
 
         <div
@@ -222,7 +260,7 @@ export default function FeaturesSection() {
                 {/* Main Premium Card - All Same White Theme */}
                 {true && (
                   <motion.div
-                    className="relative h-full p-8 rounded-3xl backdrop-blur-2xl border border-white/10 bg-gradient-to-br from-gray-900/80 via-gray-900/40 to-gray-800/80 shadow-2xl overflow-hidden"
+                    className="relative h-full p-8 rounded-3xl backdrop-blur-2xl border border-white/10 bg-gradient-to-br from-gray-900/80 via-gray-900/40 to-gray-800/80 shadow-2xl shadow-white/10 overflow-hidden"
                     whileHover={{
                       y: index === 1 ? 0 : -2,
                       boxShadow: `0 25px 50px -12px rgba(255,255,255,0.2), 0 0 0 1px rgba(255,255,255,0.1)`,
@@ -246,58 +284,74 @@ export default function FeaturesSection() {
                     )}
 
                     {/* Premium Card Content - All White Theme */}
-                    <div className="relative z-10">
+                    <div className="relative z-10 flex flex-col h-full">
                       {/* Premium White Icon Container */}
-                      <motion.div
-                        className="inline-flex p-4 rounded-2xl mb-6 shadow-2xl border border-white/20 backdrop-blur-sm bg-gradient-to-br from-emerald-400/10 to-white/5"
-                        style={{
-                          boxShadow: `0 10px 30px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.2)`,
-                        }}
-                        whileHover={{
-                          scale: 1.15,
-                          rotate: [0, -8, 8, 0],
-                          boxShadow: `0 15px 40px rgba(255,255,255,0.2), inset 0 1px 0 rgba(255,255,255,0.3)`,
-                          borderColor: "rgba(255,255,255,0.3)",
-                          transition: {
-                            duration:
-                              index === 1 ? 0.6 : index === 4 ? 0.8 : 0.4,
-                            ease: "easeInOut",
-                          },
-                        }}
-                      >
-                        <Icon className="w-6 h-6 text-emerald-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
-                      </motion.div>
 
-                      {/* Premium Typography */}
-                      <motion.h3
-                        className="text-2xl font-bold text-white mb-2 leading-tight tracking-tight"
-                        whileHover={{
-                          scale: 1.03,
-                          textShadow: `0 0 20px rgba(255,255,255,0.4)`,
-                        }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {feature.title}
-                      </motion.h3>
+                      <div className="flex-1">
+                        <motion.div
+                          className="inline-flex p-4 rounded-2xl mb-6 shadow-2xl border border-white/20 backdrop-blur-sm bg-gradient-to-br from-emerald-400/10 to-white/5"
+                          style={{
+                            boxShadow: `0 10px 30px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.2)`,
+                          }}
+                          initial={{ opacity: 0, y: 50 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            ease: "easeOut",
+                            delay: 0.8,
+                          }}
+                          viewport={{ once: true }}
+                        >
+                          <Icon className="w-6 h-6 text-emerald-100 drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]" />
+                        </motion.div>
 
-                      <motion.p
-                        className="text-gray-300 mb-10 leading-relaxed text-base font-light"
-                        whileHover={{
-                          color: "#f3f4f6",
-                          textShadow: "0 0 10px rgba(255,255,255,0.1)",
-                        }}
-                        transition={{ duration: 0.3 }}
-                      >
-                        {feature.description}
-                      </motion.p>
+                        {/* Premium Typography */}
+                        <motion.h3
+                          className="text-2xl font-bold text-white mb-2 leading-tight tracking-tight"
+                          initial={{ opacity: 0, y: 50 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            ease: "easeOut",
+                            delay: 1,
+                          }}
+                          viewport={{ once: true }}
+                        >
+                          {feature.title}
+                        </motion.h3>
+
+                        <motion.p
+                          className="text-gray-300 mb-10 leading-relaxed text-base font-light"
+                          initial={{ opacity: 0, y: 50 }}
+                          whileInView={{ opacity: 1, y: 0 }}
+                          transition={{
+                            duration: 0.8,
+                            ease: "easeOut",
+                            delay: 1.2,
+                          }}
+                          viewport={{ once: true }}
+                        >
+                          {feature.description}
+                        </motion.p>
+                      </div>
 
                       {/* Premium White Button */}
                       <motion.button
-                        className="inline-flex items-center gap-3 text-xs text-white font-semibold px-4 py-2 rounded-lg border border-white/20 shadow-xl transition-all duration-300 bg-gradient-to-br from-white/10 to-white/5"
+                        initial={{ opacity: 0, y: 50 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.8,
+                          delay: 1,
+                          type: "spring",
+                          stiffness: 60,
+                          damping: 10,
+                          ease: "easeOut",
+                        }}
+                        viewport={{ once: true }}
+                        className="inline-flex w-fit items-center gap-3 text-xs text-white font-semibold px-4 py-2 rounded-lg border border-white/20 shadow-xl bg-gradient-to-br from-white/10 to-white/5"
                         style={{
                           boxShadow: `0 8px 25px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.2)`,
                         }}
-                        whileTap={{ scale: 0.98 }}
                       >
                         Learn more
                         <ArrowRight className="w-4 h-4" />

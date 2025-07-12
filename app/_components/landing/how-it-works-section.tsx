@@ -2,10 +2,12 @@ import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { howItWorksSteps } from "@/lib/const";
 import StepCard from "./step-card";
+import Headings from "./headings";
 
 const HowItWorksSection = () => {
   const headerRef = useRef(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-100px" });
+  const headingWords = "How It Works".split(" ");
   return (
     <section
       id="how-it-works"
@@ -19,18 +21,11 @@ const HowItWorksSection = () => {
           animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-            How It Works
-          </h2>
-          <motion.div
-            className="w-24 h-1 bg-emerald-400 mx-auto mb-6"
-            initial={{ width: 0 }}
-            animate={headerInView ? { width: 96 } : { width: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+          {/* done: need to create reusable component for headings */}
+          <Headings
+            heading="How It Works"
+            subHeading="Get started in minutes and transform your scheduling experience"
           />
-          <p className="text-xl text-gray-200 max-w-2xl mx-auto">
-            Get started in minutes and transform your scheduling experience
-          </p>
         </motion.div>
 
         <div className="relative">

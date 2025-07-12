@@ -100,11 +100,11 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="relative flex flex-col min-h-screen overflow-hidden">
+    <div className="relative">
       {/* background animation and styles */}
       <BackgroundStyles />
       {/* Navigation */}
-      <Navigation scrolled={scrolled} hideNav={hideNav} />
+      <Navigation scrolled={scrolled} />
 
       <main className="flex-1 pt-20">
         {/* Hero Section  */}

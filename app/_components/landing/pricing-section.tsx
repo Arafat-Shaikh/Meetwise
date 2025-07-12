@@ -2,10 +2,15 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Headings from "./headings";
 
 const PricingSection = () => {
   return (
     <section id="pricing" className="py-32 relative">
+      {/* checkpoint */}
+      <div className="absolute inset-0 pointer-events-none blur-2xl">
+        <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,_rgba(110,231,183,0.2),_transparent_50%)]"></div>
+      </div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           className="text-center mb-20"
@@ -14,13 +19,10 @@ const PricingSection = () => {
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 1.5 }}
         >
-          <h2 className="text-4xl font-bold text-white sm:text-5xl mb-4">
-            Simple Pricing
-          </h2>
-          <div className="h-1 w-20 bg-gradient-to-r from-emerald-800 via-emerald-400 to-emerald-800 mx-auto rounded-full mb-6"></div>
-          <p className="mt-4 text-xl text-gray-100 max-w-3xl mx-auto">
-            Choose the plan that works best for your business
-          </p>
+          <Headings
+            heading="Simple Pricing"
+            subHeading="Choose the plan that works best for your business"
+          />
         </motion.div>
 
         <div className="flex items-center justify-center">
@@ -29,24 +31,48 @@ const PricingSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.2 }}
-            whileHover={{
-              y: -10,
-              boxShadow:
-                "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
-            }}
-            className="rounded-2xl bg-gradient-to-r from-white/20 to-emerald-500/20 border border-white/10 overflow-hidden flex flex-col"
+            className="rounded-2xl relative border-neutral-800 border-[2px] overflow-hidden flex flex-col bg-neutral-950 shadow-xl drop-shadow-2xl"
           >
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,_rgba(167,243,208,0.35),_transparent_40%)]"></div>
+            </div>
             <div className="p-8 flex-1">
-              <h3 className="text-xl font-semibold text-white mb-2">Starter</h3>
-              <div className="flex items-baseline mt-4">
+              <motion.h3
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="text-xl font-semibold text-white mb-2"
+              >
+                Starter
+              </motion.h3>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8 }}
+                className="flex items-baseline mt-4"
+              >
                 <span className="text-5xl font-extrabold text-white">$19</span>
                 <span className="ml-1 text-xl text-gray-200">/month</span>
-              </div>
-              <p className="mt-5 text-gray-200">
+              </motion.div>
+              <motion.p
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="mt-5 text-gray-200"
+              >
                 Perfect for individuals just getting started.
-              </p>
+              </motion.p>
 
-              <ul className="mt-8 space-y-4">
+              <motion.ul
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                viewport={{ once: true, margin: "-100px" }}
+                className="mt-8 space-y-4"
+              >
                 {[
                   "Up to 50 appointments/month",
                   "AI assistant",
@@ -54,15 +80,21 @@ const PricingSection = () => {
                   "1 service type",
                   "Document intelligence",
                   "Analytics dashboard",
-                ].map((feature) => (
-                  <li key={feature} className="flex items-center">
+                ].map((feature, index) => (
+                  <motion.li
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    transition={{ duration: 0.8, delay: index * 0.2 }}
+                    key={feature}
+                    className="flex items-center"
+                  >
                     <Check className="h-5 w-5 text-emerald-400 mr-3" />
                     <span className="text-gray-200">{feature}</span>
-                  </li>
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </div>
-            <div className="p-6 bg-white/5 border-t border-white/10">
+            <div className="p-6">
               <div className="w-full">
                 <Button className="w-full bg-white text-black hover:bg-gray-50">
                   Get Started

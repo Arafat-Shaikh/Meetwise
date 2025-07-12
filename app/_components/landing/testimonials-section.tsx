@@ -16,6 +16,7 @@ interface TestimonialsSectionProps {
 }
 
 import { Variants } from "framer-motion";
+import Headings from "./headings";
 
 export const sideCardVariants: Variants = {
   hidden: {
@@ -103,7 +104,7 @@ const TestimonialsSection = ({
     if (!isHovered) {
       const interval = setInterval(() => {
         setCurrentIndex((prev: number) => (prev + 1) % testimonials.length);
-      }, 5000);
+      }, 3500);
 
       return () => clearInterval(interval);
     }
@@ -137,17 +138,20 @@ const TestimonialsSection = ({
               visible: { opacity: 1, y: 0, transition: { duration: 0.6 } },
             }}
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              What Our Clients Say
-            </h2>
-            <p className="text-gray-100 text-lg md:text-xl max-w-2xl mx-auto">
-              Don't just take our word for it. Here's what real customers have
-              to say about their experience.
-            </p>
+            <Headings
+              heading="What Our Clients Say"
+              subHeading="Don't just take our word for it. Here's what real customers have to say about their experience."
+            />
           </motion.div>
 
           {/* testimonial layout  */}
-          <div className="relative flex items-center justify-center text-white">
+          <motion.div
+            initial={{ opacity: 0, y: 80 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="relative flex items-center justify-center text-white"
+          >
             <>
               <motion.div
                 className="absolute left-0 w-80 opacity-60 pointer-events-none"
@@ -163,7 +167,7 @@ const TestimonialsSection = ({
                       opacity: { duration: 0.8, ease: "easeOut" },
                       x: { duration: 0.8, ease: "easeOut" },
                     }}
-                    className={`bg-white/8 backdrop-blur-sm rounded-2xl p-6 border border-emerald-400/20 transition-all duration-300 ${""}`}
+                    className={`bg-white/8 backdrop-blur-sm rounded-2xl p-6 border border-emerald-400/20 ${""}`}
                   >
                     {true && (
                       <Quote className="w-6 h-6 text-emerald-300 mb-3" />
@@ -205,7 +209,7 @@ const TestimonialsSection = ({
                       opacity: { duration: 0.8, ease: "easeOut" },
                       x: { duration: 0.8, ease: "easeOut" },
                     }}
-                    className={`bg-white/8 backdrop-blur-sm rounded-2xl p-6 border border-emerald-400/20 transition-all duration-300 ${""}`}
+                    className={`bg-white/8 backdrop-blur-sm rounded-2xl p-6 border border-emerald-400/20 ${""}`}
                   >
                     {true && (
                       <Quote className="w-6 h-6 text-emerald-300 mb-3" />
@@ -330,7 +334,7 @@ const TestimonialsSection = ({
                 />
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
       </motion.section>
     </div>
