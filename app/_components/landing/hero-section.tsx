@@ -1,12 +1,58 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Clock, Phone } from "lucide-react";
+import Headings from "./headings";
 
 // interface HeroSectionProps {
 //   heroRef: RefObject<HTMLElement> | null;
 // }
 
+const container = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.08,
+      duration: 1,
+    },
+  },
+};
+
+const wordFadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
 const HeroSection = () => {
+  // const getAnimatedHeading = (headingWords: string[]) => {
+  //   return (
+  //     <>
+  //       {headingWords.map((word, index) => (
+  //         <span
+  //           key={index}
+  //           className="inline-block overflow-hidden mr-3 lg:mr-4"
+  //         >
+  //           <motion.span
+  //             initial={{ y: "100%", opacity: 0 }}
+  //             whileInView={{ y: "0%", opacity: 1 }}
+  //             viewport={{ once: true }}
+  //             transition={{
+  //               duration: 1.2,
+  //               delay: index * 0.08,
+  //               ease: [0.25, 0.46, 0.45, 0.94],
+  //             }}
+  //             className="inline-block"
+  //           >
+  //             {word}
+  //           </motion.span>
+  //         </span>
+  //       ))}
+  //     </>
+  //   );
+  // };
   return (
     <section className="relative overflow-hidden pt-16 pb-32">
       {/* floating particles  */}
@@ -22,7 +68,7 @@ const HeroSection = () => {
             }}
           />
         ))}
-        {[...Array(40)].map((_, i) => (
+        {[...Array(20)].map((_, i) => (
           <div
             key={`large-${i}`}
             className="absolute w-1.5 h-1.5 bg-white/20 rounded-full"
@@ -37,38 +83,58 @@ const HeroSection = () => {
 
       <div className="container mx-auto px-4 py-20 sm:px-6 lg:px-8 lg:py-28 relative z-10">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8">
-          <motion.div
-            className="flex flex-col sm:gap-y-10 justify-center"
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-700 to-emerald-200 sm:text-6xl lg:text-7xl">
-                Smart Scheduling <br />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-200 to-emerald-200">
-                  Powered by AI
-                </span>
-              </h1>
-              <p className="mt-6 text-xl text-blue-100">
+          <div className="flex flex-col sm:gap-y-10 justify-center">
+            <div>
+              <motion.h2
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.1 }}
+                className="text-5xl md:text-6xl font-semibold text-white tracking-wide leading-tight overflow-hidden relative"
+                style={{ textShadow: `0 0 20px rgba(255,255,255,0.4)` }}
+              >
+                {["Smart Scheduling", "Powered by AI"].map((word, index) => (
+                  <span
+                    key={index}
+                    className="inline-block overflow-hidden mr-3 lg:mr-4"
+                  >
+                    <motion.span
+                      initial={{ y: "100%", opacity: 0 }}
+                      whileInView={{ y: "0%", opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{
+                        duration: 1.2,
+                        delay: index * 0.08,
+                        ease: [0.25, 0.46, 0.45, 0.94],
+                      }}
+                      className="inline-block"
+                    >
+                      {word}
+                    </motion.span>
+                  </span>
+                ))}
+              </motion.h2>
+              <motion.p
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.8, delay: 1 }}
+                className="text-neutral-300 mt-6 text-xl"
+              >
                 Streamline your booking process and enhance client experience
                 with our AI-powered scheduling platform.
-              </p>
-            </motion.div>
+              </motion.p>
+            </div>
 
             <motion.div
               className="mt-10 flex flex-col sm:flex-row gap-4"
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0.8, delay: 1.4 }}
             >
               <Button
                 size={"lg"}
-                className="group text-white border  bg-gradient-to-tr from-emerald-600 to-emerald-800 hover:bg-opacity-90 hover:text-gray-100 transition-all duration-300 group relative overflow-hidden shadow-xl shadow-emerald-500/20 rounded-full border-emerald-600/40"
+                className="group bg-gradient-to-t from-white/70 via-white/80 to-white text-black hover:bg-opacity-90 transition-all duration-300 group relative overflow-hidden rounded-full hover:text-black"
               >
                 <span className="">Get Started</span>
 
@@ -93,7 +159,7 @@ const HeroSection = () => {
                 See Demo
               </Button>
             </motion.div>
-          </motion.div>
+          </div>
 
           <motion.div
             className="relative flex items-center justify-center lg:justify-end"
@@ -102,8 +168,13 @@ const HeroSection = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl space-y-1 ">
-              <div className="rounded-xl bg-gradient-to-br relative from-gray-800 via-gray-700 to-gray-600 p-4 text-white">
+            <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl space-y-1 shadow-white/10">
+              <motion.div
+                initial={{ opacity: 0, x: 40, y: 20 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.6 }}
+                className="rounded-xl bg-gradient-to-br relative from-emerald-500 via-emerald-600 to-emerald-700 p-4 text-white"
+              >
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-emerald-700 to-emerald-600 opacity-20" />
                 <h3 className="text-xl font-semibold">
                   Welcome to your calendar!
@@ -111,7 +182,7 @@ const HeroSection = () => {
                 <p className="mt-1 text-blue-100">
                   Events that your customers book will appear here.
                 </p>
-              </div>
+              </motion.div>
               <div className="bg-neutral-900 backdrop-blur-sm rounded-lg p-4">
                 <div className="mt-2 grid grid-cols-7 gap-2 text-center text-sm font-medium">
                   {["M", "T", "W", "T", "F", "S", "S"].map((day, i) => (
@@ -122,10 +193,12 @@ const HeroSection = () => {
                   {Array.from({ length: 7 }).map((_, i) => (
                     <motion.div
                       key={i}
-                      className="rounded-lg border-[3px] border-gray-900/90 bg-white/20 text-white p-2 hover:bg-blue-50 cursor-pointer"
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.8, delay: i * 0.1 }}
+                      className="rounded-lg border-2 border-neutral-700 shadow-lg shadow-emerald-300/10 bg-neutral-800 text-white p-2 cursor-pointer"
                       whileHover={{
                         scale: 1.05,
-                        backgroundColor: "#EFF6FF",
                       }}
                       whileTap={{ scale: 0.95 }}
                     >
@@ -136,12 +209,18 @@ const HeroSection = () => {
                 <div className="mt-4 space-y-3">
                   <motion.div
                     className="rounded-lg text-gray-200 bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-800 border-[1px] border-neutral-700/20 shadow-lg p-3 text-sm relative overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 10,
+                      duration: 0.6,
+                      delay: 0.6,
                     }}
+                    whileHover={{ scale: 1.01 }}
+                    // transition={{
+                    //   type: "spring",
+                    //   stiffness: 400,
+                    //   damping: 10,
+                    // }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-emerald-50 opacity-10" />
                     <div className="font-medium tracking-wide">
@@ -153,12 +232,13 @@ const HeroSection = () => {
                   </motion.div>
                   <motion.div
                     className="rounded-lg text-gray-200 bg-gradient-to-bl from-neutral-950 via-neutral-900 to-neutral-800 border-[1px] border-neutral-300/10 shadow-lg p-3 text-sm relative overflow-hidden"
-                    whileHover={{ scale: 1.02 }}
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{
-                      type: "spring",
-                      stiffness: 400,
-                      damping: 10,
+                      duration: 0.6,
+                      delay: 0.8,
                     }}
+                    whileHover={{ scale: 1.01 }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-emerald-50 opacity-10" />
                     <div className="font-medium tracking-wide">

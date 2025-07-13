@@ -13,64 +13,6 @@ import {
 } from "lucide-react";
 import Headings from "./headings";
 
-// const cardVariants = {
-// fadeUp: {
-//   hidden: { opacity: 0, x: -60, rotate: 20, y: 40 },
-//   visible: {
-//     opacity: 1,
-//     x: 0,
-//     y: 0,
-//     rotate: 0,
-//     transition: { duration: 1.5, ease: "easeOut", delay: 1 * 0.2 },
-//   },
-// },
-// scaleIn: {
-//   hidden: { opacity: 0, scale: 0.8 },
-//   visible: {
-//     opacity: 1,
-//     scale: 1,
-//     transition: { duration: 1.5, ease: "easeOut", delay: 2 * 0.2 },
-//   },
-// },
-// slideLeft: {
-//   hidden: { opacity: 0, x: -80 },
-//   visible: {
-//     opacity: 1,
-//     x: 0,
-//     transition: { duration: 1.5, ease: "easeOut", delay: 3 * 0.2 },
-//   },
-// },
-// slideRight: {
-//   hidden: { opacity: 0, rotate: 20, x: -60, y: 40 },
-//   visible: {
-//     opacity: 1,
-//     rotate: 0,
-//     y: 0,
-//     x: 0,
-//     transition: { duration: 1.5, ease: "easeOut", delay: 2 * 0.2 },
-//   },
-// },
-// rotateFromLeft: {
-//   hidden: { opacity: 0, y: 120, scale: 0.9 },
-//   visible: {
-//     opacity: 1,
-//     y: 0,
-//     scale: 1,
-//     transition: { duration: 1.5, ease: "easeOut", delay: 6 * 0.2 },
-//   },
-// },
-// rotateIn: {
-//   hidden: { opacity: 0, x: 100, rotate: 20, scale: 0.9 },
-//   visible: {
-//     opacity: 1,
-//     rotate: 0,
-//     x: 0,
-//     scale: 1,
-//     transition: { duration: 1.5, ease: "easeOut", delay: 6 * 0.2 },
-//   },
-// },
-// };
-
 const cardVariants = {
   fadeUp: {
     hidden: { opacity: 0, y: 120 },
@@ -210,7 +152,7 @@ export default function FeaturesSection() {
       {/* Premium black background with subtle white glows */}
       <div className="absolute inset-0">
         {/* Subtle animated grid pattern */}
-        <div className="absolute inset-0 opacity-[0.15]">
+        <div className="absolute inset-0 opacity-[0.20]">
           <div
             className="absolute inset-0"
             style={{

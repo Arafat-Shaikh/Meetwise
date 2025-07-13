@@ -31,11 +31,15 @@ const PricingSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.2 }}
-            className="rounded-2xl relative border-neutral-800 border-[2px] overflow-hidden flex flex-col bg-neutral-950 shadow-xl drop-shadow-2xl"
+            className="rounded-2xl relative border-neutral-800 border-[2px] overflow-hidden flex flex-col bg-neutral-950 shadow-xl"
           >
             <div className="absolute inset-0 pointer-events-none">
-              <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,_rgba(167,243,208,0.35),_transparent_40%)]"></div>
+              <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,_rgba(240,253,244,0.9)_0%,_rgba(110,231,183,0.4)_25%,_transparent_45%)] blur-[60px] mix-blend-screen"></div>
             </div>
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,_rgba(240,253,244,0.9)_0%,_rgba(110,231,183,0.4)_25%,_transparent_45%)] blur-[60px] mix-blend-screen"></div>
+            </div>
+
             <div className="p-8 flex-1">
               <motion.h3
                 initial={{ opacity: 0, y: 20 }}
