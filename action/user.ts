@@ -1,6 +1,8 @@
 "use server";
 
+import { AvailabilityMap } from "@/app/(dashboard)/availability/page";
 import { authOptions } from "@/lib/auth";
+import { Day } from "@/lib/const";
 import { DayOfWeek } from "@/lib/generated/prisma";
 import prisma from "@/lib/global-prisma";
 import { onboardingSchema, OnboardingDataTypes } from "@/lib/zod/schema";
@@ -73,13 +75,6 @@ export async function saveOnboardingUserData(rawData: any) {
   return { success: true };
 }
 
-type AvailabilityDay = {
-  id: string;
-  name: string;
-  enabled: boolean;
-  slots: { startTime: string; endTime: string }[];
-};
-
 export async function saveUserAvailability(data: any) {
   const session = await getServerSession(authOptions);
 
@@ -94,7 +89,7 @@ export async function saveUserAvailability(data: any) {
     maxBookings,
     advanceNotice,
   }: {
-    availability: AvailabilityDay[];
+    availability: AvailabilityMap;
     timezone: string;
     bufferTime: number;
     maxBookings: number;
@@ -113,41 +108,45 @@ export async function saveUserAvailability(data: any) {
 
   console.log(availability);
 
-  for (const el of availability) {
-    const dayAvailability = await prisma.availability.findFirst({
-      where: { day: el.name as keyof typeof DayOfWeek },
-    });
-    console.log("Day Availability:", dayAvailability);
+  for (const [day, { enabled, timeSlots }] of Object.entries(availability)) {
+    const dayOfWeek = day as keyof typeof DayOfWeek;
 
-    if (dayAvailability) {
-      await prisma.availability.update({
-        where: { id: dayAvailability.id },
-        data: {
-          enabled: el.enabled,
-          slots: {
-            deleteMany: {},
-            create: el.slots.map((slot) => ({
-              startTime: slot.startTime,
-              endTime: slot.endTime,
-            })),
-          },
+    // Delete existing availability for the day
+    const availability = await prisma.availability.findFirst({
+      where: {
+        userId: session.user.id,
+        day: dayOfWeek,
+      },
+    });
+
+    if (availability) {
+      await prisma.timeSlot.deleteMany({
+        where: {
+          availabilityId: availability.id,
         },
       });
-    } else {
-      await prisma.availability.create({
-        data: {
-          userId: session.user.id,
-          day: el.name as keyof typeof DayOfWeek,
-          enabled: el.enabled,
-          slots: {
-            create: el.slots.map((slot) => ({
-              startTime: slot.startTime,
-              endTime: slot.endTime,
-            })),
-          },
+
+      await prisma.availability.delete({
+        where: {
+          id: availability.id,
         },
       });
     }
+
+    // Create new availability for the day
+    await prisma.availability.create({
+      data: {
+        userId: session.user.id,
+        day: dayOfWeek,
+        enabled,
+        slots: {
+          create: timeSlots.map((slot) => ({
+            startTime: slot.startTime,
+            endTime: slot.endTime,
+          })),
+        },
+      },
+    });
   }
 }
 
@@ -184,21 +183,23 @@ export async function getUserAvailability() {
 
   console.log("User Availability:", user?.availability);
 
+  const availability = user?.availability.reduce((acc, day) => {
+    acc[day.day] = {
+      enabled: day.enabled,
+      timeSlots: day.slots.map((slot) => ({
+        startTime: slot.startTime,
+        endTime: slot.endTime,
+      })),
+    };
+    return acc;
+  }, {} as AvailabilityMap);
+
   const data = {
+    availability,
     timezone: user?.timezone || "",
     bufferTime: user?.bufferTime || 0,
     maxBookings: user?.maxBookings || 10,
     advanceNotice: user?.advanceNotice || 0,
-    availability:
-      user?.availability.map((day) => ({
-        id: day.id,
-        name: day.day,
-        enabled: day.enabled,
-        slots: day.slots.map((slot) => ({
-          startTime: slot.startTime,
-          endTime: slot.endTime,
-        })),
-      })) || [],
   };
 
   return data;

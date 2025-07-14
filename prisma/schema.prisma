@@ -47,6 +47,9 @@ model Availability {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  // need to remove this maybe
+  @@unique([day, userId])
 }
 
 model TimeSlot {

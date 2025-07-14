@@ -329,7 +329,16 @@ export const timezones = [
   "Australia/Sydney",
 ];
 
-export const weekDays = [
+export type Day =
+  | "Monday"
+  | "Tuesday"
+  | "Wednesday"
+  | "Thursday"
+  | "Friday"
+  | "Saturday"
+  | "Sunday";
+
+export const weekDays: Day[] = [
   "Monday",
   "Tuesday",
   "Wednesday",

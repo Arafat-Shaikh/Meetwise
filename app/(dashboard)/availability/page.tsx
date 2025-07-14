@@ -8,7 +8,7 @@ import TimezoneSelector from "@/app/_components/timezone-selector";
 import { Button } from "@/components/ui/button";
 import useAvailability from "@/hooks/useAvailability";
 import useSaveAvailability from "@/hooks/useSaveAvailability";
-import { timezones } from "@/lib/const";
+import { Day, timezones } from "@/lib/const";
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -17,81 +17,59 @@ import { toast } from "sonner";
 
 // type EventTypes = "Availability" | "Others";
 
-interface TimeSlot {
-  id: string;
+type TimeSlot = {
   startTime: string;
   endTime: string;
-}
+};
 
-interface DayAvailability {
-  id: string;
-  name: string;
+type DayAvailability = {
   enabled: boolean;
-  slots: TimeSlot[];
-}
+  timeSlots: TimeSlot[];
+};
+
+export type AvailabilityMap = Record<Day, DayAvailability>;
 
 const AvailabilityPage = () => {
   const [timezone, setTimezone] = useState(timezones[0]);
   const [bufferTime, setBufferTime] = useState("15");
   const [maxBookings, setMaxBookings] = useState(5);
   const [advanceNotice, setAdvanceNotice] = useState(2);
-  const [availability, setAvailability] = useState<DayAvailability[]>([
-    {
-      id: "monday",
-      name: "Monday",
+  const [availability, setAvailability] = useState<AvailabilityMap>({
+    Monday: {
       enabled: true,
-      slots: [{ id: "monday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-    {
-      id: "tuesday",
-      name: "Tuesday",
+    Tuesday: {
       enabled: true,
-      slots: [{ id: "tuesday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-    {
-      id: "wednesday",
-      name: "Wednesday",
+    Wednesday: {
       enabled: true,
-      slots: [{ id: "wednesday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-    {
-      id: "thursday",
-      name: "Thursday",
+    Thursday: {
       enabled: true,
-      slots: [{ id: "thursday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-    {
-      id: "friday",
-      name: "Friday",
+    Friday: {
       enabled: true,
-      slots: [{ id: "friday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-    {
-      id: "saturday",
-      name: "Saturday",
+    Saturday: {
       enabled: false,
-      slots: [{ id: "saturday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-    {
-      id: "sunday",
-      name: "Sunday",
+    Sunday: {
       enabled: false,
-      slots: [{ id: "sunday-1", startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
     },
-  ]);
+  });
   const { data: userAvailability } = useAvailability();
   const { mutateAsync, isPending } = useSaveAvailability();
 
   useEffect(() => {
     if (userAvailability) {
-      for (const day of userAvailability.availability) {
-        const isMatchedDay = availability.find((a) => a.name === day.name);
-        // if (isMatchedDay) {
-        //   isMatchedDay.enabled = day.enabled;
-        //   day.slots.forEach((slot, index) => {)
-        // }
-      }
-
+      setAvailability(userAvailability.availability as AvailabilityMap);
       setTimezone(userAvailability.timezone);
       setBufferTime(userAvailability.bufferTime.toString());
       setMaxBookings(userAvailability.maxBookings);
@@ -99,63 +77,62 @@ const AvailabilityPage = () => {
     }
   }, [userAvailability]);
 
-  const toggleDay = (dayId: string) => {
-    setAvailability((prev) =>
-      prev.map((day) =>
-        day.id === dayId ? { ...day, enabled: !day.enabled } : day
-      )
-    );
+  const toggleDay = (day: Day) => {
+    setAvailability((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        enabled: !prev[day].enabled,
+      },
+    }));
   };
 
-  const addTimeSlot = (dayId: string) => {
-    setAvailability((prev) =>
-      prev.map((day) => {
-        if (day.id === dayId) {
-          const newSlot = {
-            id: `${dayId}-${Date.now()}`,
+  const addTimeSlot = (day: Day) => {
+    setAvailability((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        timeSlots: [
+          ...prev[day].timeSlots,
+          {
             startTime: "9:00am",
             endTime: "5:00pm",
-          };
-          return { ...day, slots: [...day.slots, newSlot] };
-        }
-        return day;
-      })
-    );
+          },
+        ],
+      },
+    }));
   };
 
-  const removeTimeSlot = (dayId: string, slotId: string) => {
-    setAvailability((prev) =>
-      prev.map((day) => {
-        if (day.id === dayId) {
-          return {
-            ...day,
-            slots: day.slots.filter((slot) => slot.id !== slotId),
-          };
-        }
-        return day;
-      })
-    );
+  const removeTimeSlot = (day: Day, index: number) => {
+    setAvailability((prev) => ({
+      ...prev,
+      [day]: {
+        ...prev[day],
+        timeSlots: prev[day].timeSlots.filter((_, i) => i !== index),
+      },
+    }));
   };
 
   const updateTime = (
-    dayId: string,
-    slotId: string,
+    day: Day,
+    slotIndex: number,
     timeType: "startTime" | "endTime",
     value: string
   ) => {
-    setAvailability((prev) =>
-      prev.map((day) => {
-        if (day.id === dayId) {
-          return {
-            ...day,
-            slots: day.slots.map((slot) =>
-              slot.id === slotId ? { ...slot, [timeType]: value } : slot
-            ),
-          };
-        }
-        return day;
-      })
-    );
+    setAvailability((prev) => {
+      const updatedSlots = [...prev[day].timeSlots];
+      updatedSlots[slotIndex] = {
+        ...updatedSlots[slotIndex],
+        [timeType]: value,
+      };
+      return {
+        ...prev,
+        [day]: {
+          ...prev[day],
+          timeSlots: updatedSlots,
+        },
+      };
+    });
   };
 
   const handleSave = async () => {
@@ -169,13 +146,13 @@ const AvailabilityPage = () => {
 
     console.log("Saving availability data:", data);
 
-    // try {
-    //   await mutateAsync(data);
-    //   toast.success("Availability saved successfully");
-    // } catch (error) {
-    //   toast.error("Failed to save availability");
-    //   console.error(error);
-    // }
+    try {
+      await mutateAsync(data);
+      toast.success("Availability saved successfully");
+    } catch (error) {
+      toast.error("Failed to save availability");
+      console.error(error);
+    }
   };
 
   return (
