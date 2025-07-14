@@ -4,12 +4,15 @@ import Link from "next/link";
 const Footer = () => {
   return (
     <motion.footer
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-      className="relative bg-gradient-to-b from-gray-800/40 to-emerald-800/10 m-4 md:mx-8 rounded-2xl text-gray-300 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      className="relative bg-gradient-to-b from-neutral-900 via-black/5 to-neutral-950 mx-4 md:mx-6 rounded-t-2xl text-gray-300 backdrop-blur-sm"
+      style={{
+        boxShadow: `0 10px 30px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.2)`,
+      }}
     >
-      <div className="absolute inset-1 opacity-10 bg-gradient-to-t from-white to-black/80 rounded-xl shadow- pointer-events-none" />
+      {/* <div className="absolute inset-1 opacity-10 bg-gradient-to-t from-white to-black/80 rounded-xl shadow- pointer-events-none" /> */}
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4 text-white">
           <div>
@@ -22,9 +25,9 @@ const Footer = () => {
               Meetvise
             </motion.h3>
             <motion.p
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 60 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
+              transition={{ duration: 0.6 }}
               className="mt-4 text-gray-300"
             >
               AI-powered scheduling platform for service providers and their
@@ -45,7 +48,7 @@ const Footer = () => {
                 (item, index) => (
                   <motion.li
                     key={item}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{
                       opacity: { duration: 0.8, delay: index * 0.2 },
@@ -78,7 +81,7 @@ const Footer = () => {
               {["About", "Blog", "Careers", "Contact"].map((item, index) => (
                 <motion.li
                   key={item}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={{ opacity: 0, y: 60 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{
                     opacity: { duration: 0.8, delay: index * 0.2 },
@@ -111,7 +114,7 @@ const Footer = () => {
                 (item, index) => (
                   <motion.li
                     key={item}
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 60 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     transition={{
                       opacity: { duration: 0.8, delay: index * 0.2 },
@@ -132,7 +135,7 @@ const Footer = () => {
             </ul>
           </div>
         </div>
-        <div className="mt-12 border-t border-gray-800/50 pt-8 text-center text-gray-700">
+        <div className="mt-20 border-t border-gray-800/50 pt-3 text-center text-gray-700">
           <p>© {new Date().getFullYear()} Meetvise. All rights reserved.</p>
         </div>
       </div>

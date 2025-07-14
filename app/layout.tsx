@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Provider from "./_components/Provider";
-import Lenis from "@studio-freight/lenis";
 import { useEffect } from "react";
-import SmoothScroll from "./_components/smooth-scroll";
 
 import { Nunito_Sans } from "next/font/google";
 
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
+  weight: ["400", "700"],
 });
 
 const geistSans = localFont({

@@ -148,7 +148,7 @@ export default function FeaturesSection() {
   const headingWords = "Premium Features".split(" ");
 
   return (
-    <div className="min-h-screen overflow-hidden">
+    <div id="features" className="min-h-screen overflow-hidden">
       {/* Premium black background with subtle white glows */}
       <div className="absolute inset-0">
         {/* Subtle animated grid pattern */}
@@ -181,7 +181,7 @@ export default function FeaturesSection() {
 
         <div
           ref={containerRef}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 blur-[0.5px]"
         >
           {features.map((feature, index) => {
             const Icon = feature.icon;
@@ -202,13 +202,13 @@ export default function FeaturesSection() {
                 {/* Main Premium Card - All Same White Theme */}
                 {true && (
                   <motion.div
-                    className="relative h-full p-8 rounded-3xl backdrop-blur-2xl border border-white/10 bg-gradient-to-br from-gray-900/80 via-gray-900/40 to-gray-800/80 shadow-2xl shadow-white/10 overflow-hidden"
-                    whileHover={{
-                      y: index === 1 ? 0 : -2,
-                      boxShadow: `0 25px 50px -12px rgba(255,255,255,0.2), 0 0 0 1px rgba(255,255,255,0.1)`,
-                      borderColor: "rgba(255,255,255,0.2)",
-                      transition: { duration: 0.4, ease: "easeOut" },
-                    }}
+                    className="relative h-full p-8 rounded-3xl backdrop-blur-2xl border border-white/10 bg-gradient-to-br from-neutral-900/80 blur-[0.5px] via-neutral-900/40 to-neutral-800/80 shadow-2xl shadow-white/10 overflow-hidden"
+                    // whileHover={{
+                    //   y: index === 1 ? 0 : -2,
+                    //   boxShadow: `0 25px 50px -12px rgba(255,255,255,0.2), 0 0 0 1px rgba(255,255,255,0.1)`,
+                    //   borderColor: "rgba(255,255,255,0.2)",
+                    //   transition: { duration: 0.4, ease: "easeOut" },
+                    // }}
                     style={{
                       transformStyle: "preserve-3d",
                     }}

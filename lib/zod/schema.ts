@@ -12,6 +12,9 @@ const dayAvailabilitySchema = z.object({
     .min(1, "At least one time slot is required"),
 });
 
+const availabilitySchema = z.record(dayAvailabilitySchema);
+export type AvailabilityTypes = z.infer<typeof availabilitySchema>;
+
 export const onboardingSchema = z.object({
   username: z.string().min(3),
   fullName: z.string().min(1),

@@ -1,16 +1,21 @@
 "use client";
 
+import { saveUserAvailability } from "@/action/user";
 import AvailabilityScheduler from "@/app/_components/availability-scheduler";
 import BookingSettings from "@/app/_components/BookingSettings";
+import Loader from "@/app/_components/loader";
 import TimezoneSelector from "@/app/_components/timezone-selector";
 import { Button } from "@/components/ui/button";
+import useAvailability from "@/hooks/useAvailability";
+import useSaveAvailability from "@/hooks/useSaveAvailability";
 import { timezones } from "@/lib/const";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
 
-const tabs = ["Availability", "Others"];
+// const tabs = ["Availability", "Others"];
 
-type EventTypes = "Availability" | "Others";
+// type EventTypes = "Availability" | "Others";
 
 interface TimeSlot {
   id: string;
@@ -30,7 +35,6 @@ const AvailabilityPage = () => {
   const [bufferTime, setBufferTime] = useState("15");
   const [maxBookings, setMaxBookings] = useState(5);
   const [advanceNotice, setAdvanceNotice] = useState(2);
-
   const [availability, setAvailability] = useState<DayAvailability[]>([
     {
       id: "monday",
@@ -75,6 +79,25 @@ const AvailabilityPage = () => {
       slots: [{ id: "sunday-1", startTime: "9:00am", endTime: "5:00pm" }],
     },
   ]);
+  const { data: userAvailability } = useAvailability();
+  const { mutateAsync, isPending } = useSaveAvailability();
+
+  useEffect(() => {
+    if (userAvailability) {
+      for (const day of userAvailability.availability) {
+        const isMatchedDay = availability.find((a) => a.name === day.name);
+        // if (isMatchedDay) {
+        //   isMatchedDay.enabled = day.enabled;
+        //   day.slots.forEach((slot, index) => {)
+        // }
+      }
+
+      setTimezone(userAvailability.timezone);
+      setBufferTime(userAvailability.bufferTime.toString());
+      setMaxBookings(userAvailability.maxBookings);
+      setAdvanceNotice(userAvailability.advanceNotice);
+    }
+  }, [userAvailability]);
 
   const toggleDay = (dayId: string) => {
     setAvailability((prev) =>
@@ -90,8 +113,8 @@ const AvailabilityPage = () => {
         if (day.id === dayId) {
           const newSlot = {
             id: `${dayId}-${Date.now()}`,
-            startTime: "9:00",
-            endTime: "17:00",
+            startTime: "9:00am",
+            endTime: "5:00pm",
           };
           return { ...day, slots: [...day.slots, newSlot] };
         }
@@ -135,12 +158,24 @@ const AvailabilityPage = () => {
     );
   };
 
-  const handleSave = () => {
-    console.log("Availability saved:", availability);
-    console.log("timezone saved:", timezone);
-    console.log("bufferTime saved:", bufferTime);
-    console.log("maxBookings saved:", maxBookings);
-    console.log("advanceNotice saved:", advanceNotice);
+  const handleSave = async () => {
+    const data = {
+      availability,
+      timezone,
+      bufferTime: Number(bufferTime),
+      maxBookings,
+      advanceNotice,
+    };
+
+    console.log("Saving availability data:", data);
+
+    // try {
+    //   await mutateAsync(data);
+    //   toast.success("Availability saved successfully");
+    // } catch (error) {
+    //   toast.error("Failed to save availability");
+    //   console.error(error);
+    // }
   };
 
   return (
@@ -210,11 +245,13 @@ const AvailabilityPage = () => {
               </div>
             </div>
           </div>
+
           <Button
             onClick={() => handleSave()}
+            disabled={isPending}
             className="w-full mt-8 bg-teal-600"
           >
-            Save
+            {isPending ? <Loader borderColor="border-white" /> : "Save"}
           </Button>
         </div>
       </div>

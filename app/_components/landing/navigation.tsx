@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Menu } from "lucide-react";
-import Image from "next/image";
 
 interface NavigationProps {
   scrolled: boolean;
@@ -36,14 +35,16 @@ const Navigation = ({ scrolled }: NavigationProps) => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5 }}
               >
-                <span className="mr-1 bg-black/5 rounded-full p-2">
+                {/* <span className="mr-1 bg-black/5 rounded-full p-2">
                   <img src="/logo.png" alt="logo" className="w-10 h-6" />
-                </span>
-                {!scrolled && (
-                  <span className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent">
-                    Meetvise
-                  </span>
-                )}
+                </span> */}
+
+                <Link
+                  href={"/"}
+                  className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
+                >
+                  Meetvise
+                </Link>
               </motion.div>
               <motion.nav
                 className="hidden md:flex items-center space-x-8"
@@ -78,7 +79,7 @@ const Navigation = ({ scrolled }: NavigationProps) => {
               >
                 <Button
                   onClick={() => router.push("/dashboard")}
-                  className={`hidden md:block bg-gradient-to-t from-white/90 to-white text-black rounded-full opacity-80 hover:opacity-80 transition duration-300 hover:to-emerald-700`}
+                  className={`hidden md:block bg-gradient-to-t from-white/90 to-white text-black rounded-full opacity-80 hover:opacity-70 transition duration-300`}
                 >
                   Sign up
                 </Button>

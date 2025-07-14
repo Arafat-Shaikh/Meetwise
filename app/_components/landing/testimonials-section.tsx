@@ -117,7 +117,7 @@ const TestimonialsSection = ({
   };
 
   return (
-    <div className="min-h-screen">
+    <div id="testimonials" className="min-h-screen">
       <motion.section
         className="relative min-h-screen flex items-center justify-center py-20 px-4 overflow-hidden"
         initial="hidden"

@@ -67,7 +67,7 @@ const CtaSection = () => {
               delay: words.length * 0.08 + 1,
               ease: "easeOut",
             }}
-            className="text-slate-300 text-lg mt-6 mb-32 font-light tracking-wide"
+            className="text-neutral-200 text-lg mt-6 mb-32 font-light tracking-wide"
           >
             Experience the future of productivity
           </motion.p>
@@ -106,7 +106,7 @@ const CtaSection = () => {
             </Button>
           </motion.div>
           <motion.p
-            className="mt-8 text-sm text-blue-200"
+            className="mt-8 text-sm text-neutral-300"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}

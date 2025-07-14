@@ -171,6 +171,7 @@ const OnboardingStepPage = () => {
         const result = await saveOnboardingUserData(finalData);
         if (result.success) {
           toast.success("Setup completed!");
+          router.push("/availability");
           localStorage.removeItem("onboarding-data");
         } else {
           toast.error("Something went wrong");

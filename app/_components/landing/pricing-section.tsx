@@ -32,6 +32,9 @@ const PricingSection = () => {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.2 }}
             className="rounded-2xl relative border-neutral-800 border-[2px] overflow-hidden flex flex-col bg-neutral-950 shadow-xl"
+            style={{
+              boxShadow: `0 10px 30px rgba(255,255,255,0.1), inset 0 1px 0 rgba(255,255,255,0.2)`,
+            }}
           >
             <div className="absolute inset-0 pointer-events-none">
               <div className="w-full h-full bg-[radial-gradient(circle_at_top_left,_rgba(240,253,244,0.9)_0%,_rgba(110,231,183,0.4)_25%,_transparent_45%)] blur-[60px] mix-blend-screen"></div>
@@ -99,8 +102,8 @@ const PricingSection = () => {
               </motion.ul>
             </div>
             <div className="p-6">
-              <div className="w-full">
-                <Button className="w-full bg-white text-black hover:bg-gray-50">
+              <div className="w-full flex justify-center">
+                <Button className="bg-gradient-to-t from-white/70 via-white/80 to-white text-black rounded-full hover:bg-gray-50 w-1/2 shadow-xl shadow-white/10">
                   Get Started
                 </Button>
               </div>
