@@ -67,7 +67,7 @@ const CtaSection = () => {
               delay: words.length * 0.08 + 1,
               ease: "easeOut",
             }}
-            className="text-neutral-200 text-lg mt-6 mb-32 font-light tracking-wide"
+            className="text-neutral-200 text-lg mt-6 mb-8 font-light tracking-wide"
           >
             Experience the future of productivity
           </motion.p>
@@ -80,9 +80,10 @@ const CtaSection = () => {
           >
             <Button
               size="default"
-              className="group bg-emerald-600 rounded-full hover:bg-emerald-700 transition-all duration-300 text-white  group relative text-lg h-14 px-8"
+              className="group border border-emerald-700 bg-gradient-to-tl from-emerald-500 via-emerald-600 to-emerald-700 rounded-full hover:bg-emerald-700 transition-all duration-300 text-white  group relative text-lg h-14 px-8"
             >
               <span className="relative z-10">Start Free Trial</span>
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-950 via-emerald-700 rounded-full to-emerald-600 opacity-20 " />
 
               <motion.span
                 className="inline-block"

@@ -18,9 +18,8 @@ const Navigation = ({ scrolled }: NavigationProps) => {
           className={`fixed top-3.5 z-50 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 left-1/2 -translate-x-1/2  w-[95%] ${
             scrolled ? "max-w-3xl scale-98" : "max-w-4xl"
           }`}
-          initial={{ y: 80, opacity: 0, x: "-50%" }}
+          initial={{ opacity: 0, x: "-50%" }}
           animate={{
-            y: 0,
             opacity: 1,
             scale: scrolled ? 0.98 : 1,
             maxWidth: scrolled ? "768px" : "1024px",
@@ -56,8 +55,20 @@ const Navigation = ({ scrolled }: NavigationProps) => {
                   (item, i) => (
                     <motion.div
                       key={item}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, y: -20 }}
+                      animate={{
+                        opacity: 1,
+                        y: 0,
+                        transition: { duration: 1, delay: i * 0.3 },
+                      }}
+                      whileHover={{
+                        scale: 1.05,
+                        transition: { duration: 0.2 },
+                      }}
+                      whileTap={{
+                        scale: 0.95,
+                        transition: { duration: 0.2 },
+                      }}
                     >
                       <Link
                         href={`#${item.toLowerCase().replace(/\s+/g, "-")}`}

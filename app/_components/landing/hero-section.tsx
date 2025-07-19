@@ -165,7 +165,7 @@ const HeroSection = () => {
             className="relative flex items-center justify-center lg:justify-end"
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            transition={{ duration: 0.2, delay: 0.4 }}
             whileHover={{ y: -5 }}
           >
             <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl space-y-1 shadow-white/10">
@@ -215,7 +215,7 @@ const HeroSection = () => {
                       duration: 0.6,
                       delay: 0.6,
                     }}
-                    whileHover={{ scale: 1.01 }}
+                    whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
                     // transition={{
                     //   type: "spring",
                     //   stiffness: 400,
@@ -238,7 +238,7 @@ const HeroSection = () => {
                       duration: 0.6,
                       delay: 0.8,
                     }}
-                    whileHover={{ scale: 1.01 }}
+                    whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-emerald-50 opacity-10" />
                     <div className="font-medium tracking-wide">

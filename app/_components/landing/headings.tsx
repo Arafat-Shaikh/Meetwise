@@ -46,7 +46,7 @@ const Headings = ({ heading, subHeading }: HeadingsProps) => {
           delay: 1,
           ease: "easeInOut",
         }}
-        className="h-[1px] bg-gradient-to-r mt-6 from-transparent via-emerald-800 to-transparent mx-auto"
+        className="h-[1px] bg-gradient-to-r mt-6 from-transparent via-white/80 to-transparent mx-auto"
       />
       <motion.p
         initial={{ opacity: 0, y: 60 }}

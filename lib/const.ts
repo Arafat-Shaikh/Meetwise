@@ -225,7 +225,7 @@ export const testimonials = [
   {
     id: 1,
     text: "This product has completely transformed how we work. The intuitive design and powerful features have increased our productivity by 300%. I can't imagine going back to our old workflow.",
-    name: "Sarah Chen",
+    name: "Sam Chen",
     role: "Product Manager at TechCorp",
     avatar:
       "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100&h=100&fit=crop&crop=face",
@@ -241,10 +241,10 @@ export const testimonials = [
   {
     id: 3,
     text: "The best investment we've made this year. The ROI has been incredible, and our team absolutely loves using it. Highly recommend to anyone looking to scale their operations.",
-    name: "Emily Johnson",
+    name: "Ahmed Khan",
     role: "CEO at GrowthCo",
     avatar:
-      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face",
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face",
   },
   {
     id: 4,

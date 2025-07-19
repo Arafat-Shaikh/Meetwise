@@ -61,7 +61,7 @@ const StepCard = ({
                 ? { opacity: 1, x: 0 }
                 : { opacity: 0, x: isEven ? -100 : 100 }
             }
-            transition={{ duration: 0.8, delay: index * 0.3 }}
+            transition={{ duration: 1.4, delay: index * 0.3 }}
           >
             <div className="bg-gray-50/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-emerald-100/50">
               {/* Icon */}

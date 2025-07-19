@@ -202,19 +202,23 @@ export default function FeaturesSection() {
                 {/* Main Premium Card - All Same White Theme */}
                 {true && (
                   <motion.div
-                    className="relative h-full p-8 rounded-3xl backdrop-blur-2xl border border-white/10 bg-gradient-to-br from-neutral-900/80 blur-[0.5px] via-neutral-900/40 to-neutral-800/80 shadow-2xl shadow-white/10 overflow-hidden"
+                    className="relative h-full p-8 rounded-3xl backdrop-blur-2xl border border-white/10 bg-gradient-to-b from-neutral-900/80 blur-[0.5px] via-neutral-900/40 to-neutral-800/80 shadow-2xl shadow-white/10 overflow-hidden"
                     // whileHover={{
                     //   y: index === 1 ? 0 : -2,
                     //   boxShadow: `0 25px 50px -12px rgba(255,255,255,0.2), 0 0 0 1px rgba(255,255,255,0.1)`,
                     //   borderColor: "rgba(255,255,255,0.2)",
                     //   transition: { duration: 0.4, ease: "easeOut" },
                     // }}
+
+                    whileHover={{
+                      scale: 1.05,
+                    }}
                     style={{
                       transformStyle: "preserve-3d",
                     }}
                   >
                     {/* Premium white gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 opacity-50 group-hover:opacity-70 transition-opacity duration-500" />
+                    {/* <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/2 opacity-50 group-hover:opacity-70 transition-opacity duration-500" /> */}
 
                     {/* Card every card: White Particle Effect */}
                     {hoveredCard === feature.id && (
