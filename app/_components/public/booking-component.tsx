@@ -18,9 +18,11 @@ const formatTime = (time: string) => {
 // Mock data for available dates and time slots
 const availableSlots = {
   "2025-07-16": ["09:00", "10:30", "14:00", "15:30", "17:00"],
-  "2025-07-17": ["09:00", "11:00", "13:30", "16:00"],
-  "2025-07-18": ["10:00", "11:30", "14:30", "16:30"],
-  "2025-07-19": ["09:30", "12:00", "15:00"],
+  "2025-07-17": ["09:00", "11:00", "13:30"], // Fewer slots
+  "2025-07-18": ["10:00", "11:30", "14:30", "16:30", "17:30", "18:00", "19:00", "20:00"], // More slots
+  "2025-07-19": ["09:30"], // Single slot
+  "2025-07-20": ["10:00", "11:00"], // Two slots
+  "2025-07-21": ["12:00", "13:00", "14:00"], // Three slots
   "2025-07-22": ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
   "2025-07-23": ["09:30", "11:30", "13:00", "14:30", "16:00"],
   "2025-07-24": ["10:00", "12:00", "15:30", "17:00"],
@@ -235,17 +237,17 @@ const BookingComponent = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mx-auto">
                   {getTimeSlots(selectedDate).map((time, index) => (
                     <Button
                       key={time}
                       variant={selectedTime === time ? "default" : "outline"}
                       onClick={() => handleTimeSelect(time)}
                       className={`
-                        h-12 text-base transition-all duration-300 rounded-lg
+                        h-10 text-base transition-all duration-300 rounded-full
                         ${
                           selectedTime === time
-                            ? "bg-white text-black font-semibold shadow-lg transform scale-105"
+                            ? "bg-white text-black font-semibold shadow-lg transform scale-105 hover:bg-white/90"
                             : "bg-neutral-800 text-neutral-300 border border-neutral-700 hover:bg-neutral-700 hover:text-white"
                         }
                       `}
