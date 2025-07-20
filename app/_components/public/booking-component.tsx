@@ -267,53 +267,38 @@ const BookingComponent = ({
 
           {/* Confirmation Section */}
           {selectedDate && selectedTime && showConfirmation && (
-            <>
-              <Separator className="mx-8" />
-
-              <div
-                ref={confirmationRef}
-                className="p-8 animate-slide-up opacity-0"
-                style={{
-                  animationDelay: "400ms",
-                  animationFillMode: "forwards",
-                }}
-              >
-                <div className="space-y-6">
-                  <div className="text-center">
-                    <div className="inline-flex items-center gap-3 text-primary">
-                      <CheckCircle className="h-6 w-6" />
-                      <h3 className="text-xl font-semibold text-white">
-                        Ready to Book?
-                      </h3>
-                    </div>
-                  </div>
-
-                  <div className="bg-neutral-900 border border-neutral-700 rounded-xl p-6 space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-neutral-400">Date</span>
-                      <span className="font-semibold text-neutral-100">
-                        {getDateLabel(selectedDate)}
-                      </span>
-                    </div>
-                    <Separator className="bg-neutral-800" />
-                    <div className="flex justify-between items-center">
-                      <span className="text-neutral-400">Time</span>
-                      <span className="font-semibold text-neutral-100">
-                        {selectedTime}
-                      </span>
-                    </div>
-                  </div>
-
-                  <Button
-                    onClick={handleBooking}
-                    className="w-full h-14 text-lg font-semibold bg-white text-black hover:bg-neutral-200 transition-all duration-300 rounded-full shadow-lg shadow-white/10 hover:shadow-white/20"
-                    size="lg"
-                  >
-                    Confirm Booking
-                  </Button>
+            <div
+              ref={confirmationRef}
+              className="p-8 animate-slide-up opacity-0"
+              style={{
+                animationDelay: "400ms",
+                animationFillMode: "forwards",
+              }}
+            >
+              <div className="space-y-6 text-center">
+                <div className="inline-flex items-center gap-3 text-primary">
+                  <CheckCircle className="h-6 w-6" />
+                  <h3 className="text-xl font-semibold text-neutral-200">Booking Confirmed</h3>
                 </div>
+
+                <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl p-6 space-y-4 shadow-lg shadow-neutral-950/50">
+                  <p className="text-neutral-400 text-base font-medium">
+                    Your appointment is scheduled for:
+                  </p>
+                  <p className="text-white text-2xl font-extrabold">
+                    {getDateLabel(selectedDate)} at {selectedTime}
+                  </p>
+                </div>
+
+                <Button
+                  onClick={handleBooking}
+                  className="mx-auto w-fit px-8 h-12 text-base font-semibold bg-white text-black hover:bg-neutral-200 transition-all duration-300 rounded-full shadow-lg shadow-white/10 hover:shadow-white/20"
+                  size="lg"
+                >
+                  Confirm Booking
+                </Button>
               </div>
-            </>
+            </div>
           )}
         </CardContent>
       </Card>
