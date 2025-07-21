@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format, isToday, isTomorrow } from "date-fns";
 import { CalendarIcon, Clock, CheckCircle, Sparkles } from "lucide-react";
+import useAvailability from "@/hooks/useAvailability";
+import { AvailabilityMap } from "@/app/(dashboard)/availability/page";
 
 const formatTime = (time: string) => {
   const [hour, minute] = time.split(":");
@@ -50,6 +52,11 @@ const BookingComponent = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const timeSlotsRef = useRef<HTMLDivElement>(null);
   const confirmationRef = useRef<HTMLDivElement>(null);
+  const { data, isPending } = useAvailability();
+  const availability = data?.availability as AvailabilityMap;
+
+  console.log(data);
+  //
 
   // Get available dates
   const availableDates = Object.keys(availableSlots).map(
@@ -58,10 +65,29 @@ const BookingComponent = ({
 
   // Check if a date has available slots
   const isDayAvailable = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
-    return (
-      availableSlots[dateString as keyof typeof availableSlots]?.length > 0
-    );
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const maxDate = new Date(today);
+    maxDate.setDate(today.getDate() + 30); // 30 days from today
+
+    if (date < tomorrow || date > maxDate) return false;
+
+    const weekdays = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+    ];
+
+    const dayName = weekdays[date.getDay()];
+    const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
+
+    return dayAvailability?.enabled ?? false;
   };
 
   // Get time slots for selected date
@@ -137,6 +163,7 @@ const BookingComponent = ({
   return (
     <div className="max-w-2xl border-0 bg-transparent sm:bg-neutral-950  rounded-2xl mx-auto sm:p-6">
       {/* Header */}
+
       <div className="text-center space-y-3 mb-8 animate-fade-in">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
           <Sparkles className="h-4 w-4 text-white" />
@@ -234,7 +261,7 @@ const BookingComponent = ({
                   <div className="flex items-center gap-2 mt-1">
                     <Badge
                       variant="secondary"
-                      className="text-sm px-3 py-1 bg-white/10 text-white border-0"
+                      className="text-sm px-3 py-1 bg-white/10 rounded-full text-neutral-400 border-0"
                     >
                       {getDateLabel(selectedDate)}
                     </Badge>
@@ -285,7 +312,6 @@ const BookingComponent = ({
               <div className="space-y-6 text-center">
                 <div className="inline-flex items-center gap-3 text-primary">
                   <CheckCircle className="h-6 w-6 text-neutral-400" />
-              
                 </div>
 
                 <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl p-6 space-y-4 shadow-lg shadow-neutral-950/50">
@@ -299,7 +325,7 @@ const BookingComponent = ({
 
                 <Button
                   onClick={handleBooking}
-                  className="mx-auto w-fit px-8 h-10 text-base font-semibold bg-gradient-to-t from-white/70 via-white/80 to-white border border-black/90 text-black hover:bg-neutral-200 transition-all duration-300 rounded-full hover:shadow-white/20"
+                  className="mx-auto w-fit px-8 h-10 text-sm font-semibold bg-gradient-to-t from-white/70 via-white/80 to-white border border-black/90 text-black hover:bg-neutral-200 transition-all duration-300 rounded-full hover:shadow-white/20"
                 >
                   Confirm
                 </Button>
