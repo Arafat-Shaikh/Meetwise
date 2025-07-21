@@ -8,6 +8,7 @@ import { format, isToday, isTomorrow } from "date-fns";
 import { CalendarIcon, Clock, CheckCircle, Sparkles } from "lucide-react";
 import useAvailability from "@/hooks/useAvailability";
 import { AvailabilityMap } from "@/app/(dashboard)/availability/page";
+import { formatTo12Hour, to24Hour } from "@/lib/test-utils";
 
 const formatTime = (time: string) => {
   const [hour, minute] = time.split(":");
@@ -39,6 +40,44 @@ const availableSlots = {
   "2025-07-25": ["09:00", "10:30", "13:30", "15:00", "16:30"],
 };
 
+type Booking = {
+  userId: string;
+  date: Date;
+  clientName: string;
+  clientEmail: string;
+  title: string;
+  duration: number;
+};
+
+const mockBookings = [
+  {
+    userId: "user123",
+    date: new Date("2025-07-24T09:00:00"), // thursday
+    clientName: "Alice",
+    clientEmail: "alice@example.com",
+    title: "Strategy Session",
+    duration: 30, // meeting duration
+  },
+  {
+    userId: "user123",
+    date: new Date("2025-07-24T10:15:00"), // thursday
+    clientName: "Bob",
+    clientEmail: "bob@example.com",
+    title: "Quick Consult",
+    duration: 15, // meeting duration
+  },
+];
+
+const SLOT_DURATION = 15;
+const weekdays = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
 const BookingComponent = ({
   value,
   onChange,
@@ -74,16 +113,6 @@ const BookingComponent = ({
 
     if (date < tomorrow || date > maxDate) return false;
 
-    const weekdays = [
-      "Sunday",
-      "Monday",
-      "Tuesday",
-      "Wednesday",
-      "Thursday",
-      "Friday",
-      "Saturday",
-    ];
-
     const dayName = weekdays[date.getDay()];
     const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
 
@@ -98,16 +127,94 @@ const BookingComponent = ({
     return slots.map(formatTime);
   };
 
+  function generateTimeSlots(
+    start: string,
+    end: string,
+    intervalMinutes: number
+  ): string[] {
+    const slots: string[] = [];
+    const startDate = new Date(`1970-01-01T${to24Hour(start)}:00`);
+    const endDate = new Date(`1970-01-01T${to24Hour(end)}:00`);
+
+    while (startDate < endDate) {
+      slots.push(formatTo12Hour(startDate));
+      startDate.setMinutes(startDate.getMinutes() + intervalMinutes);
+    }
+
+    return slots;
+  }
+
+  const getTimeSlotsOfDay = (date: Date) => {
+    const slotsOfDay =
+      availability?.[weekdays[date.getDay()] as keyof AvailabilityMap]
+        .timeSlots;
+    console.log(slotsOfDay);
+    const arrayOfSlots = [];
+    for (const el of slotsOfDay) {
+      arrayOfSlots.push(...generateTimeSlots(el.startTime, el.endTime, 15));
+    }
+
+    console.log(arrayOfSlots);
+    return arrayOfSlots;
+  };
+
+  function filterBookedSlots(
+    timeRanges: string[],
+    bookings: Booking[]
+  ): string[] {
+    const bookedSlots = new Set<string>();
+
+    bookings.forEach((booking) => {
+      const start = booking.date;
+
+      const isSameDate =
+        start.getFullYear() === selectedDate?.getFullYear() &&
+        start.getMonth() === selectedDate?.getMonth() &&
+        start.getDate() === selectedDate?.getDate();
+
+      if (!isSameDate) return;
+
+      const duration = booking.duration || 15;
+
+      const slotsToBlock = duration / SLOT_DURATION;
+
+      const blocked: string[] = [];
+
+      const startDate = new Date(start);
+      for (let i = 0; i < slotsToBlock; i++) {
+        const slotTime = formatTo12Hour(startDate);
+        console.log("inside loop: ", slotTime);
+        blocked.push(slotTime);
+
+        startDate.setMinutes(startDate.getMinutes() + SLOT_DURATION);
+      }
+
+      blocked.forEach((slot) => bookedSlots.add(slot));
+    });
+
+    // Return only the slots that are NOT booked
+    return timeRanges.filter((slot) => !bookedSlots.has(slot));
+  }
+
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     setSelectedTime(undefined);
     setShowConfirmation(false);
 
+    const timeRanges = getTimeSlotsOfDay(date || new Date());
+
+    // fake bookings for removing slots that are already booked
+    const bookings = mockBookings;
+    //available time slots
+    const availableSlots = filterBookedSlots(timeRanges, bookings);
+    // console.log(selectedDate);
+    // console.log(availableSlots);
+
     if (date) {
-      // Small delay before showing time slots for smoother transition
+      // Small delay before showing time slots
       setTimeout(() => {
         setShowTimeSlots(true);
-        // Scroll to time slots after animation starts
+        // Scroll to time slots
         setTimeout(() => {
           timeSlotsRef.current?.scrollIntoView({
             behavior: "smooth",
@@ -123,10 +230,10 @@ const BookingComponent = ({
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
 
-    // Delay before showing confirmation for smoother transition
+    // Delay before showing confirmation
     setTimeout(() => {
       setShowConfirmation(true);
-      // Scroll to confirmation after animation starts
+      // Scroll to confirmation
       setTimeout(() => {
         confirmationRef.current?.scrollIntoView({
           behavior: "smooth",
