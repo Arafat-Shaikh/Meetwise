@@ -15,14 +15,22 @@ const formatTime = (time: string) => {
   return `${formattedHour}:${minute}${ampm}`;
 };
 
-// Mock data for available dates and time slots
 const availableSlots = {
   "2025-07-16": ["09:00", "10:30", "14:00", "15:30", "17:00"],
-  "2025-07-17": ["09:00", "11:00", "13:30"], // Fewer slots
-  "2025-07-18": ["10:00", "11:30", "14:30", "16:30", "17:30", "18:00", "19:00", "20:00"], // More slots
-  "2025-07-19": ["09:30"], // Single slot
-  "2025-07-20": ["10:00", "11:00"], // Two slots
-  "2025-07-21": ["12:00", "13:00", "14:00"], // Three slots
+  "2025-07-17": ["09:00", "11:00", "13:30"],
+  "2025-07-18": [
+    "10:00",
+    "11:30",
+    "14:30",
+    "16:30",
+    "17:30",
+    "18:00",
+    "19:00",
+    "20:00",
+  ], // More slots
+  "2025-07-19": ["09:30"],
+  "2025-07-20": ["10:00", "11:00"],
+  "2025-07-21": ["12:00", "13:00", "14:00"],
   "2025-07-22": ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00"],
   "2025-07-23": ["09:30", "11:30", "13:00", "14:30", "16:00"],
   "2025-07-24": ["10:00", "12:00", "15:30", "17:00"],
@@ -127,26 +135,26 @@ const BookingComponent = ({
   };
 
   return (
-    <div className="w-full max-w-4xl bg-neutral-950 border border-neutral-800 rounded-2xl mx-auto p-6">
+    <div className="max-w-2xl border-0 bg-transparent sm:bg-neutral-950  rounded-2xl mx-auto sm:p-6">
       {/* Header */}
       <div className="text-center space-y-3 mb-8 animate-fade-in">
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-full">
           <Sparkles className="h-4 w-4 text-white" />
-          <span className="text-sm font-medium text-white">Book Your Time</span>
+          <span className="text-2xl sm:text-3xl font-medium text-white">
+            Book Your Time
+          </span>
         </div>
-        <h2 className="text-2xl font-semibold text-white">
-          Select Date & Time
-        </h2>
-        <p className="text-muted-foreground">
+
+        <p className="text-muted-foreground sm:text-lg">
           Choose your preferred appointment slot
         </p>
       </div>
 
       {/* Single Unified Card */}
-      <Card className="border-0 shadow-lg bg-neutral-900 transition-all duration-300 hover:shadow-xl animate-fade-in overflow-hidden">
+      <Card className="border-0 shadow-lg px-2 sm:px-8 bg-transparent transition-all duration-300 hover:shadow-xl animate-fade-in overflow-hidden sm:min-w-[400px] md:min-w-[524px]">
         <CardContent className="p-0">
           {/* Calendar Section */}
-          <div className="p-8">
+          <div className="py-8">
             <Calendar
               formatters={{
                 formatWeekdayName: (date) => {
@@ -179,7 +187,7 @@ const BookingComponent = ({
                 caption_label: "text-base text-neutral-200 font-semibold",
                 nav: "space-x-1 flex items-center",
                 nav_button:
-                  "h-8 w-8 flex items-center justify-center bg-transparent bg-white/70 p-0 hover:opacity-100 transition-all duration-200 rounded-full hover:bg-accent",
+                  "h-8 w-8 flex items-center justify-center bg-transparent bg-white/90 p-0 hover:opacity-100 transition-all duration-200 rounded-full hover:bg-accent",
                 nav_button_previous: "absolute left-1",
                 nav_button_next: "absolute right-1",
                 table: "w-full border-collapse space-y-1",
@@ -190,7 +198,7 @@ const BookingComponent = ({
                 cell: "text-center text-sm p-0 relative flex-1 focus-within:relative focus-within:z-20",
                 day: "h-10 w-10 p-0 font-normal aria-selected:opacity-100 text-neutral-300 rounded-full transition-all duration-200 hover:scale-105",
                 day_selected:
-                  "bg-white text-black hover:bg-white/90 focus:text-neutral-700 shadow-md transform scale-105 rounded-full",
+                  "bg-white text-neutral-900 hover:bg-white/90 shadow-md transform scale-105 rounded-full",
                 day_today:
                   "border-2 bg-white/20 text-white border-neutral-100 font-semibold ring-2 ring-primary/20 rounded-full",
                 day_outside: "text-muted-foreground opacity-50",
@@ -206,34 +214,33 @@ const BookingComponent = ({
           {/* Time Slots Section */}
           {selectedDate && showTimeSlots && (
             <>
-              <Separator className="mx-8 bg-neutral-800" />
+              <Separator className=" bg-neutral-800" />
               <div
                 ref={timeSlotsRef}
-                className="p-8 animate-slide-up opacity-0"
+                className=" animate-slide-up opacity-0  py-8"
                 style={{
                   animationDelay: "300ms",
                   animationFillMode: "forwards",
                 }}
               >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 bg-white/10 rounded-full">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-6">
+                  <div className="flex gap-x-2">
                     <Clock className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="flex-1">
                     <h3 className="text-xl font-semibold text-white">
                       Available Times
                     </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <Badge
-                        variant="secondary"
-                        className="text-sm px-3 py-1 bg-white/10 text-white border-0"
-                      >
-                        {getDateLabel(selectedDate)}
-                      </Badge>
-                      <span className="text-sm text-neutral-400">
-                        {getTimeSlots(selectedDate).length} slots available
-                      </span>
-                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 mt-1">
+                    <Badge
+                      variant="secondary"
+                      className="text-sm px-3 py-1 bg-white/10 text-white border-0"
+                    >
+                      {getDateLabel(selectedDate)}
+                    </Badge>
+                    <span className="text-sm text-neutral-400">
+                      {getTimeSlots(selectedDate).length} slots available
+                    </span>
                   </div>
                 </div>
 
@@ -247,7 +254,7 @@ const BookingComponent = ({
                         h-10 text-base transition-all duration-300 rounded-full
                         ${
                           selectedTime === time
-                            ? "bg-white text-black font-semibold shadow-lg transform scale-105 hover:bg-white/90"
+                            ? "bg-gradient-to-t from-white/70 via-white/80 to-white text-black font-semibold shadow-lg transform scale-105 hover:bg-white/20"
                             : "bg-neutral-800 text-neutral-300 border border-neutral-700 hover:bg-neutral-700 hover:text-white"
                         }
                       `}
@@ -277,8 +284,8 @@ const BookingComponent = ({
             >
               <div className="space-y-6 text-center">
                 <div className="inline-flex items-center gap-3 text-primary">
-                  <CheckCircle className="h-6 w-6" />
-                  <h3 className="text-xl font-semibold text-neutral-200">Booking Confirmed</h3>
+                  <CheckCircle className="h-6 w-6 text-neutral-400" />
+              
                 </div>
 
                 <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl p-6 space-y-4 shadow-lg shadow-neutral-950/50">
@@ -292,10 +299,9 @@ const BookingComponent = ({
 
                 <Button
                   onClick={handleBooking}
-                  className="mx-auto w-fit px-8 h-12 text-base font-semibold bg-white text-black hover:bg-neutral-200 transition-all duration-300 rounded-full shadow-lg shadow-white/10 hover:shadow-white/20"
-                  size="lg"
+                  className="mx-auto w-fit px-8 h-10 text-base font-semibold bg-gradient-to-t from-white/70 via-white/80 to-white border border-black/90 text-black hover:bg-neutral-200 transition-all duration-300 rounded-full hover:shadow-white/20"
                 >
-                  Confirm Booking
+                  Confirm
                 </Button>
               </div>
             </div>

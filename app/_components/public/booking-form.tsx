@@ -12,7 +12,7 @@ const BookingForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="w-full">
       <Controller
         name="booking"
         control={control}

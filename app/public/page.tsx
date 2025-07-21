@@ -5,18 +5,18 @@ import BookingForm from "../_components/public/booking-form";
 
 const PublicPage = () => {
   return (
-   <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-950 py-12 px-4">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12 animate-fade-in">
+   <div className="min-h-screen bg-gradient-to-br flex items-center from-neutral-950 via-black  to-neutral-950 py-12 px-4">
+      <div className="max-w-4xl w-full mx-auto min-h-full">
+        {/* <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-4xl text-white mb-4">
             Book Your Appointment
           </h1>
           <p className="text-lg text-slate-400 max-w-md mx-auto">
             Select your preferred date and time for a seamless booking experience
           </p>
-        </div>
+        </div> */}
         
-        <div className="flex justify-center">
+        <div className="flex justify-center ">
           <BookingForm />
         </div>
       </div>
