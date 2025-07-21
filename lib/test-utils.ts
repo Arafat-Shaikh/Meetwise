@@ -36,5 +36,5 @@ function formatTo12Hour(date: Date): string {
   return `${hours}:${minutes.toString().padStart(2, "0")}${meridian}`;
 }
 
-const slots = generateTimeSlots("9:00am", "12:00pm", 30);
+const slots = generateTimeSlots("9:00am", "12:00pm", 15);
 console.log(slots);
