@@ -1,11 +1,12 @@
-"use client"
+"use client";
 
 import React from "react";
+import BookingComponent from "../_components/public/booking-component";
 import BookingForm from "../_components/public/booking-form";
 
 const PublicPage = () => {
   return (
-   <div className="min-h-screen bg-gradient-to-br flex items-center from-neutral-950 via-black  to-neutral-950 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br flex items-center from-neutral-950 via-black  to-neutral-950 py-12 px-4">
       <div className="max-w-4xl w-full mx-auto min-h-full">
         {/* <div className="text-center mb-12 animate-fade-in">
           <h1 className="text-4xl text-white mb-4">
@@ -15,7 +16,7 @@ const PublicPage = () => {
             Select your preferred date and time for a seamless booking experience
           </p>
         </div> */}
-        
+
         <div className="flex justify-center ">
           <BookingForm />
         </div>
@@ -27,7 +28,6 @@ const PublicPage = () => {
 export default PublicPage;
 
 // clients flow.👇
-
 
 // able to select the date from calendar.
 // able to just select the start time in time slot.

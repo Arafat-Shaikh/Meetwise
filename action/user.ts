@@ -7,7 +7,7 @@ import { DayOfWeek } from "@/lib/generated/prisma";
 import prisma from "@/lib/global-prisma";
 import { onboardingSchema, OnboardingDataTypes } from "@/lib/zod/schema";
 import { getServerSession } from "next-auth";
-import { any } from "zod";
+import { any, z } from "zod";
 
 export async function getUser() {
   const users = await prisma.user.findMany({});
@@ -203,4 +203,47 @@ export async function getUserAvailability() {
   };
 
   return data;
+}
+
+const bookingFormSchema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  date: z.coerce.date(),
+  timeSlot: z.string().min(1, "Time slot is required"),
+  additionalNotes: z.string().optional(),
+});
+
+export type BookingFormData = z.infer<typeof bookingFormSchema>;
+
+export async function saveBooking(data: BookingFormData) {
+  const validation = bookingFormSchema.safeParse(data);
+
+  if (!validation.success) {
+    console.error("Booking validation failed:", validation.error.flatten());
+    throw new Error("Invalid booking data provided.");
+  }
+
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { id: true },
+  });
+
+  const booking = await prisma.booking.create({
+    data: {
+      userId: session.user.id,
+      title: "your-booking",
+      clientName: validation.data.fullName,
+      clientEmail: validation.data.email,
+      date: validation.data.date,
+      additionalNote: validation.data.additionalNotes,
+    },
+  });
+
+  return { success: true, bookingId: booking.id };
 }
