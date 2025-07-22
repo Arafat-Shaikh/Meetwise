@@ -5,10 +5,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format, isToday, isTomorrow } from "date-fns";
-import { CalendarIcon, Clock, CheckCircle, Sparkles } from "lucide-react";
+import {
+  CalendarIcon,
+  Clock,
+  CheckCircle,
+  Sparkles,
+  ArrowRight,
+  MessageSquare,
+  Mail,
+  User,
+} from "lucide-react";
 import useAvailability from "@/hooks/useAvailability";
 import { AvailabilityMap } from "@/app/(dashboard)/availability/page";
 import { formatTo12Hour, to24Hour } from "@/lib/test-utils";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const formatTime = (time: string) => {
   const [hour, minute] = time.split(":");
@@ -429,17 +441,100 @@ const BookingComponent = ({
             >
               <div className="space-y-6 text-center">
                 <div className="inline-flex items-center gap-3 text-primary">
-                  <CheckCircle className="h-6 w-6 text-neutral-400" />
+                  <CheckCircle className="h-6 w-6 text-amber-400/70" />
                 </div>
 
-                <div className="bg-gradient-to-br from-neutral-900 to-neutral-800 rounded-xl p-6 space-y-4 shadow-lg shadow-neutral-950/50">
-                  <p className="text-neutral-400 text-base font-medium">
-                    Your appointment is scheduled for:
-                  </p>
-                  <p className="text-white text-2xl font-extrabold">
-                    {getDateLabel(selectedDate)} at {selectedTime}
-                  </p>
+                <div className="flex justify-center">
+                  <div className="relative bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-800 border-[1px] border-neutral-700/20  py-2 px-8 rounded-full space-y-2 shadow-xl shadow-amber-50/5">
+                    {/* just a background style  */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-emerald-50 opacity-10 rounded-full" />
+                    <p className="text-neutral-500 text-sm font-medium">
+                      Your appointment is scheduled for:
+                    </p>
+                    <p className="text-white text-lg font-extrabold">
+                      {getDateLabel(selectedDate)} at {selectedTime}
+                    </p>
+                  </div>
                 </div>
+
+                <Card className="bg-transparent backdrop-blur-xl border-0 shadow-2xl">
+                  <CardContent className="p-8 space-y-8">
+                    {/* Name Field */}
+                    <div className="space-y-3">
+                      <Label
+                        htmlFor="name"
+                        className="text-white font-medium text-base flex items-center gap-3"
+                      >
+                        <div className="w-8 h-8 bg-neutral-800 rounded-full flex items-center justify-center">
+                          <User className="w-4 h-4 text-neutral-400" />
+                        </div>
+                        Full Name
+                      </Label>
+                      <Input
+                        id="name"
+                        placeholder="Enter your full name"
+                        className="border-neutral-700 text-white hover:border-neutral-600 hover:border-[2px] transition duration-500"
+                      />
+                    </div>
+
+                    {/* Email Field */}
+                    <div className="space-y-3">
+                      <Label
+                        htmlFor="email"
+                        className="text-white font-medium text-base flex items-center gap-3"
+                      >
+                        <div className="w-8 h-8 bg-neutral-800 rounded-full flex items-center justify-center">
+                          <Mail className="w-4 h-4 text-neutral-400" />
+                        </div>
+                        Email Address
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="your.email@example.com"
+                        className="border-neutral-700 text-white hover:border-neutral-600 hover:border-[2px] transition duration-500"
+                      />
+                    </div>
+
+                    {/* Notes Field */}
+                    <div className="space-y-3">
+                      <Label
+                        htmlFor="notes"
+                        className="text-white font-medium text-base flex items-center gap-3"
+                      >
+                        <div className="w-8 h-8 bg-neutral-800 flex rounded-full items-center justify-center">
+                          <MessageSquare className="w-4 h-4 text-neutral-400" />
+                        </div>
+                        Additional Notes
+                      </Label>
+                      <Textarea
+                        id="notes"
+                        placeholder="Add context or reminders for the meeting..."
+                        className="border-neutral-700 hover:border-neutral-600 hover:border-[2px] transition duration-500 bg-black/50 placeholder:text-neutral-500 min-h-[140px] resize-none text-base leading-relaxed outline-none text-white"
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    {/* <div className="pt-4">
+                      <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold h-14 text-base transition-all duration-300 shadow-lg hover:shadow-xl hover:shadow-amber-500/25 group">
+                        Schedule Appointment
+                        <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
+                      </Button>
+                    </div> */}
+
+                    {/* Footer Text */}
+                    {/* <div className="pt-4 border-t border-neutral-800">
+                      <p className="text-neutral-400 text-sm text-center leading-relaxed">
+                        By submitting this form, you agree to our{" "}
+                        <span className="text-amber-400 hover:text-amber-300 cursor-pointer transition-colors">
+                          terms of service
+                        </span>
+                        . We respect your privacy and will never share your
+                        information.
+                      </p>
+                    </div> */}
+                  </CardContent>
+                </Card>
 
                 <Button
                   onClick={handleBooking}
