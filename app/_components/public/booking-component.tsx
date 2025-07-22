@@ -93,6 +93,7 @@ const BookingComponent = ({
   const confirmationRef = useRef<HTMLDivElement>(null);
   const { data, isPending } = useAvailability();
   const availability = data?.availability as AvailabilityMap;
+  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
 
   console.log(data);
   //
@@ -120,12 +121,13 @@ const BookingComponent = ({
   };
 
   // Get time slots for selected date
-  const getTimeSlots = (date: Date) => {
-    const dateString = format(date, "yyyy-MM-dd");
-    const slots =
-      availableSlots[dateString as keyof typeof availableSlots] || [];
-    return slots.map(formatTime);
-  };
+  // const getTimeSlots = (date: Date) => {
+  //   const dateString = format(date, "yyyy-MM-dd");
+  //   const slots =
+  //     availableSlots[dateString as keyof typeof availableSlots] || [];
+  //   console.log(slots.map(formatTime));
+  //   return slots.map(formatTime);
+  // };
 
   function generateTimeSlots(
     start: string,
@@ -201,12 +203,8 @@ const BookingComponent = ({
     setSelectedTime(undefined);
     setShowConfirmation(false);
 
-    const timeRanges = getTimeSlotsOfDay(date || new Date());
-
-    // fake bookings for removing slots that are already booked
-    const bookings = mockBookings;
     //available time slots
-    const availableSlots = filterBookedSlots(timeRanges, bookings);
+
     // console.log(selectedDate);
     // console.log(availableSlots);
 
@@ -226,6 +224,16 @@ const BookingComponent = ({
       setShowTimeSlots(false);
     }
   };
+
+  useEffect(() => {
+    if (!selectedDate) return;
+    const timeRanges = getTimeSlotsOfDay(selectedDate || new Date());
+    // fake bookings for removing slots that are already booked
+    const bookings = mockBookings;
+
+    const availableSlots = filterBookedSlots(timeRanges, bookings);
+    setAvailableTimeSlots(availableSlots as any);
+  }, [selectedDate]);
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time);
@@ -373,13 +381,13 @@ const BookingComponent = ({
                       {getDateLabel(selectedDate)}
                     </Badge>
                     <span className="text-sm text-neutral-400">
-                      {getTimeSlots(selectedDate).length} slots available
+                      {availableTimeSlots.length} slots available
                     </span>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mx-auto">
-                  {getTimeSlots(selectedDate).map((time, index) => (
+                  {availableTimeSlots.map((time, index) => (
                     <Button
                       key={time}
                       variant={selectedTime === time ? "default" : "outline"}
@@ -393,8 +401,11 @@ const BookingComponent = ({
                         }
                       `}
                       style={{
+                        animationName: "fade-in",
+                        animationDuration: "0.5s",
+                        animationTimingFunction: "ease-out",
                         animationDelay: `${index * 70 + 400}ms`,
-                        animation: "fade-in 0.5s ease-out forwards",
+                        animationFillMode: "forwards",
                         opacity: "0",
                       }}
                     >
