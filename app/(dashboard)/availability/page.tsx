@@ -18,8 +18,8 @@ import { toast } from "sonner";
 // type EventTypes = "Availability" | "Others";
 
 type TimeSlot = {
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
 };
 
 type DayAvailability = {
@@ -34,13 +34,13 @@ const AvailabilityPage = () => {
   const [bufferTime, setBufferTime] = useState("15");
   const [maxBookings, setMaxBookings] = useState(5);
   const [advanceNotice, setAdvanceNotice] = useState(2);
-  const [availability, setAvailability] = useState<AvailabilityMap>({
+  const [availability, setAvailability] = useState({
     Monday: {
       enabled: true,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
@@ -48,8 +48,8 @@ const AvailabilityPage = () => {
       enabled: true,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
@@ -57,8 +57,8 @@ const AvailabilityPage = () => {
       enabled: true,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
@@ -66,8 +66,8 @@ const AvailabilityPage = () => {
       enabled: true,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
@@ -75,8 +75,8 @@ const AvailabilityPage = () => {
       enabled: true,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
@@ -84,8 +84,8 @@ const AvailabilityPage = () => {
       enabled: false,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
@@ -93,14 +93,17 @@ const AvailabilityPage = () => {
       enabled: false,
       timeSlots: [
         {
-          startTime: new Date("2023-01-01T09:00:00.000Z"),
-          endTime: new Date("2023-01-01T09:00:00.000Z"),
+          startTime: "9:00am",
+          endTime: "5:00pm",
         },
       ],
     },
   });
   const { data: userAvailability } = useAvailability();
   const { mutateAsync, isPending } = useSaveAvailability();
+
+  console.log(userAvailability?.availability?.Monday.timeSlots[0].startTime);
+  console.log(userAvailability?.availability?.Monday.timeSlots[0].endTime);
 
   useEffect(() => {
     if (userAvailability) {

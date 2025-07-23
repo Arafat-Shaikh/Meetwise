@@ -9,7 +9,8 @@ import { onboardingSchema, OnboardingDataTypes } from "@/lib/zod/schema";
 import { addDays, parse } from "date-fns";
 import { getServerSession } from "next-auth";
 import { any, z } from "zod";
-import { fromZonedTime } from "date-fns-tz";
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
+import { convertTimeSlotsToUtc } from "@/lib/utils";
 
 export async function getUser() {
   const users = await prisma.user.findMany({});
@@ -26,16 +27,6 @@ export async function checkUsernameExists(username: string) {
 
   return !!exists;
 }
-
-const dayToDateMap: Record<string, string> = {
-  Monday: "2025-01-06",
-  Tuesday: "2025-01-07",
-  Wednesday: "2025-01-08",
-  Thursday: "2025-01-09",
-  Friday: "2025-01-10",
-  Saturday: "2025-01-11",
-  Sunday: "2025-01-12",
-};
 
 export async function saveOnboardingUserData(rawData: any) {
   const session = await getServerSession(authOptions);
@@ -74,36 +65,15 @@ export async function saveOnboardingUserData(rawData: any) {
     throw new Error("No user found");
   }
 
-  function normalizeTimeFormat(time: string): string {
-    return time
-      .toUpperCase() // "9:00am" -> "9:00AM"
-      .replace(/(AM|PM)/, " $1") // "9:00AM" -> "9:00 AM"
-      .trim(); // Clean any extra spaces
-  }
-
   for (const [day, { enabled, timeSlots }] of Object.entries(
     data.availability
   )) {
-    let utcSlots = [];
-    const fakeDate = dayToDateMap[day];
-
-    for (const slot of timeSlots) {
-      const fullStart = `${fakeDate} ${normalizeTimeFormat(slot.startTime)}`;
-      const fullEnd = `${fakeDate} ${normalizeTimeFormat(slot.endTime)}`;
-
-      const localStart = parse(fullStart, "yyyy-MM-dd h:mm a", new Date());
-      const localEnd = parse(fullEnd, "yyyy-MM-dd h:mm a", new Date());
-
-      const startUtc = fromZonedTime(localStart, user.timezone);
-      const endUtc = fromZonedTime(localEnd, user.timezone);
-
-      utcSlots.push({
-        day,
-        enabled,
-        startUtc: startUtc.toISOString(),
-        endUtc: endUtc.toISOString(),
-      });
-    }
+    const utcSlots = convertTimeSlotsToUtc(
+      day,
+      timeSlots,
+      user.timezone,
+      enabled
+    );
 
     await prisma.availability.create({
       data: {
@@ -159,6 +129,8 @@ export async function saveUserAvailability(data: any) {
   for (const [day, { enabled, timeSlots }] of Object.entries(availability)) {
     const dayOfWeek = day as keyof typeof DayOfWeek;
 
+    const utcSlots = convertTimeSlotsToUtc(day, timeSlots, timezone, enabled);
+
     // Delete existing availability for the day
     const availability = await prisma.availability.findFirst({
       where: {
@@ -188,9 +160,9 @@ export async function saveUserAvailability(data: any) {
         day: dayOfWeek,
         enabled,
         slots: {
-          create: timeSlots.map((slot) => ({
-            startTime: slot.startTime,
-            endTime: slot.endTime,
+          create: utcSlots.map(({ startUtc, endUtc }) => ({
+            startTime: new Date(startUtc),
+            endTime: new Date(endUtc),
           })),
         },
       },
@@ -230,13 +202,28 @@ export async function getUserAvailability() {
   });
 
   console.log("User Availability:", user?.availability);
+  console.log(user?.availability[0].day);
+
+  console.log(user?.availability[0].slots[0].startTime);
+  console.log(user?.availability[0].slots[0].endTime);
+
+  function formatTimeToUserTZ(date: Date, timeZone: string): string {
+    return formatInTimeZone(date, timeZone, "h:mma").toLowerCase(); // returns "9:00am"
+  }
+
+  const targetTimeZone = user?.timezone;
+
+  // may have to fix this later
+  if (!targetTimeZone) {
+    throw new Error("Error while checking the timezone");
+  }
 
   const availability = user?.availability.reduce((acc, day) => {
     acc[day.day] = {
       enabled: day.enabled,
       timeSlots: day.slots.map((slot) => ({
-        startTime: new Date(),
-        endTime: new Date(),
+        startTime: formatTimeToUserTZ(new Date(slot.startTime), targetTimeZone),
+        endTime: formatTimeToUserTZ(new Date(slot.endTime), targetTimeZone),
       })),
     };
     return acc;
@@ -253,6 +240,7 @@ export async function getUserAvailability() {
   return data;
 }
 
+// booking function down below
 const bookingFormSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
   email: z.string().email("Invalid email address"),
