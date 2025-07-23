@@ -51,8 +51,8 @@ const OnboardingStepPage = () => {
   } = useForm<MultiStepFormData>({ defaultValues: defaultFormData });
 
   const watchedData = watch();
-  console.log("availability for monday", watchedData.availability["Monday"]);
-  console.log(timeValidationErrors);
+  // console.log("availability for monday", watchedData.availability["Monday"]);
+  // console.log(timeValidationErrors);
 
   // detect timezone
   useEffect(() => {

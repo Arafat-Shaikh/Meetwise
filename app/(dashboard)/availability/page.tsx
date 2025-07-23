@@ -18,8 +18,8 @@ import { toast } from "sonner";
 // type EventTypes = "Availability" | "Others";
 
 type TimeSlot = {
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
 };
 
 type DayAvailability = {
@@ -37,31 +37,66 @@ const AvailabilityPage = () => {
   const [availability, setAvailability] = useState<AvailabilityMap>({
     Monday: {
       enabled: true,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
     Tuesday: {
       enabled: true,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
     Wednesday: {
       enabled: true,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
     Thursday: {
       enabled: true,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
     Friday: {
       enabled: true,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
     Saturday: {
       enabled: false,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
     Sunday: {
       enabled: false,
-      timeSlots: [{ startTime: "9:00am", endTime: "5:00pm" }],
+      timeSlots: [
+        {
+          startTime: new Date("2023-01-01T09:00:00.000Z"),
+          endTime: new Date("2023-01-01T09:00:00.000Z"),
+        },
+      ],
     },
   });
   const { data: userAvailability } = useAvailability();

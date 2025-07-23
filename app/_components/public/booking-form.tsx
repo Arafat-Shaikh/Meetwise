@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import BookingComponent from "./booking-component";
 import { saveBooking } from "@/action/user";
@@ -21,6 +21,12 @@ const BookingForm = () => {
     watch,
     formState: { errors },
   } = useForm<BookingFormData>();
+  const [clientTimezone, setClientTimezone] = useState("");
+
+  useEffect(() => {
+    const tZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log("Client Timezone: ", tZone);
+  }, []);
 
   const onSubmit = async (data: BookingFormData) => {
     console.log(data);

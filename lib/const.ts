@@ -324,7 +324,7 @@ export const timezones = [
   "Europe/London",
   "Europe/Paris",
   "Europe/Berlin",
-  "Asia/Tokyo",
+  "Asia/Kolkata",
   "Asia/Shanghai",
   "Australia/Sydney",
 ];

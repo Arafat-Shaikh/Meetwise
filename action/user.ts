@@ -6,8 +6,10 @@ import { Day } from "@/lib/const";
 import { DayOfWeek } from "@/lib/generated/prisma";
 import prisma from "@/lib/global-prisma";
 import { onboardingSchema, OnboardingDataTypes } from "@/lib/zod/schema";
+import { addDays, parse } from "date-fns";
 import { getServerSession } from "next-auth";
 import { any, z } from "zod";
+import { fromZonedTime } from "date-fns-tz";
 
 export async function getUser() {
   const users = await prisma.user.findMany({});
@@ -25,6 +27,16 @@ export async function checkUsernameExists(username: string) {
   return !!exists;
 }
 
+const dayToDateMap: Record<string, string> = {
+  Monday: "2025-01-06",
+  Tuesday: "2025-01-07",
+  Wednesday: "2025-01-08",
+  Thursday: "2025-01-09",
+  Friday: "2025-01-10",
+  Saturday: "2025-01-11",
+  Sunday: "2025-01-12",
+};
+
 export async function saveOnboardingUserData(rawData: any) {
   const session = await getServerSession(authOptions);
 
@@ -32,12 +44,16 @@ export async function saveOnboardingUserData(rawData: any) {
     throw new Error("Unauthorized");
   }
 
+  console.log("Raw data: ", rawData);
+
   const result = onboardingSchema.safeParse(rawData);
 
   if (!result.success) {
     console.error("Validation failed:", result.error);
     throw new Error("Invalid data provided");
   }
+
+  const timezone = "Asia/Kolkata";
 
   const data: OnboardingDataTypes = result.data;
 
@@ -54,18 +70,50 @@ export async function saveOnboardingUserData(rawData: any) {
     },
   });
 
+  if (!user.id || !user.timezone) {
+    throw new Error("No user found");
+  }
+
+  function normalizeTimeFormat(time: string): string {
+    return time
+      .toUpperCase() // "9:00am" -> "9:00AM"
+      .replace(/(AM|PM)/, " $1") // "9:00AM" -> "9:00 AM"
+      .trim(); // Clean any extra spaces
+  }
+
   for (const [day, { enabled, timeSlots }] of Object.entries(
     data.availability
   )) {
+    let utcSlots = [];
+    const fakeDate = dayToDateMap[day];
+
+    for (const slot of timeSlots) {
+      const fullStart = `${fakeDate} ${normalizeTimeFormat(slot.startTime)}`;
+      const fullEnd = `${fakeDate} ${normalizeTimeFormat(slot.endTime)}`;
+
+      const localStart = parse(fullStart, "yyyy-MM-dd h:mm a", new Date());
+      const localEnd = parse(fullEnd, "yyyy-MM-dd h:mm a", new Date());
+
+      const startUtc = fromZonedTime(localStart, user.timezone);
+      const endUtc = fromZonedTime(localEnd, user.timezone);
+
+      utcSlots.push({
+        day,
+        enabled,
+        startUtc: startUtc.toISOString(),
+        endUtc: endUtc.toISOString(),
+      });
+    }
+
     await prisma.availability.create({
       data: {
         userId: user.id,
         day: day as keyof typeof DayOfWeek,
         enabled,
         slots: {
-          create: timeSlots.map((slot) => ({
-            startTime: slot.startTime,
-            endTime: slot.endTime,
+          create: utcSlots.map(({ startUtc, endUtc }) => ({
+            startTime: new Date(startUtc),
+            endTime: new Date(endUtc),
           })),
         },
       },
@@ -187,8 +235,8 @@ export async function getUserAvailability() {
     acc[day.day] = {
       enabled: day.enabled,
       timeSlots: day.slots.map((slot) => ({
-        startTime: slot.startTime,
-        endTime: slot.endTime,
+        startTime: new Date(),
+        endTime: new Date(),
       })),
     };
     return acc;
