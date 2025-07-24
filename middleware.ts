@@ -8,7 +8,12 @@ const publicRoutes = ["/", "/login", "/sign-up", "/api/auth"];
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  if (publicRoutes.includes(pathname) || pathname.startsWith("/api/auth")) {
+  const isPublicPage =
+    publicRoutes.includes(pathname) ||
+    pathname.startsWith("/api/auth") ||
+    /^\/[^\/]+$/.test(pathname);
+
+  if (isPublicPage) {
     return NextResponse.next();
   }
 

@@ -1,8 +1,7 @@
 "use client";
 
+import BookingForm from "@/app/_components/public/booking-form";
 import React from "react";
-import BookingComponent from "../_components/public/booking-component";
-import BookingForm from "../_components/public/booking-form";
 
 const PublicPage = () => {
   return (

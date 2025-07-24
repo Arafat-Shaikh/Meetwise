@@ -28,6 +28,12 @@ import {
 } from "react-hook-form";
 import { BookingFormData } from "./booking-form";
 import { weekDays } from "@/lib/const";
+import { fromZonedTime, toZonedTime } from "date-fns-tz";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import InvalidUsername from "./invalid-username";
+import Loader from "../loader";
+import CalendarLoader from "../calendar-loader";
 
 type Booking = {
   userId: string;
@@ -77,15 +83,27 @@ const BookingComponent = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const timeSlotsRef = useRef<HTMLDivElement>(null);
   const confirmationRef = useRef<HTMLDivElement>(null);
-  const { data } = useAvailability();
-  const availability = data?.availability as AvailabilityMap;
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
+  const [clientTimeZone, setClientTimeZone] = useState<string | undefined>();
+  const { username } = useParams();
 
-  console.log(data);
+  console.log(username);
+
+  useEffect(() => {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    setClientTimeZone(tz);
+  }, []);
+
+  const { data, isLoading } = useAvailability(
+    clientTimeZone,
+    username.toString()
+  );
+  const availability = data?.availability as AvailabilityMap;
 
   // Check if a date has available slots
   const isDayAvailable = (date: Date) => {
     const today = new Date();
+
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
@@ -94,10 +112,13 @@ const BookingComponent = ({
 
     if (date < tomorrow || date > maxDate) return false;
 
-    const dayName = weekDays[date.getDay()];
-    const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
-
-    return dayAvailability?.enabled ?? false;
+    if (data?.timezone) {
+      const userZonedData = toZonedTime(date, data.timezone);
+      // const dayName = weekDays[date.getDay()];
+      const dayName = format(userZonedData, "EEEE");
+      const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
+      return dayAvailability?.enabled ?? false;
+    }
   };
 
   function generateTimeSlots(
@@ -124,7 +145,7 @@ const BookingComponent = ({
     console.log(slotsOfDay);
     const arrayOfSlots = [];
     for (const el of slotsOfDay) {
-      arrayOfSlots.push(...generateTimeSlots(el.startTime, el.endTime, 15));
+      arrayOfSlots.push(...generateTimeSlots(el.startTime, el.endTime, 30));
     }
 
     console.log(arrayOfSlots);
@@ -219,6 +240,14 @@ const BookingComponent = ({
     return format(date, "EEEE, MMM dd");
   };
 
+  if (!data?.availability && !isLoading) {
+    return <InvalidUsername />;
+  }
+
+  if (isLoading) {
+    return <CalendarLoader />;
+  }
+
   return (
     <div className="max-w-2xl border-0 bg-transparent sm:bg-neutral-950  rounded-2xl mx-auto sm:p-6">
       {/* Header */}
@@ -263,7 +292,7 @@ const BookingComponent = ({
                       },
                     }}
                     mode="single"
-                    selected={field.value}
+                    selected={selectedDate}
                     onSelect={(date) => {
                       field.onChange(date);
                       handleDateSelect(date);

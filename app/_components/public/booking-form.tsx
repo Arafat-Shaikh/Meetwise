@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import BookingComponent from "./booking-component";
 import { saveBooking } from "@/action/user";
 import { toast } from "sonner";

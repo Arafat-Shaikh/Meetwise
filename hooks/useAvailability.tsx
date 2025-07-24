@@ -1,11 +1,12 @@
 import { getUserAvailability } from "@/action/user";
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
 
-const useAvailability = () => {
+const useAvailability = (clientTimeZone?: string, username?: string) => {
+  console.log(clientTimeZone);
+  console.log(username);
   return useQuery({
-    queryKey: ["availability"],
-    queryFn: () => getUserAvailability(),
+    queryKey: ["availability", clientTimeZone, username],
+    queryFn: () => getUserAvailability(clientTimeZone, username),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };

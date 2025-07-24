@@ -10,7 +10,7 @@ import { addDays, parse } from "date-fns";
 import { getServerSession } from "next-auth";
 import { any, z } from "zod";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
-import { convertTimeSlotsToUtc } from "@/lib/utils";
+import { convertTimeSlotsToUtc, getTargetUser } from "@/lib/utils";
 
 export async function getUser() {
   const users = await prisma.user.findMany({});
@@ -170,15 +170,18 @@ export async function saveUserAvailability(data: any) {
   }
 }
 
-export async function getUserAvailability() {
-  const session = await getServerSession(authOptions);
+export async function getUserAvailability(
+  clientTimeZone?: string,
+  usernameOverride?: string
+) {
+  const { user, targetTimeZone } = await getTargetUser(
+    usernameOverride,
+    clientTimeZone
+  );
+  if (!targetTimeZone) throw new Error("Timezone missing");
 
-  if (!session?.user.id) {
-    throw new Error("Unauthorized");
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
+  const detailedUser = await prisma.user.findUnique({
+    where: { id: user.id },
     select: {
       id: true,
       timezone: true,
@@ -201,24 +204,19 @@ export async function getUserAvailability() {
     },
   });
 
-  console.log("User Availability:", user?.availability);
-  console.log(user?.availability[0].day);
+  // console.log("User Availability:", user?.availability);
+  // console.log(user?.availability[0].day);
 
-  console.log(user?.availability[0].slots[0].startTime);
-  console.log(user?.availability[0].slots[0].endTime);
+  // console.log(user?.availability[0].slots[0].startTime);
+  // console.log(user?.availability[0].slots[0].endTime);
+
+  if (!detailedUser) throw new Error("User not found");
 
   function formatTimeToUserTZ(date: Date, timeZone: string): string {
     return formatInTimeZone(date, timeZone, "h:mma").toLowerCase(); // returns "9:00am"
   }
 
-  const targetTimeZone = user?.timezone;
-
-  // may have to fix this later
-  if (!targetTimeZone) {
-    throw new Error("Error while checking the timezone");
-  }
-
-  const availability = user?.availability.reduce((acc, day) => {
+  const availability = detailedUser?.availability.reduce((acc, day) => {
     acc[day.day] = {
       enabled: day.enabled,
       timeSlots: day.slots.map((slot) => ({
