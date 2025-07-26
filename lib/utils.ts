@@ -51,7 +51,16 @@ export async function getTargetUser(
   usernameOverride?: string,
   clientTimeZone?: string
 ) {
+  if (usernameOverride && clientTimeZone) {
+    const user = await prisma.user.findUnique({
+      where: { username: usernameOverride },
+    });
+    if (!user) throw new Error("User not found");
+    return { user, targetTimeZone: clientTimeZone };
+  }
+
   const session = await getServerSession(authOptions);
+
   if (session?.user?.id) {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
@@ -60,15 +69,7 @@ export async function getTargetUser(
     if (!user) throw new Error("User not found");
     return { user, targetTimeZone: user.timezone };
   } else {
-    if (usernameOverride && clientTimeZone) {
-      const user = await prisma.user.findUnique({
-        where: { username: usernameOverride },
-      });
-      if (!user) throw new Error("User not found");
-      return { user, targetTimeZone: clientTimeZone };
-    } else {
-      throw new Error("Timezone not found");
-    }
+    throw new Error("Something went wrong");
   }
 }
 

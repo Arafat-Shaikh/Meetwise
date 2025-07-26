@@ -9,13 +9,26 @@ import { onboardingSchema, OnboardingDataTypes } from "@/lib/zod/schema";
 import { addDays, parse } from "date-fns";
 import { getServerSession } from "next-auth";
 import { any, z } from "zod";
-import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
+import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
 import { convertTimeSlotsToUtc, getTargetUser } from "@/lib/utils";
 
 export async function getUser() {
-  const users = await prisma.user.findMany({});
-  console.log(users);
-  return users;
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user.id) {
+    throw new Error("User not found");
+  }
+  const user = await prisma.user.findUnique({
+    where: {
+      id: session.user.id,
+    },
+  });
+
+  if (!user?.id) {
+    throw new Error("User not found");
+  }
+
+  return user;
 }
 
 export async function checkUsernameExists(username: string) {
@@ -170,18 +183,12 @@ export async function saveUserAvailability(data: any) {
   }
 }
 
-export async function getUserAvailability(
-  clientTimeZone?: string,
-  usernameOverride?: string
-) {
-  const { user, targetTimeZone } = await getTargetUser(
-    usernameOverride,
-    clientTimeZone
-  );
-  if (!targetTimeZone) throw new Error("Timezone missing");
+export async function getUserAvailability(timezone?: string) {
+  const session = await getServerSession(authOptions);
+  if (!session?.user.id) throw new Error("User not found");
 
-  const detailedUser = await prisma.user.findUnique({
-    where: { id: user.id },
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
     select: {
       id: true,
       timezone: true,
@@ -204,19 +211,15 @@ export async function getUserAvailability(
     },
   });
 
-  // console.log("User Availability:", user?.availability);
-  // console.log(user?.availability[0].day);
+  if (!user?.timezone) throw new Error("User not found");
 
-  // console.log(user?.availability[0].slots[0].startTime);
-  // console.log(user?.availability[0].slots[0].endTime);
-
-  if (!detailedUser) throw new Error("User not found");
+  const targetTimeZone = timezone || user.timezone;
 
   function formatTimeToUserTZ(date: Date, timeZone: string): string {
     return formatInTimeZone(date, timeZone, "h:mma").toLowerCase(); // returns "9:00am"
   }
 
-  const availability = detailedUser?.availability.reduce((acc, day) => {
+  const availability = user?.availability.reduce((acc, day) => {
     acc[day.day] = {
       enabled: day.enabled,
       timeSlots: day.slots.map((slot) => ({
@@ -238,6 +241,58 @@ export async function getUserAvailability(
   return data;
 }
 
+export async function getPublicUserAvailability(
+  targetTimeZone?: string,
+  username?: string
+) {
+  if (!targetTimeZone || !username) throw new Error("Timezone missing");
+
+  const detailedUser = await prisma.user.findUnique({
+    where: { username },
+    select: {
+      id: true,
+      timezone: true,
+      maxBookings: true,
+      availability: {
+        select: {
+          id: true,
+          day: true,
+          enabled: true,
+          slots: {
+            select: {
+              startTime: true,
+              endTime: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!detailedUser) throw new Error("User not found");
+
+  function formatTimeToUserTZ(date: Date, timeZone: string): string {
+    return formatInTimeZone(date, timeZone, "h:mma").toLowerCase(); // returns "9:00am"
+  }
+
+  const availability = detailedUser?.availability.reduce((acc, day) => {
+    acc[day.day] = {
+      enabled: day.enabled,
+      timeSlots: day.slots.map((slot) => ({
+        startTime: formatTimeToUserTZ(new Date(slot.startTime), targetTimeZone),
+        endTime: formatTimeToUserTZ(new Date(slot.endTime), targetTimeZone),
+      })),
+    };
+    return acc;
+  }, {} as AvailabilityMap);
+
+  return {
+    availability,
+    timezone: detailedUser?.timezone || "",
+    maxBookings: detailedUser?.maxBookings || 10,
+  };
+}
+
 // booking function down below
 const bookingFormSchema = z.object({
   fullName: z.string().min(1, "Full name is required"),
@@ -245,6 +300,8 @@ const bookingFormSchema = z.object({
   date: z.coerce.date(),
   timeSlot: z.string().min(1, "Time slot is required"),
   additionalNotes: z.string().optional(),
+  duration: z.number(),
+  username: z.string(),
 });
 
 export type BookingFormData = z.infer<typeof bookingFormSchema>;
@@ -257,27 +314,61 @@ export async function saveBooking(data: BookingFormData) {
     throw new Error("Invalid booking data provided.");
   }
 
-  const session = await getServerSession(authOptions);
-
-  if (!session?.user.id) {
-    throw new Error("Unauthorized");
-  }
+  console.log(data);
 
   const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { id: true },
+    where: { username: data.username },
+    select: { id: true, timezone: true },
   });
+
+  if (!user?.id || !user.timezone) {
+    throw new Error("Something went wrong");
+  }
+
+  console.log(data.date);
+  console.log(data.timeSlot);
+  // UTC date into user’s timezone
+  const userLocalDate = toZonedTime(new Date(data.date), user.timezone);
+  // Combine date + timeSlot (e.g., '9:00am')
+  const dateStr = `${userLocalDate.getFullYear()}-${(
+    userLocalDate.getMonth() + 1
+  )
+    .toString()
+    .padStart(2, "0")}-${userLocalDate.getDate().toString().padStart(2, "0")} ${
+    data.timeSlot
+  }`;
+
+  //  Parse this string into a Date in user's TZ
+  const bookingStartInUserTz = parse(dateStr, "yyyy-MM-dd h:mma", new Date());
+  // convert to utc
+  const bookingStartUtc = fromZonedTime(bookingStartInUserTz, user.timezone);
+
+  console.log(bookingStartUtc);
 
   const booking = await prisma.booking.create({
     data: {
-      userId: session.user.id,
+      userId: user.id,
       title: "your-booking",
-      clientName: validation.data.fullName,
-      clientEmail: validation.data.email,
-      date: validation.data.date,
-      additionalNote: validation.data.additionalNotes,
+      clientName: data.fullName,
+      clientEmail: data.email,
+      date: bookingStartUtc,
+      additionalNote: data.additionalNotes,
+      duration: data.duration,
     },
   });
 
-  return { success: true, bookingId: booking.id };
+  const obj = {
+    id: "cmdjvomr80001s6li2wthgj2m",
+    userId: "cmdgcez3y000ms6skr8l4vw6k",
+    clientEmail: "admin@gmail.com",
+    clientName: "Arafat shaikh",
+    duration: 30,
+    date: "2025-07-28T04:00:00.000Z",
+    title: "your-booking",
+    additionalNote: "yououououou",
+  };
+
+  console.log(booking);
+
+  return { success: false, bookingId: "9009" };
 }

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import BookingComponent from "./booking-component";
 import { saveBooking } from "@/action/user";
 import { toast } from "sonner";
+import { useParams } from "next/navigation";
 
 export type BookingFormData = {
   fullName: string;
@@ -11,6 +12,8 @@ export type BookingFormData = {
   date: Date;
   timeSlot: string;
   additionalNotes?: string;
+  username: string;
+  duration: number;
 };
 
 const BookingForm = () => {
@@ -19,14 +22,9 @@ const BookingForm = () => {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm<BookingFormData>();
-  const [clientTimezone, setClientTimezone] = useState("");
-
-  useEffect(() => {
-    const tZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log("Client Timezone: ", tZone);
-  }, []);
 
   const onSubmit = async (data: BookingFormData) => {
     console.log(data);
@@ -48,6 +46,7 @@ const BookingForm = () => {
     <form onSubmit={handleSubmit(onSubmit)} className="w-full">
       <BookingComponent
         register={register}
+        setValue={setValue}
         control={control}
         errors={errors}
         watch={watch}

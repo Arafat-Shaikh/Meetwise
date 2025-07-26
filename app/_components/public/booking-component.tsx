@@ -24,6 +24,7 @@ import {
   Controller,
   FieldErrors,
   UseFormRegister,
+  UseFormSetValue,
   UseFormWatch,
 } from "react-hook-form";
 import { BookingFormData } from "./booking-form";
@@ -34,32 +35,39 @@ import Link from "next/link";
 import InvalidUsername from "./invalid-username";
 import Loader from "../loader";
 import CalendarLoader from "../calendar-loader";
+import usePublicAvailability from "@/hooks/use-public-availability";
 
 type Booking = {
+  id: string;
   userId: string;
-  date: Date;
   clientName: string;
   clientEmail: string;
-  title: string;
   duration: number;
+  date: Date;
+  title: string;
+  additionalNote: string;
 };
 
 const mockBookings = [
   {
-    userId: "user123",
-    date: new Date("2025-07-24T09:00:00"), // thursday
-    clientName: "Alice",
-    clientEmail: "alice@example.com",
-    title: "Strategy Session",
-    duration: 30, // meeting duration
+    id: "cmdjvomr80001s6li2wthgj2m",
+    userId: "cmdgcez3y000ms6skr8l4vw6k",
+    clientEmail: "one@gmail.com",
+    clientName: "one",
+    duration: 30,
+    date: new Date("2025-07-28T05:00:00.000Z"),
+    title: "your-booking",
+    additionalNote: "yououououou",
   },
   {
-    userId: "user123",
-    date: new Date("2025-07-24T10:15:00"), // thursday
-    clientName: "Bob",
-    clientEmail: "bob@example.com",
-    title: "Quick Consult",
-    duration: 15, // meeting duration
+    id: "cmdjvomr80001s6li2wthgj2m",
+    userId: "cmdgcez3y000ms6skr8l4vw6k",
+    clientEmail: "admin@gmail.com",
+    clientName: "Arafat shaikh",
+    duration: 30,
+    date: new Date("2025-07-28T04:00:00.000Z"),
+    title: "your-booking",
+    additionalNote: "yououououou",
   },
 ];
 
@@ -70,6 +78,7 @@ type BookingComponentProps = {
   errors: FieldErrors<BookingFormData>;
   control: Control<BookingFormData>;
   watch: UseFormWatch<BookingFormData>;
+  setValue: UseFormSetValue<BookingFormData>;
 };
 
 const BookingComponent = ({
@@ -77,6 +86,7 @@ const BookingComponent = ({
   errors,
   control,
   watch,
+  setValue,
 }: BookingComponentProps) => {
   const { timeSlot: selectedTime, date: selectedDate } = watch();
   const [showTimeSlots, setShowTimeSlots] = useState(false);
@@ -86,15 +96,16 @@ const BookingComponent = ({
   const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
   const [clientTimeZone, setClientTimeZone] = useState<string | undefined>();
   const { username } = useParams();
-
-  console.log(username);
+  const DURATION = 30;
 
   useEffect(() => {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     setClientTimeZone(tz);
+    setValue("username", username.toString());
+    setValue("duration", DURATION);
   }, []);
 
-  const { data, isLoading } = useAvailability(
+  const { data, isLoading } = usePublicAvailability(
     clientTimeZone,
     username.toString()
   );
@@ -113,14 +124,22 @@ const BookingComponent = ({
     if (date < tomorrow || date > maxDate) return false;
 
     if (data?.timezone) {
-      const userZonedData = toZonedTime(date, data.timezone);
+      // user zoned date
+      const userZonedDate = toZonedTime(date, data.timezone);
       // const dayName = weekDays[date.getDay()];
-      const dayName = format(userZonedData, "EEEE");
+      const dayName = format(userZonedDate, "EEEE");
       const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
       return dayAvailability?.enabled ?? false;
     }
-  };
 
+    if (!data?.timezone) return false;
+  };
+  // the availability is saved in utc.
+  // booking should be saved in utc.
+  // the available slots logic should already be calculated at server side.
+  // and should send the string like slots back to the frontend.
+  // and when booking should happen by selecting string like timeslots.
+  // then it should go to backend and get converted into utc and then saved.
   function generateTimeSlots(
     start: string,
     end: string,
@@ -129,6 +148,10 @@ const BookingComponent = ({
     const slots: string[] = [];
     const startDate = new Date(`1970-01-01T${to24Hour(start)}:00`);
     const endDate = new Date(`1970-01-01T${to24Hour(end)}:00`);
+
+    console.log(startDate);
+    console.log(endDate);
+    console.log(slots);
 
     while (startDate < endDate) {
       slots.push(formatTo12Hour(startDate));
@@ -139,10 +162,14 @@ const BookingComponent = ({
   }
 
   const getTimeSlotsOfDay = (date: Date) => {
+    if (!data?.timezone) return;
+
+    const userZonedDate = toZonedTime(date, data.timezone);
+    const dayName = format(userZonedDate, "EEEE");
     const slotsOfDay =
-      availability?.[weekDays[date.getDay()] as keyof AvailabilityMap]
-        .timeSlots;
+      availability?.[dayName as keyof AvailabilityMap].timeSlots;
     console.log(slotsOfDay);
+
     const arrayOfSlots = [];
     for (const el of slotsOfDay) {
       arrayOfSlots.push(...generateTimeSlots(el.startTime, el.endTime, 30));
@@ -168,7 +195,7 @@ const BookingComponent = ({
 
       if (!isSameDate) return;
 
-      const duration = booking.duration || 15;
+      const duration = booking.duration || 30;
 
       const slotsToBlock = duration / SLOT_DURATION;
 
@@ -177,7 +204,7 @@ const BookingComponent = ({
       const startDate = new Date(start);
       for (let i = 0; i < slotsToBlock; i++) {
         const slotTime = formatTo12Hour(startDate);
-        console.log("inside loop: ", slotTime);
+
         blocked.push(slotTime);
 
         startDate.setMinutes(startDate.getMinutes() + SLOT_DURATION);
@@ -212,9 +239,11 @@ const BookingComponent = ({
 
   useEffect(() => {
     if (!selectedDate) return;
-    const timeRanges = getTimeSlotsOfDay(selectedDate || new Date());
+    const timeRanges = getTimeSlotsOfDay(selectedDate);
+
+    if (!timeRanges) return;
     // fake bookings for removing slots that are already booked
-    const bookings = mockBookings;
+    const bookings = mockBookings as Booking[];
 
     const availableSlots = filterBookedSlots(timeRanges, bookings);
     setAvailableTimeSlots(availableSlots as any);
@@ -344,7 +373,7 @@ const BookingComponent = ({
               <Separator className=" bg-neutral-800" />
               <div
                 ref={timeSlotsRef}
-                className=" animate-slide-up opacity-0  py-8"
+                className=" animate-slide-up opacity-0 py-8"
                 style={{
                   animationDelay: "300ms",
                   animationFillMode: "forwards",

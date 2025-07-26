@@ -82,6 +82,7 @@ model Booking {
   clientName        String
   clientPhoneNumber String?
   clientTimezone    String?
+  duration          Int     @default(30)
 
   date           DateTime
   title          String
