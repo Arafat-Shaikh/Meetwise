@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -36,6 +36,7 @@ import InvalidUsername from "./invalid-username";
 import Loader from "../loader";
 import CalendarLoader from "../calendar-loader";
 import usePublicAvailability from "@/hooks/use-public-availability";
+import useTimeSlots from "@/hooks/use-time-slots";
 
 type Booking = {
   id: string;
@@ -47,29 +48,6 @@ type Booking = {
   title: string;
   additionalNote: string;
 };
-
-const mockBookings = [
-  {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "one@gmail.com",
-    clientName: "one",
-    duration: 30,
-    date: new Date("2025-07-28T05:00:00.000Z"),
-    title: "your-booking",
-    additionalNote: "yououououou",
-  },
-  {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "admin@gmail.com",
-    clientName: "Arafat shaikh",
-    duration: 30,
-    date: new Date("2025-07-28T04:00:00.000Z"),
-    title: "your-booking",
-    additionalNote: "yououououou",
-  },
-];
 
 const SLOT_DURATION = 15;
 
@@ -93,14 +71,22 @@ const BookingComponent = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const timeSlotsRef = useRef<HTMLDivElement>(null);
   const confirmationRef = useRef<HTMLDivElement>(null);
-  const [availableTimeSlots, setAvailableTimeSlots] = useState([]);
-  const [clientTimeZone, setClientTimeZone] = useState<string | undefined>();
+  const [availableTimeSlots, setAvailableTimeSlots] = useState<string[]>([]);
+  const clientTimeZone = useMemo(
+    () => Intl.DateTimeFormat().resolvedOptions().timeZone,
+    []
+  );
   const { username } = useParams();
+  const { data: userTimeSlots } = useTimeSlots(
+    username.toString(),
+    selectedDate,
+    clientTimeZone
+  );
   const DURATION = 30;
+  console.log("userTimeSlots:", userTimeSlots);
+  console.log("availableTimeSlots:", availableTimeSlots);
 
   useEffect(() => {
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    setClientTimeZone(tz);
     setValue("username", username.toString());
     setValue("duration", DURATION);
   }, []);
@@ -126,7 +112,6 @@ const BookingComponent = ({
     if (data?.timezone) {
       // user zoned date
       const userZonedDate = toZonedTime(date, data.timezone);
-      // const dayName = weekDays[date.getDay()];
       const dayName = format(userZonedDate, "EEEE");
       const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
       return dayAvailability?.enabled ?? false;
@@ -134,88 +119,6 @@ const BookingComponent = ({
 
     if (!data?.timezone) return false;
   };
-  // the availability is saved in utc.
-  // booking should be saved in utc.
-  // the available slots logic should already be calculated at server side.
-  // and should send the string like slots back to the frontend.
-  // and when booking should happen by selecting string like timeslots.
-  // then it should go to backend and get converted into utc and then saved.
-  function generateTimeSlots(
-    start: string,
-    end: string,
-    intervalMinutes: number
-  ): string[] {
-    const slots: string[] = [];
-    const startDate = new Date(`1970-01-01T${to24Hour(start)}:00`);
-    const endDate = new Date(`1970-01-01T${to24Hour(end)}:00`);
-
-    console.log(startDate);
-    console.log(endDate);
-    console.log(slots);
-
-    while (startDate < endDate) {
-      slots.push(formatTo12Hour(startDate));
-      startDate.setMinutes(startDate.getMinutes() + intervalMinutes);
-    }
-
-    return slots;
-  }
-
-  const getTimeSlotsOfDay = (date: Date) => {
-    if (!data?.timezone) return;
-
-    const userZonedDate = toZonedTime(date, data.timezone);
-    const dayName = format(userZonedDate, "EEEE");
-    const slotsOfDay =
-      availability?.[dayName as keyof AvailabilityMap].timeSlots;
-    console.log(slotsOfDay);
-
-    const arrayOfSlots = [];
-    for (const el of slotsOfDay) {
-      arrayOfSlots.push(...generateTimeSlots(el.startTime, el.endTime, 30));
-    }
-
-    console.log(arrayOfSlots);
-    return arrayOfSlots;
-  };
-
-  function filterBookedSlots(
-    timeRanges: string[],
-    bookings: Booking[]
-  ): string[] {
-    const bookedSlots = new Set<string>();
-
-    bookings.forEach((booking) => {
-      const start = booking.date;
-
-      const isSameDate =
-        start.getFullYear() === selectedDate?.getFullYear() &&
-        start.getMonth() === selectedDate?.getMonth() &&
-        start.getDate() === selectedDate?.getDate();
-
-      if (!isSameDate) return;
-
-      const duration = booking.duration || 30;
-
-      const slotsToBlock = duration / SLOT_DURATION;
-
-      const blocked: string[] = [];
-
-      const startDate = new Date(start);
-      for (let i = 0; i < slotsToBlock; i++) {
-        const slotTime = formatTo12Hour(startDate);
-
-        blocked.push(slotTime);
-
-        startDate.setMinutes(startDate.getMinutes() + SLOT_DURATION);
-      }
-
-      blocked.forEach((slot) => bookedSlots.add(slot));
-    });
-
-    // Return only the slots that are NOT booked
-    return timeRanges.filter((slot) => !bookedSlots.has(slot));
-  }
 
   const handleDateSelect = (date: Date | undefined) => {
     setShowConfirmation(false);
@@ -239,15 +142,11 @@ const BookingComponent = ({
 
   useEffect(() => {
     if (!selectedDate) return;
-    const timeRanges = getTimeSlotsOfDay(selectedDate);
 
-    if (!timeRanges) return;
-    // fake bookings for removing slots that are already booked
-    const bookings = mockBookings as Booking[];
-
-    const availableSlots = filterBookedSlots(timeRanges, bookings);
-    setAvailableTimeSlots(availableSlots as any);
-  }, [selectedDate]);
+    if (userTimeSlots) {
+      setAvailableTimeSlots(userTimeSlots as any);
+    }
+  }, [selectedDate, userTimeSlots]);
 
   const handleTimeSelect = (time: string) => {
     // Delay before showing confirmation

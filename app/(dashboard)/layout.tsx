@@ -1,12 +1,11 @@
-"use client";
-
+import { getTimeSlots } from "@/action/user";
 import SidebarLayout from "../_components/sidebar/sidebar-layout";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-const DashboardLayout = ({ children }: DashboardLayoutProps) => {
+const DashboardLayout = async ({ children }: DashboardLayoutProps) => {
   return <SidebarLayout>{children}</SidebarLayout>;
 };
 

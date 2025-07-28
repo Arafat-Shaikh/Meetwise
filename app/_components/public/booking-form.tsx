@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import BookingComponent from "./booking-component";
 import { saveBooking } from "@/action/user";
 import { toast } from "sonner";
-import { useParams } from "next/navigation";
 
 export type BookingFormData = {
   fullName: string;
