@@ -1,5 +1,14 @@
 import { calendar_v3, google } from "googleapis";
 
+type CreateCalendarEventParams = {
+  summary: string;
+  description: string;
+  attendeeEmail: string;
+  startDateTime: string;
+  endDateTime: string;
+  userTimezone?: string;
+};
+
 export class GoogleCalendarService {
   private calendar: calendar_v3.Calendar;
 
@@ -22,7 +31,17 @@ export class GoogleCalendarService {
     attendeeEmail,
     startDateTime,
     endDateTime,
-  }: any) {
+    userTimezone = "Asia/Kolkata",
+  }: CreateCalendarEventParams) {
+    console.log("inside createCalendarEvent with params:");
+    console.log("Creating calendar event with:", {
+      summary,
+      description,
+      attendeeEmail,
+      startDateTime,
+      endDateTime,
+      userTimezone,
+    });
     const event = await this.calendar.events.insert({
       calendarId: "primary",
       conferenceDataVersion: 1,
@@ -31,11 +50,11 @@ export class GoogleCalendarService {
         description,
         start: {
           dateTime: startDateTime,
-          timeZone: "Asia/Kolkata",
+          timeZone: userTimezone,
         },
         end: {
           dateTime: endDateTime,
-          timeZone: "Asia/Kolkata",
+          timeZone: userTimezone,
         },
         attendees: [{ email: attendeeEmail }],
         conferenceData: {

@@ -55,3 +55,15 @@ export const settingsSchema = z.object({
   connectedCalendar: z.string().optional(),
 });
 export type SettingsFormData = z.infer<typeof settingsSchema>;
+
+export const bookingFormSchema = z.object({
+  fullName: z.string().min(1, "Full name is required"),
+  email: z.string().email("Invalid email address"),
+  date: z.coerce.date(),
+  timeSlot: z.string().min(1, "Time slot is required"),
+  additionalNotes: z.string().optional(),
+  duration: z.number(),
+  username: z.string(),
+});
+
+export type BookingFormData = z.infer<typeof bookingFormSchema>;

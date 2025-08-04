@@ -12,6 +12,8 @@ import { any, z } from "zod";
 import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
 import { convertTimeSlotsToUtc, getTargetUser } from "@/lib/utils";
 import { formatTo12Hour, to24Hour } from "@/lib/test-utils";
+import { GoogleCalendarService } from "@/lib/googleCalendar";
+import { google } from "googleapis";
 
 export async function getUser() {
   const session = await getServerSession(authOptions);
@@ -276,6 +278,7 @@ export async function getPublicUserAvailability(
     select: {
       id: true,
       timezone: true,
+      fullName: true,
       maxBookings: true,
       availability: {
         select: {
@@ -293,7 +296,7 @@ export async function getPublicUserAvailability(
     },
   });
 
-  if (!detailedUser) throw new Error("User not found");
+  if (!detailedUser?.id) throw new Error("User not found");
 
   function formatTimeToUserTZ(date: Date, timeZone: string): string {
     return formatInTimeZone(date, timeZone, "h:mma").toLowerCase(); // returns "9:00am"
@@ -312,90 +315,13 @@ export async function getPublicUserAvailability(
 
   return {
     availability,
+    fullName: detailedUser.fullName,
     timezone: detailedUser?.timezone || "",
     maxBookings: detailedUser?.maxBookings || 10,
   };
 }
 
 // booking function down below
-const bookingFormSchema = z.object({
-  fullName: z.string().min(1, "Full name is required"),
-  email: z.string().email("Invalid email address"),
-  date: z.coerce.date(),
-  timeSlot: z.string().min(1, "Time slot is required"),
-  additionalNotes: z.string().optional(),
-  duration: z.number(),
-  username: z.string(),
-});
-
-export type BookingFormData = z.infer<typeof bookingFormSchema>;
-
-export async function saveBooking(data: BookingFormData) {
-  const validation = bookingFormSchema.safeParse(data);
-
-  if (!validation.success) {
-    console.error("Booking validation failed:", validation.error.flatten());
-    throw new Error("Invalid booking data provided.");
-  }
-
-  console.log(data);
-
-  const user = await prisma.user.findUnique({
-    where: { username: data.username },
-    select: { id: true, timezone: true },
-  });
-
-  if (!user?.id || !user.timezone) {
-    throw new Error("Something went wrong");
-  }
-
-  console.log(data.date);
-  console.log(data.timeSlot);
-  // UTC date into user’s timezone
-  const userLocalDate = toZonedTime(new Date(data.date), user.timezone);
-  // Combine date + timeSlot (e.g., '9:00am')
-  const dateStr = `${userLocalDate.getFullYear()}-${(
-    userLocalDate.getMonth() + 1
-  )
-    .toString()
-    .padStart(2, "0")}-${userLocalDate.getDate().toString().padStart(2, "0")} ${
-    data.timeSlot
-  }`;
-
-  //  Parse this string into a Date in user's TZ
-  const bookingStartInUserTz = parse(dateStr, "yyyy-MM-dd h:mma", new Date());
-  // convert to utc
-  const bookingStartUtc = fromZonedTime(bookingStartInUserTz, user.timezone);
-
-  console.log(bookingStartUtc);
-
-  const booking = await prisma.booking.create({
-    data: {
-      userId: user.id,
-      title: "your-booking",
-      clientName: data.fullName,
-      clientEmail: data.email,
-      date: bookingStartUtc,
-      additionalNote: data.additionalNotes,
-      duration: data.duration,
-    },
-  });
-
-  const obj = {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "admin@gmail.com",
-    clientName: "Arafat shaikh",
-    duration: 30,
-    date: "2025-07-28T04:00:00.000Z",
-    title: "your-booking",
-    additionalNote: "yououououou",
-  };
-
-  console.log(booking);
-
-  return { success: false, bookingId: "9009" };
-}
 
 export async function getTimeSlots(
   username: string,
@@ -552,4 +478,14 @@ function generateTimeSlots(
   }
 
   return slots;
+}
+
+export async function getFreshAccessToken(refreshToken: string) {
+  const oauth2Client = new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET
+  );
+  oauth2Client.setCredentials({ refresh_token: refreshToken });
+  const tokens = await oauth2Client.refreshAccessToken();
+  return tokens.credentials.access_token;
 }

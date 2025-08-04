@@ -42,6 +42,8 @@ export const authOptions = {
               data: {
                 googleCalendarConnected: true,
                 calendarConnectedAt: new Date(),
+                googleAccessToken: account.access_token,
+                googleRefreshToken: account.refresh_token,
               },
             });
           }
@@ -102,7 +104,7 @@ export const authOptions = {
   },
 } satisfies NextAuthOptions;
 
-async function refreshAccessToken(token: any) {
+export async function refreshAccessToken(token: any) {
   try {
     const url = "https://oauth2.googleapis.com/token";
 

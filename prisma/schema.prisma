@@ -31,7 +31,12 @@ model User {
   googleCalendarConnected Boolean   @default(false)
   calendarConnectedAt     DateTime?
   hashedPassword          String?
-  emailVerified           DateTime?
+
+  googleAccessToken  String?
+  googleRefreshToken String?
+  googleTokenExpiry  DateTime? // to check if access token is expired
+
+  emailVerified DateTime?
 
   bookings     Booking[]
   availability Availability[]
@@ -87,9 +92,18 @@ model Booking {
   date           DateTime
   title          String
   additionalNote String?
-  location       String?
+
+  meetingType     MeetingType? // e.g., "google_meet", "phone", "in_person"
+  meetingLink     String? // e.g., actual URL or call instructions
+  bookingPageSlug String? // optional: to track which session/page was used
 
   user      User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum MeetingType {
+  Google_Meet
+  Phone
+  In_Person
 }

@@ -28,15 +28,14 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 import { BookingFormData } from "./booking-form";
-import { weekDays } from "@/lib/const";
 import { fromZonedTime, toZonedTime } from "date-fns-tz";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import InvalidUsername from "./invalid-username";
 import Loader from "../loader";
 import CalendarLoader from "../calendar-loader";
 import usePublicAvailability from "@/hooks/use-public-availability";
 import useTimeSlots from "@/hooks/use-time-slots";
+import GoogleIcon from "@/app/icon/google-icon";
 
 type Booking = {
   id: string;
@@ -57,6 +56,7 @@ type BookingComponentProps = {
   control: Control<BookingFormData>;
   watch: UseFormWatch<BookingFormData>;
   setValue: UseFormSetValue<BookingFormData>;
+  isLoadingForm: boolean;
 };
 
 const BookingComponent = ({
@@ -65,6 +65,7 @@ const BookingComponent = ({
   control,
   watch,
   setValue,
+  isLoadingForm,
 }: BookingComponentProps) => {
   const { timeSlot: selectedTime, date: selectedDate } = watch();
   const [showTimeSlots, setShowTimeSlots] = useState(false);
@@ -91,11 +92,11 @@ const BookingComponent = ({
     setValue("duration", DURATION);
   }, []);
 
-  const { data, isLoading } = usePublicAvailability(
+  const { data: userData, isLoading } = usePublicAvailability(
     clientTimeZone,
     username.toString()
   );
-  const availability = data?.availability as AvailabilityMap;
+  const availability = userData?.availability as AvailabilityMap;
 
   // Check if a date has available slots
   const isDayAvailable = (date: Date) => {
@@ -109,16 +110,25 @@ const BookingComponent = ({
 
     if (date < tomorrow || date > maxDate) return false;
 
-    if (data?.timezone) {
+    if (userData?.timezone) {
       // user zoned date
-      const userZonedDate = toZonedTime(date, data.timezone);
+      const userZonedDate = toZonedTime(date, userData.timezone);
       const dayName = format(userZonedDate, "EEEE");
       const dayAvailability = availability?.[dayName as keyof AvailabilityMap];
       return dayAvailability?.enabled ?? false;
     }
 
-    if (!data?.timezone) return false;
+    if (!userData?.timezone) return false;
   };
+
+  useEffect(() => {
+    if (!selectedDate) return;
+
+    if (userTimeSlots) {
+      console.log("userTimeSlots:", userTimeSlots);
+      setAvailableTimeSlots(userTimeSlots as any);
+    }
+  }, [selectedDate, userTimeSlots]);
 
   const handleDateSelect = (date: Date | undefined) => {
     setShowConfirmation(false);
@@ -140,14 +150,6 @@ const BookingComponent = ({
     }
   };
 
-  useEffect(() => {
-    if (!selectedDate) return;
-
-    if (userTimeSlots) {
-      setAvailableTimeSlots(userTimeSlots as any);
-    }
-  }, [selectedDate, userTimeSlots]);
-
   const handleTimeSelect = (time: string) => {
     // Delay before showing confirmation
     setTimeout(() => {
@@ -168,7 +170,7 @@ const BookingComponent = ({
     return format(date, "EEEE, MMM dd");
   };
 
-  if (!data?.availability && !isLoading) {
+  if (!userData?.availability && !isLoading) {
     return <InvalidUsername />;
   }
 
@@ -357,15 +359,29 @@ const BookingComponent = ({
                 </div>
 
                 <div className="flex justify-center">
-                  <div className="relative bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-800 border-[1px] border-neutral-700/20  py-2 px-8 rounded-full space-y-2 shadow-xl shadow-amber-50/5">
-                    {/* just a background style  */}
-                    <div className="absolute inset-0 bg-gradient-to-tr from-emerald-100 to-emerald-50 opacity-10 rounded-full" />
-                    <p className="hidden md:block text-neutral-500 text-sm font-medium">
-                      Your appointment is scheduled for:
-                    </p>
-                    <p className="text-white text-lg font-extrabold">
-                      {getDateLabel(selectedDate)} at {selectedTime}
-                    </p>
+                  <div className="relative bg-gradient-to-br from-neutral-950 via-neutral-900 to-neutral-800 border border-neutral-700/30 py-3 px-6 rounded-xl shadow-2xl">
+                    {/* Subtle overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] to-white/[0.05] rounded-xl" />
+
+                    {/* Content */}
+                    <div className="relative">
+                      <div className="flex items-center justify-between mb-1 space-x-6">
+                        <h3 className="text-white text-lg font-semibold">
+                          {userData?.fullName}
+                        </h3>
+                        <hr className="text-white w-2" />
+                        <div className="flex items-center gap-1.5">
+                          <GoogleIcon />
+                          <span className="text-neutral-300 text-sm font-semibold">
+                            Meet
+                          </span>
+                        </div>
+                      </div>
+                      <p className="text-neutral-300 text-sm font-medium">
+                        {getDateLabel(selectedDate)} at{" "}
+                        <span className="text-white">{selectedTime}</span>
+                      </p>
+                    </div>
                   </div>
                 </div>
 
@@ -449,9 +465,11 @@ const BookingComponent = ({
                   </CardContent>
                 </Card>
                 <Button
+                  disabled={isLoadingForm}
                   type="submit"
                   className="mx-auto w-fit px-8 h-10 text-sm font-semibold bg-gradient-to-t from-white/70 via-white/80 to-white border border-black/90 text-black hover:bg-neutral-200 transition-all duration-300 rounded-full hover:shadow-white/20"
                 >
+                  {isLoadingForm ? <Loader borderColor="border-black" /> : null}
                   Confirm
                 </Button>
               </div>
