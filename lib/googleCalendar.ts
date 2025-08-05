@@ -33,15 +33,6 @@ export class GoogleCalendarService {
     endDateTime,
     userTimezone = "Asia/Kolkata",
   }: CreateCalendarEventParams) {
-    console.log("inside createCalendarEvent with params:");
-    console.log("Creating calendar event with:", {
-      summary,
-      description,
-      attendeeEmail,
-      startDateTime,
-      endDateTime,
-      userTimezone,
-    });
     const event = await this.calendar.events.insert({
       calendarId: "primary",
       conferenceDataVersion: 1,
@@ -82,7 +73,7 @@ export class GoogleCalendarService {
   }
 
   async getEvents(
-    calendarId: string,
+    calendarId?: string,
     timeRange: { timeMin?: string; timeMax?: string } = {}
   ) {
     try {
@@ -95,7 +86,7 @@ export class GoogleCalendarService {
         orderBy: "startTime",
       });
 
-      return response.data.items;
+      return response.data.items || [];
     } catch (error) {
       console.error("Error fetching events:", error);
       throw error;

@@ -92,6 +92,7 @@ model Booking {
   date           DateTime
   title          String
   additionalNote String?
+  googleEventId  String? // to track the event in Google Calendar
 
   meetingType     MeetingType? // e.g., "google_meet", "phone", "in_person"
   meetingLink     String? // e.g., actual URL or call instructions

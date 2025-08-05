@@ -2,18 +2,36 @@
 
 import { AvailabilityMap } from "@/app/(dashboard)/availability/page";
 import { authOptions } from "@/lib/auth";
-import { Day } from "@/lib/const";
 import { DayOfWeek } from "@/lib/generated/prisma";
 import prisma from "@/lib/global-prisma";
 import { onboardingSchema, OnboardingDataTypes } from "@/lib/zod/schema";
-import { addDays, addMinutes, format, parse } from "date-fns";
 import { getServerSession } from "next-auth";
-import { any, z } from "zod";
-import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
-import { convertTimeSlotsToUtc, getTargetUser } from "@/lib/utils";
-import { formatTo12Hour, to24Hour } from "@/lib/test-utils";
-import { GoogleCalendarService } from "@/lib/googleCalendar";
+import { formatInTimeZone } from "date-fns-tz";
+import { convertTimeSlotsToUtc } from "@/lib/utils";
 import { google } from "googleapis";
+
+const mockBookings = [
+  {
+    id: "cmdjvomr80001s6li2wthgj2m",
+    userId: "cmdgcez3y000ms6skr8l4vw6k",
+    clientEmail: "one@gmail.com",
+    clientName: "one",
+    duration: 30,
+    date: new Date("2025-07-28T05:00:00.000Z"),
+    title: "your-booking",
+    additionalNote: "yououououou",
+  },
+  {
+    id: "cmdjvomr80001s6li2wthgj2m",
+    userId: "cmdgcez3y000ms6skr8l4vw6k",
+    clientEmail: "admin@gmail.com",
+    clientName: "Arafat shaikh",
+    duration: 30,
+    date: new Date("2025-07-28T04:00:00.000Z"),
+    title: "your-booking",
+    additionalNote: "yououououou",
+  },
+];
 
 export async function getUser() {
   const session = await getServerSession(authOptions);
@@ -244,29 +262,6 @@ export async function getUserAvailability(timezone?: string) {
   return data;
 }
 
-const mockBookings = [
-  {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "one@gmail.com",
-    clientName: "one",
-    duration: 30,
-    date: new Date("2025-07-28T05:00:00.000Z"),
-    title: "your-booking",
-    additionalNote: "yououououou",
-  },
-  {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "admin@gmail.com",
-    clientName: "Arafat shaikh",
-    duration: 30,
-    date: new Date("2025-07-28T04:00:00.000Z"),
-    title: "your-booking",
-    additionalNote: "yououououou",
-  },
-];
-
 export async function getPublicUserAvailability(
   targetTimeZone?: string,
   username?: string
@@ -322,163 +317,6 @@ export async function getPublicUserAvailability(
 }
 
 // booking function down below
-
-export async function getTimeSlots(
-  username: string,
-  date: Date,
-  timezone: string
-) {
-  const user = await prisma.user.findUnique({
-    where: { username },
-    select: {
-      id: true,
-      timezone: true,
-
-      availability: {
-        select: {
-          day: true,
-          enabled: true,
-          slots: {
-            select: {
-              startTime: true,
-              endTime: true,
-            },
-          },
-        },
-      },
-    },
-  });
-
-  if (!user?.id || !user?.timezone) {
-    throw new Error("User not found");
-  }
-
-  /**
-   * Converts the given date to the user's specified timezone.
-   *
-   * @param date - The original date to be converted.
-   * @param user.timezone - The IANA timezone string representing the user's timezone.
-   * @returns The date object adjusted to the user's timezone.
-   */
-  const userZonedDate = toZonedTime(date, user.timezone);
-  const dayName = format(userZonedDate, "EEEE");
-
-  const dayAvailability = user.availability.find(
-    (avail) => avail.day === dayName
-  );
-  if (!dayAvailability || !dayAvailability.enabled) {
-    return { timeSlots: [] };
-  }
-
-  let allSlots: Date[] = [];
-
-  for (const slot of dayAvailability.slots) {
-    /**
-     * Converts the given date to the user's timezone and formats it as a 12-hour time string (e.g., "3:45pm").
-     */
-    const start12hr = formatInTimeZone(
-      new Date(slot.startTime),
-      user.timezone,
-      "h:mma"
-    ).toLowerCase(); // "9:00am"
-    const end12hr = formatInTimeZone(
-      new Date(slot.endTime),
-      user.timezone,
-      "h:mma"
-    ).toLowerCase(); // "5:00pm"
-    console.log("Start 12hr:", start12hr); //
-    console.log("End 12hr:", end12hr);
-    // example: "9:00am" and "5:00pm and 30 minutes interval"
-    const slotTimes = generateTimeSlots(start12hr, end12hr, 30);
-    console.log("Slot times:", slotTimes);
-    for (const slot of slotTimes) {
-      // Combine date and timeStr into full datetime in user's timezone
-      // Example: "2025-07-28 9:00am"
-      const combined = `${format(userZonedDate, "yyyy-MM-dd")} ${slot}`;
-
-      // Parse this string into a Date in user's TZ
-      // Example: parse("2025-07-28 9:00am", "yyyy-MM-dd h:mma", new Date()) => Date object in user's TZ
-      const naive = parse(combined, "yyyy-MM-dd h:mma", new Date());
-
-      // Convert the parsed date to UTC
-      // Example: fromZonedTime(naive, user.timezone) => Date object in UTC
-      const utcSlot = fromZonedTime(naive, user.timezone);
-
-      allSlots.push(utcSlot);
-    }
-  }
-
-  console.log("All slots: ", allSlots);
-  console.log("User Zoned Date:", userZonedDate);
-  console.log("User Timezone:", user.timezone);
-
-  // start and end date just to fetch the bookings for the selected date
-  const startOfDay = fromZonedTime(
-    new Date(`${format(userZonedDate, "yyyy-MM-dd")}T00:00:00`),
-    user.timezone
-  );
-  const endOfDay = fromZonedTime(
-    new Date(`${format(userZonedDate, "yyyy-MM-dd")}T23:59:59`),
-    user.timezone
-  );
-
-  const bookings = await prisma.booking.findMany({
-    where: {
-      userId: user.id,
-      date: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    },
-  });
-
-  console.log("Bookings:", bookings);
-
-  const availableSlotsUtc = filterBookedSlots(allSlots, bookings, 30);
-  console.log("availableSlotsUtc:", availableSlotsUtc);
-
-  const finalSlots = availableSlotsUtc.map((slot) =>
-    formatInTimeZone(slot, timezone, "h:mma").toLowerCase()
-  );
-
-  return finalSlots;
-}
-
-const filterBookedSlots = (
-  slots: Date[],
-  bookings: any[],
-  duration: number
-) => {
-  return slots.filter((slot) => {
-    console.log("slot start:", slot);
-    const slotEnd = addMinutes(slot, duration);
-    console.log("slot end:", slotEnd);
-    return !bookings.some((booking) => {
-      const bookingStart = booking.date; // booking.date is already in UTC
-      const bookingEnd = addMinutes(bookingStart, booking.duration);
-      return slot < bookingEnd && bookingStart < slotEnd;
-      // 9:00am < 10:00am && 9:30am < 9:30am = false = keep this slot
-      // 9:00am < 9:30am && 9:00am  < 9:30am = true = remove this slot
-    });
-  });
-};
-
-function generateTimeSlots(
-  start: string,
-  end: string,
-  intervalMinutes: number
-): string[] {
-  const slots: string[] = [];
-  const startDate = new Date(`1970-01-01T${to24Hour(start)}:00`);
-  const endDate = new Date(`1970-01-01T${to24Hour(end)}:00`);
-
-  while (startDate < endDate) {
-    slots.push(formatTo12Hour(startDate));
-    startDate.setMinutes(startDate.getMinutes() + intervalMinutes);
-  }
-
-  return slots;
-}
 
 export async function getFreshAccessToken(refreshToken: string) {
   const oauth2Client = new google.auth.OAuth2(

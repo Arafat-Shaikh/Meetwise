@@ -1,41 +1,15 @@
 "use client";
 
-import {
-  CalendarDays,
-  Clock,
-  MapPin,
-  User,
-  Timer,
-  ArrowLeft,
-} from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card"; // Only importing Card and CardContent now
+import { CalendarDays, Clock, MapPin, User, ArrowLeft } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import useBooking from "@/hooks/use-bookings";
-import Loader from "@/app/_components/loader";
 import CalendarLoader from "@/app/_components/calendar-loader";
-
-interface BookingDetails {
-  date: string;
-  time: string;
-  location: string;
-  host: string;
-  duration: string;
-}
-
-const { date, time, location, host, duration } = {
-  date: "July 20, 2023",
-  time: "10:00 AM",
-  location: "Google Meet",
-  host: "John Doe",
-  duration: "30 minutes",
-} as BookingDetails; // Mock data for demonstration
 
 export default function BookingIdPage() {
   const { bookingId } = useParams();
   const { data: bookingDetails, isLoading } = useBooking(bookingId.toString());
-
-  console.log("Booking Details:", bookingDetails);
 
   if (isLoading) {
     return <CalendarLoader />;
@@ -79,9 +53,6 @@ export default function BookingIdPage() {
   );
 
   const bookingDateFormatted = dateFormatter.format(bookingDate);
-
-  console.log("Formatted Date:", bookingDateFormatted);
-  console.log("Formatted Time:", timeFormatted);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-950 p-4 sm:p-6">

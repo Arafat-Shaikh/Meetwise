@@ -75,11 +75,13 @@ export async function createBooking(data: BookingFormData) {
 
   // Step 4: Convert to UTC based on user's timezone
   const start = fromZonedTime(parsed, user.timezone);
+
   const end = addMinutes(start, data.duration);
 
   // These are correct UTC ISO strings
 
   const startDateTime = start.toISOString();
+
   const endDateTime = end.toISOString();
 
   const calendarService = new GoogleCalendarService(
@@ -88,6 +90,7 @@ export async function createBooking(data: BookingFormData) {
   );
 
   let googleMeetLink = "";
+  let eventId = "";
 
   try {
     const { event } = await calendarService.createCalendarEvent({
@@ -98,7 +101,8 @@ export async function createBooking(data: BookingFormData) {
       endDateTime: endDateTime,
       userTimezone: user.timezone,
     });
-    console.log(event.data.start);
+
+    eventId = event?.data?.id || "";
     googleMeetLink = event?.data?.hangoutLink || "";
   } catch (error) {
     console.error("Error creating calendar event:", error);
@@ -123,23 +127,28 @@ export async function createBooking(data: BookingFormData) {
   // convert to utc
   const bookingStartUtc = fromZonedTime(bookingStartInUserTz, user.timezone);
 
-  const booking = await prisma.booking.create({
-    data: {
-      userId: user.id,
-      title: "your-booking",
-      clientName: data.fullName,
-      clientEmail: data.email,
-      date: bookingStartUtc,
-      additionalNote: data.additionalNotes,
-      duration: data.duration,
-      meetingType: MeetingType.Google_Meet,
-      meetingLink: googleMeetLink,
-    },
-  });
+  try {
+    const booking = await prisma.booking.create({
+      data: {
+        userId: user.id,
+        title: "your-booking",
+        clientName: data.fullName,
+        clientEmail: data.email,
+        date: bookingStartUtc,
+        additionalNote: data.additionalNotes,
+        duration: data.duration,
+        meetingType: MeetingType.Google_Meet,
+        meetingLink: googleMeetLink,
+        googleEventId: eventId,
+      },
+    });
 
-  console.log(booking);
-
-  return { success: false, bookingId: booking.id };
+    console.log(booking);
+    return { success: true, bookingId: booking.id };
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    return { success: false, bookingId: null };
+  }
 }
 
 export async function getAccessTokenVerified(user: any) {

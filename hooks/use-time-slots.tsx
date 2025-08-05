@@ -1,4 +1,4 @@
-import { getTimeSlots, getUserAvailability } from "@/action/user";
+import { getTimeSlots } from "@/action/get-time-slots";
 import { useQuery } from "@tanstack/react-query";
 
 const useTimeSlots = (username: string, date: Date, clientTimeZone: string) => {

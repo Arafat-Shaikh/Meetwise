@@ -3,10 +3,11 @@ import { twMerge } from "tailwind-merge";
 import prisma from "@/lib/global-prisma";
 import { nanoid } from "nanoid";
 import { dayToDateMap } from "./const";
-import { parse } from "date-fns";
 import { fromZonedTime } from "date-fns-tz";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
+import { addDays, addMinutes, format, parse } from "date-fns";
+import { formatTo12Hour, to24Hour } from "./test-utils";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -108,4 +109,62 @@ export function convertTimeSlotsToUtc(
   }
 
   return utcSlots;
+}
+
+export function getDayRangeInUserTimezone(date: Date, userTimezone: string) {
+  // This date is in client timezone. We treat it as a date only, no time part.
+  const yyyyMMdd = format(date, "yyyy-MM-dd"); // e.g., "2025-08-04"
+
+  // Now we treat that string as a day in the user's timezone
+  const start = fromZonedTime(
+    `${yyyyMMdd}T00:00:00`,
+    userTimezone
+  ).toISOString();
+  const end = fromZonedTime(`${yyyyMMdd}T23:59:59`, userTimezone).toISOString();
+
+  return { timeMin: start, timeMax: end };
+}
+
+export const filterBookedSlots = (
+  slots: Date[],
+  bookings: any[],
+  duration: number
+) => {
+  return slots.filter((slot) => {
+    const slotEnd = addMinutes(slot, duration);
+    console.log("Checking slot:", slot, "to", slotEnd);
+    return !bookings.some((booking) => {
+      const bookingStart = booking.start;
+      const bookingEnd = booking.end;
+      console.log(
+        "Against booking:",
+        bookingStart,
+        "to",
+        bookingEnd,
+        "-> Overlaps?",
+        slot < bookingEnd && bookingStart < slotEnd
+      );
+      // Check if the slot overlaps with the booking
+      return slot < bookingEnd && bookingStart < slotEnd;
+      // 9:00am < 10:00am && 9:30am < 9:30am = false = keep this slot
+      // 9:00am < 9:30am && 9:00am  < 9:30am = true = remove this slot
+    });
+  });
+};
+
+export function generateTimeSlots(
+  start: string,
+  end: string,
+  intervalMinutes: number
+): string[] {
+  const slots: string[] = [];
+  const startDate = new Date(`1970-01-01T${to24Hour(start)}:00`);
+  const endDate = new Date(`1970-01-01T${to24Hour(end)}:00`);
+
+  while (startDate < endDate) {
+    slots.push(formatTo12Hour(startDate));
+    startDate.setMinutes(startDate.getMinutes() + intervalMinutes);
+  }
+
+  return slots;
 }

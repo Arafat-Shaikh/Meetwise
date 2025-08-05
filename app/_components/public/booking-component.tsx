@@ -224,6 +224,7 @@ const BookingComponent = ({
                     mode="single"
                     selected={selectedDate}
                     onSelect={(date) => {
+                      console.log("Date selected in booking component: ", date);
                       field.onChange(date);
                       handleDateSelect(date);
                     }}
