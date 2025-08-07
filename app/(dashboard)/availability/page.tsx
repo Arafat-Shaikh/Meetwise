@@ -1,6 +1,5 @@
 "use client";
 
-import { saveUserAvailability } from "@/action/user";
 import AvailabilityScheduler from "@/app/_components/availability-scheduler";
 import BookingSettings from "@/app/_components/BookingSettings";
 import Loader from "@/app/_components/loader";
@@ -8,14 +7,10 @@ import TimezoneSelector from "@/app/_components/timezone-selector";
 import { Button } from "@/components/ui/button";
 import useAvailability from "@/hooks/useAvailability";
 import useSaveAvailability from "@/hooks/useSaveAvailability";
-import { Day, timezones } from "@/lib/const";
+import { darkButtonStyles, Day, timezones } from "@/lib/const";
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
-
-// const tabs = ["Availability", "Others"];
-
-// type EventTypes = "Availability" | "Others";
 
 type TimeSlot = {
   startTime: string;
@@ -99,6 +94,7 @@ const AvailabilityPage = () => {
       ],
     },
   });
+
   const { data: userAvailability } = useAvailability();
   const { mutateAsync, isPending } = useSaveAvailability();
 
@@ -108,6 +104,7 @@ const AvailabilityPage = () => {
   useEffect(() => {
     if (userAvailability) {
       setAvailability(userAvailability.availability as AvailabilityMap);
+      console.log("User Availability: ", userAvailability.timezone);
       setTimezone(userAvailability.timezone);
       setBufferTime(userAvailability.bufferTime.toString());
       setMaxBookings(userAvailability.maxBookings);
@@ -193,43 +190,22 @@ const AvailabilityPage = () => {
     }
   };
 
+  console.log("Current Timezone: ", timezone);
+
   return (
-    <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-12 lg:p-10 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
+    <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-8 lg:p-10 lg:px-40 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
+      <div className="rounded-lg py-2 gap-x-20">
+        <h2 className="text-3xl text-white font-semibold mb-4">Availability</h2>
+
+        <p className="text-gray-500">
+          Manage your working hours. Set your working hours, and choose your
+          preferred timezone.
+        </p>
+      </div>
       <div
         className="w-full rounded-xl py-6 px-2 md:px-6 shadow-xl shadow-white/10 border-2 border-[#343a40] bg-gradient-to-br from-[#161a1d] via-[#212529] to-[#161a1d] h-fit"
         // style={{ boxShadow: "0 10px 20px rgba(20, 160, 124, 0.1)" }}
       >
-        {/* <div className="w-fit rounded-xl bg-[#161411] px-0.5 py-0.5">
-          <div className="relative flex space-x-1 m-0.5">
-            {tabs.map((tab) => {
-              const isActive = eventType === tab;
-              return (
-                <button
-                  key={tab}
-                  className={`relative z-10 text-base text-gray-300 w-fit rounded-lg px-4 py-0.5 border shadow-lg transition-all duration-300 ${
-                    isActive
-                      ? "border-slate-600/10"
-                      : "bg-transparent border-slate-800/10"
-                  }`}
-                  onClick={() => setEventType(tab as EventTypes)}
-                >
-                  {tab}
-                  {isActive && (
-                    <motion.div
-                      layoutId="tabBackground"
-                      className="absolute inset-0 z-[-1] rounded-lg bg-gradient-to-t from-black/20 to-white/10"
-                      transition={{
-                        type: "spring",
-                        stiffness: 300,
-                        damping: 30,
-                      }}
-                    />
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        </div> */}
         <div className="pb-4 pt-8 w-full">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* left side availability schedule  */}
@@ -261,13 +237,22 @@ const AvailabilityPage = () => {
             </div>
           </div>
 
-          <Button
-            onClick={() => handleSave()}
-            disabled={isPending}
-            className="w-full mt-8 bg-teal-600"
-          >
-            {isPending ? <Loader borderColor="border-white" /> : "Save"}
-          </Button>
+          <div className="flex justify-end items-center mt-10 md:mt-16 gap-x-4">
+            <Button
+              onClick={() => {}}
+              disabled={isPending}
+              className="bg-white/10 hover:bg-white/10 hover:text-white/80 px-8 transition-all duration-300 group relative overflow-hidden rounded-lg text-white hover:text-black"
+            >
+              {"Reset"}
+            </Button>
+            <Button
+              onClick={() => handleSave()}
+              disabled={isPending}
+              className="px-8 text-base mr-3 bg-gradient-to-t from-white/70 via-white/80 to-white text-black hover:bg-opacity-90 transition-all duration-300 group relative overflow-hidden rounded-lg hover:text-black"
+            >
+              {isPending ? <Loader borderColor="border-white" /> : "Save"}
+            </Button>
+          </div>
         </div>
       </div>
     </div>

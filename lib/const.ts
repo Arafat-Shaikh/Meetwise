@@ -314,6 +314,7 @@ export const steps = [
 ];
 
 export const timezones = [
+  "Asia/Kolkata",
   "America/New_York",
   "America/Chicago",
   "America/Denver",
@@ -321,7 +322,6 @@ export const timezones = [
   "Europe/London",
   "Europe/Paris",
   "Europe/Berlin",
-  "Asia/Kolkata",
   "Asia/Shanghai",
   "Australia/Sydney",
 ];

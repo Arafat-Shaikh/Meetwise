@@ -9,7 +9,6 @@ import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz";
 import { getAccessTokenVerified } from "./create-booking";
 import { GoogleCalendarService } from "@/lib/googleCalendar";
 import { addMinutes, format, parse } from "date-fns";
-import { bookings } from "@/lib/const";
 
 export async function getTimeSlots(
   username: string,
@@ -70,8 +69,6 @@ export async function getTimeSlots(
       end: event.end?.dateTime,
     }));
 
-  console.log("cleanedEvents:", cleanedEvents);
-
   /**
    * Converts the given date to the user's specified timezone.
    *
@@ -108,7 +105,6 @@ export async function getTimeSlots(
 
     // example: "9:00am" and "5:00pm and 30 minutes interval"
     const slotTimes = generateTimeSlots(start12hr, end12hr, 30);
-    console.log("Slot times:", slotTimes);
     for (const slot of slotTimes) {
       // Combine date and timeStr into full datetime in user's timezone
       // Example: "2025-07-28 9:00am"
@@ -175,20 +171,11 @@ export async function getTimeSlots(
       }),
   ];
 
-  console.log("allBusySlots: ", allBusySlots);
-  console.log("dbGoogleIds: ", dbGoogleIds);
-  console.log("pureGoogleEvents: ", pureGoogleEvents);
-  console.log("bookings: ", dbBookings);
-  console.log("allSlots: ", allSlots);
-
   const availableSlotsUtc = filterBookedSlots(allSlots, allBusySlots, 30);
-  console.log("availableSlotsUtc:", availableSlotsUtc);
 
   const finalSlots = availableSlotsUtc.map((slot) =>
     formatInTimeZone(slot, timezone, "h:mma").toLowerCase()
   );
-
-  console.log("finalSlots:", finalSlots);
 
   return finalSlots;
 }

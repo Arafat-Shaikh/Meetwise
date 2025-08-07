@@ -1,8 +1,4 @@
-import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
-import TimeInput from "./time-input";
-import { Button } from "@/components/ui/button";
-import { toast } from "@/hooks/use-toast";
 import { Plus, X } from "lucide-react";
 import TimePicker from "./time-picker";
 import { Day, weekDays } from "@/lib/const";
@@ -49,10 +45,10 @@ const AvailabilityScheduler = ({
               <Switch
                 checked={availability[day]?.enabled}
                 onCheckedChange={() => toggleDay(day)}
-                className="data-[state=checked]:bg-teal-600 data-[state=unchecked]:bg-gray-600"
+                className="data-[state=checked]:bg-white/20 data-[state=unchecked]:bg-white/5"
               />
               <span
-                className={`font-medium text-sm ${
+                className={`font-medium text-sm  ${
                   availability[day]?.enabled ? "text-gray-100" : "text-gray-500"
                 }`}
               >
@@ -93,7 +89,7 @@ const AvailabilityScheduler = ({
                 ))}
                 <button
                   onClick={() => addTimeSlot(day)}
-                  className="flex items-center gap-1 text-teal-400 hover:text-teal-300 text-sm font-medium mt-1 w-fit"
+                  className="flex items-center gap-1 text-neutral-400 hover:text-neutral-300 transition duration-300 text-sm font-medium mt-1 w-fit"
                 >
                   <Plus size={16} />
                   Add slot

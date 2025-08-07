@@ -4,12 +4,14 @@ import { CalendarDays, Clock, MapPin, User, ArrowLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import useBooking from "@/hooks/use-bookings";
 import CalendarLoader from "@/app/_components/calendar-loader";
+import useBookingInfo from "@/hooks/use-booking-info";
 
 export default function BookingIdPage() {
   const { bookingId } = useParams();
-  const { data: bookingDetails, isLoading } = useBooking(bookingId.toString());
+  const { data: bookingDetails, isLoading } = useBookingInfo(
+    bookingId.toString()
+  );
 
   if (isLoading) {
     return <CalendarLoader />;

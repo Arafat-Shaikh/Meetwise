@@ -29,8 +29,6 @@ const BookingSettings = ({
   setMaxBookings,
   setAdvanceNotice,
 }: BookingSettingsProps) => {
-
-
   const handleMaxBookingsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = parseInt(e.target.value) || 0;
     setMaxBookings(Math.max(0, value));
@@ -46,7 +44,7 @@ const BookingSettings = ({
   return (
     <div className="bg-[#161a1d] rounded-2xl p-6 border border-[#2e2d2d]">
       <div className="flex items-center gap-3 mb-6">
-        <Settings size={20} className="text-teal-400" />
+        <Settings size={20} className="text-neutral-400" />
         <h3 className="text-lg font-semibold text-gray-100">
           Booking Settings
         </h3>

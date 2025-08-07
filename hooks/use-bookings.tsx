@@ -1,13 +1,12 @@
-import { getBookingDetails } from "@/action/create-booking";
+import { getBookingsByRange } from "@/action/get-bookings";
 import { useQuery } from "@tanstack/react-query";
 
-const useBooking = (bookingId: string) => {
+const useBookings = () => {
   return useQuery({
-    queryKey: ["booking", bookingId],
-    queryFn: () => getBookingDetails(bookingId),
-    enabled: !!bookingId,
+    queryKey: ["bookings"],
+    queryFn: () => getBookingsByRange(),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 };
 
-export default useBooking;
+export default useBookings;

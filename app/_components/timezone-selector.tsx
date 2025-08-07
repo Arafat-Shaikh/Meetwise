@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/select";
 import { timezones } from "@/lib/const";
 import { Globe } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 interface TimezoneSelectorProps {
   timezone: string;
@@ -15,10 +15,11 @@ interface TimezoneSelectorProps {
 }
 
 const TimezoneSelector = ({ timezone, setTimezone }: TimezoneSelectorProps) => {
+  console.log("Timezone: ", timezone);
   return (
     <div className="bg-[#161a1d] rounded-2xl p-6 border border-[#2e2d2d]">
       <div className="flex items-center gap-3 mb-4">
-        <Globe size={20} className="text-teal-400" />
+        <Globe size={20} className="text-neutral-400" />
         <h3 className="text-lg font-semibold text-gray-100">Timezone</h3>
       </div>
       <Select value={timezone} onValueChange={setTimezone}>
