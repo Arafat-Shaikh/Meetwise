@@ -15,18 +15,20 @@ datasource db {
 }
 
 model User {
-  id             String  @id @default(cuid())
-  email          String? @unique
+  id             String       @id @default(cuid())
+  email          String?      @unique
   name           String?
   fullName       String?
-  username       String? @unique
+  username       String?      @unique
   timezone       String?
   profilePicture String?
   bio            String?
-  bufferTime     Int     @default(0) // in minutes
-  maxBookings    Int     @default(10) // maximum bookings per day
-  advanceNotice  Int     @default(0) // in hours
-  integrations   Json    @default("{}")
+  bufferTime     Int          @default(0) // in minutes
+  maxBookings    Int          @default(10) // maximum bookings per day
+  advanceNotice  Int          @default(0) // in hours
+  integrations   Json         @default("{}")
+  welcomeMessage String?      @default("Welcome! Let's schedule a time to connect and discuss.")
+  meetingType    MeetingType? // e.g., "google_meet", "phone", "in_person"
 
   googleCalendarConnected Boolean   @default(false)
   calendarConnectedAt     DateTime?

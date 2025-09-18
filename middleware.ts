@@ -3,28 +3,36 @@ import { getToken } from "next-auth/jwt";
 
 const secret = process.env.NEXTAUTH_SECRET;
 
-const publicRoutes = ["/", "/login", "/sign-up", "/api/auth"];
+const protectedPages = [
+  "/dashboard",
+  "/settings",
+  "/availability",
+  "/appointments",
+];
 
 export async function middleware(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
-  const isPublicPage =
-    publicRoutes.includes(pathname) ||
-    pathname.startsWith("/api/auth") ||
-    /^\/[^\/]+$/.test(pathname);
+  const isPublicApiAuth = pathname.startsWith("/api/auth");
+  const isApiRoute = pathname.startsWith("/api/");
+  const protectedPrefixes = ["/onboarding"];
 
-  if (isPublicPage) {
+  const needsAuth =
+    protectedPages.includes(pathname) ||
+    (isApiRoute && !isPublicApiAuth) ||
+    protectedPrefixes.some((prefix) => pathname.startsWith(prefix));
+
+  if (!needsAuth) {
     return NextResponse.next();
   }
 
   const token = await getToken({ req, secret });
 
-  console.log(token);
+  console.log("IN middleware: ", token);
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
-
   return NextResponse.next();
 }
 

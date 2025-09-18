@@ -37,13 +37,10 @@ export const settingsSchema = z.object({
   meetingType: z.enum(["googleMeet", "phone", "inPerson"], {
     required_error: "Please select a meeting type",
   }),
-  bookingSlug: z
+  username: z
     .string()
     .min(3, "Username must be at least 3 characters")
-    .regex(
-      /^[a-z0-9-]+$/,
-      "Username can only contain lowercase letters, numbers, and hyphens"
-    )
+    .max(20, "Username must be at most 20 characters")
     .refine(
       (val) => !["admin", "api", "www", "mail"].includes(val),
       "This username is not available"
