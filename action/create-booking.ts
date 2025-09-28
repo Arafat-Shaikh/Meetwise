@@ -137,7 +137,7 @@ export async function createBooking(data: BookingFormData) {
         date: bookingStartUtc,
         additionalNote: data.additionalNotes,
         duration: data.duration,
-        meetingType: MeetingType.Google_Meet,
+        meetingType: MeetingType.google_meet,
         meetingLink: googleMeetLink,
         googleEventId: eventId,
       },
@@ -168,6 +168,7 @@ export async function getAccessTokenVerified(user: any) {
     const refreshed = await refreshAccessToken(tokens);
 
     if (refreshed.error) {
+      console.log(refreshed.error);
       throw new Error("Failed to refresh Google access token");
     }
 

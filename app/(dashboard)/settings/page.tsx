@@ -1,8 +1,6 @@
 "use client";
 
-import type React from "react";
-
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -33,12 +31,18 @@ import { SettingsFormData, settingsSchema } from "@/lib/zod/schema";
 import BookingConfiguration from "@/app/_components/settings/booking-configuration";
 import IntegrationsSection from "@/app/_components/settings/integrations-section";
 import ProfileSection from "@/app/_components/settings/profile-section";
+import { saveUserSettings } from "@/action/save-user-settings";
+import useUserData from "@/hooks/use-userData";
+import PublicPageSettings from "@/app/_components/settings/public-page-settings";
 
 export default function SettingsPage() {
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
   const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const userData = useUserData();
+
+  console.log("userData: ", userData.data);
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
@@ -46,14 +50,33 @@ export default function SettingsPage() {
       profileName: "John Doe",
       profileImage: "/placeholder.svg?height=64&width=64",
       profileEmail: "john.doe@gmail.com",
-      meetingType: "googleMeet",
+      meetingType: "google_meet",
       username: "john-doe",
       welcomeMessage:
         "Welcome! Let's schedule a time to connect and discuss your needs.",
-      googleCalendarConnected: true,
-      connectedCalendar: "johndoe@gmail.com",
+      googleCalendarConnected: false,
     },
   });
+
+  // When user data loads, populate the form
+  useEffect(() => {
+    if (!userData.data) return;
+
+    form.reset({
+      profileName: userData.data.name || "John Doe",
+      profileImage:
+        userData.data.profilePicture || "/placeholder.svg?height=64&width=64",
+      profileEmail: userData.data.email || "john.doe@gmail.com",
+      meetingType:
+        (userData.data.meetingType as SettingsFormData["meetingType"]) ||
+        "google_meet",
+      username: userData.data.username || "john-doe",
+      welcomeMessage:
+        userData.data.welcomeMessage ||
+        "Welcome! Let's schedule a time to connect and discuss your needs.",
+      googleCalendarConnected: Boolean(userData.data.googleCalendarConnected),
+    });
+  }, [userData.data, form]);
 
   const { watch, setValue } = form;
 
@@ -100,10 +123,9 @@ export default function SettingsPage() {
     setIsSubmitting(true);
 
     try {
-      // simulate api call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      console.log("Settings data to save:", data);
+      console.log("user settings data: ", data);
+      const response = await saveUserSettings(data);
+      console.log("Save user settings response: ", response);
 
       toast({
         title: "Settings saved",
@@ -187,6 +209,14 @@ export default function SettingsPage() {
 
                 <Separator className="bg-gray-800" />
 
+                {/* public page settings */}
+                <PublicPageSettings
+                  form={form}
+                  copyBookingLink={copyBookingLink}
+                />
+
+                <Separator className="bg-gray-800" />
+
                 {/* integrations section */}
                 <IntegrationsSection
                   form={form}
@@ -200,9 +230,9 @@ export default function SettingsPage() {
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-teal-600 hover:bg-teal-700 px-8"
+                    className="px-8 text-base mr-3 bg-gradient-to-t from-white/70 via-white/80 to-white text-black hover:bg-opacity-90 transition-all duration-300 group relative overflow-hidden rounded-lg hover:text-black"
                   >
-                    {isSubmitting ? "Saving..." : "Save All Settings"}
+                    {isSubmitting ? "Saving..." : "Save"}
                   </Button>
                 </div>
               </CardContent>
@@ -211,99 +241,6 @@ export default function SettingsPage() {
         </Form>
 
         {/*  account delete card */}
-        <Card className="bg-gray-900 border-red-800/20">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-400">
-              <Trash2 className="h-5 w-5" />
-              Danger Zone
-            </CardTitle>
-            <CardDescription>
-              Permanently delete your account and all associated data
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Alert className="bg-red-900/10 border-red-800/20 mb-6">
-              <AlertCircle className="h-4 w-4 text-red-400" />
-              <AlertDescription className="text-red-300">
-                <strong>Warning:</strong> This action cannot be undone. All your
-                data including profile, bookings, and availability will be
-                permanently deleted.
-              </AlertDescription>
-            </Alert>
-
-            <Dialog
-              open={deleteConfirmOpen}
-              onOpenChange={setDeleteConfirmOpen}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  variant="destructive"
-                  className="bg-red-700 hover:bg-red-700"
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete My Account
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-gray-900 border-gray-800">
-                <DialogHeader>
-                  <DialogTitle className="text-red-400">
-                    Delete Account
-                  </DialogTitle>
-                  <DialogDescription>
-                    Are you sure you want to delete your account? This action is
-                    permanent and cannot be undone.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <Alert className="bg-red-900/20 border-red-800">
-                    <AlertCircle className="h-4 w-4 text-red-400" />
-                    <AlertDescription className="text-red-300">
-                      This will permanently delete:
-                      <ul className="list-disc list-inside mt-2 space-y-1">
-                        <li>Your profile and account information</li>
-                        <li>All booking history and upcoming appointments</li>
-                        <li>Your availability settings</li>
-                        <li>Connected integrations</li>
-                      </ul>
-                    </AlertDescription>
-                  </Alert>
-                  <div className="space-y-2">
-                    <Label htmlFor="delete-confirm">
-                      Type <strong>DELETE</strong> to confirm:
-                    </Label>
-                    <Input
-                      id="delete-confirm"
-                      value={deleteConfirmText}
-                      onChange={(e) => setDeleteConfirmText(e.target.value)}
-                      className="bg-gray-800 border-gray-700"
-                      placeholder="DELETE"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setDeleteConfirmOpen(false);
-                      setDeleteConfirmText("");
-                    }}
-                    className="border-gray-700 hover:bg-gray-800"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    variant="destructive"
-                    onClick={handleDeleteAccount}
-                    disabled={deleteConfirmText !== "DELETE"}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    Delete Account Permanently
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

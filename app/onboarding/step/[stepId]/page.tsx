@@ -60,6 +60,7 @@ const OnboardingStepPage = () => {
       setValue("fullName", session.user.name);
     }
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    console.log("Detected Timezone: ", detectedTimezone);
     setValue("timezone", detectedTimezone);
   }, [session?.user?.name, setValue]);
 

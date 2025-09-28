@@ -7,7 +7,7 @@ import { addDays, startOfDay, endOfDay } from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 // Return 3 groups: Today, This Week, Next 30 Days
-export async function getBookingsByRange() {
+export async function getBookingsByRange(timezoneParam?: string) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) throw new Error("User not authenticated");
 
@@ -19,22 +19,18 @@ export async function getBookingsByRange() {
     select: { timezone: true },
   });
 
-  const tz = user?.timezone || "UTC"; // fallback to UTC
+  const tz = timezoneParam || user?.timezone || "UTC";
 
   const now = new Date();
+
+  // this is how start time of the day(user's timezone) represented in utc timezone
   const todayStart = fromZonedTime(startOfDay(toZonedTime(now, tz)), tz);
   const todayEnd = fromZonedTime(endOfDay(toZonedTime(now, tz)), tz);
-
   const weekEnd = fromZonedTime(endOfDay(toZonedTime(addDays(now, 7), tz)), tz);
   const monthEnd = fromZonedTime(
     endOfDay(toZonedTime(addDays(now, 30), tz)),
     tz
   );
-
-  console.log("todayStart:", todayStart);
-  console.log("todayEnd:", todayEnd);
-  console.log("weekEnd:", weekEnd);
-  console.log("monthEnd:", monthEnd);
 
   const allBookings = await prisma.booking.findMany({
     where: {
@@ -47,13 +43,24 @@ export async function getBookingsByRange() {
     orderBy: { date: "asc" },
   });
 
+  console.log(tz);
+  const convertedBookings = allBookings.map((b) => ({
+    ...b,
+    date: toZonedTime(b.date, tz),
+  }));
+
+  for (let b of convertedBookings) {
+    console.log("Converted booking date: ", b.date);
+  }
+
   const result = {
-    today: [] as typeof allBookings,
-    thisWeek: [] as typeof allBookings,
-    nextMonth: [] as typeof allBookings,
+    today: [] as typeof convertedBookings,
+    thisWeek: [] as typeof convertedBookings,
+    nextMonth: [] as typeof convertedBookings,
+    allBookings: convertedBookings,
   };
 
-  for (const b of allBookings) {
+  for (const b of convertedBookings) {
     if (b.date >= todayStart && b.date <= todayEnd) {
       result.today.push(b);
     }
@@ -65,5 +72,7 @@ export async function getBookingsByRange() {
     }
   }
 
-  return result ?? { today: [], thisWeek: [], nextMonth: [] };
+  console.log("This is the result: ", result.allBookings);
+
+  return result ?? { today: [], thisWeek: [], nextMonth: [], allBookings: [] };
 }

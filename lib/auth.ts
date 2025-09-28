@@ -59,6 +59,7 @@ export const authOptions = {
     async jwt({ token, account }) {
       // persist the oauth access_token and refresh_token to the token right after signin
       if (account) {
+        console.log("Refresh token:", account.refresh_token);
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.expiresAt = account.expires_at;

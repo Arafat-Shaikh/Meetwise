@@ -1,4 +1,3 @@
-import { getTimeSlots } from "@/action/user";
 import SidebarLayout from "../_components/sidebar/sidebar-layout";
 
 interface DashboardLayoutProps {

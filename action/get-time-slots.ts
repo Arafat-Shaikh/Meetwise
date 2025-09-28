@@ -48,7 +48,9 @@ export async function getTimeSlots(
 
   const dayRange = getDayRangeInUserTimezone(userZonedDate, user.timezone);
 
+  console.log("before assigning new access token");
   user.googleAccessToken = await getAccessTokenVerified(user);
+  console.log("after assigning new access token");
 
   const calendarService = new GoogleCalendarService(
     user.googleAccessToken!,
@@ -82,6 +84,7 @@ export async function getTimeSlots(
   const dayAvailability = user.availability.find(
     (avail) => avail.day === dayName
   );
+
   if (!dayAvailability || !dayAvailability.enabled) {
     return { timeSlots: [] };
   }

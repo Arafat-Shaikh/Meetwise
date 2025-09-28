@@ -2,6 +2,8 @@ import { getTimeSlots } from "@/action/get-time-slots";
 import { useQuery } from "@tanstack/react-query";
 
 const useTimeSlots = (username: string, date: Date, clientTimeZone: string) => {
+  console.log("useTimeSlots: ");
+  console.log(username, date, clientTimeZone);
   return useQuery({
     queryKey: ["timeSlots", username, date, clientTimeZone],
     queryFn: () => getTimeSlots(username, date, clientTimeZone),

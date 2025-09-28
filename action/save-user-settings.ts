@@ -1,9 +1,11 @@
+"use server";
+
 import { authOptions } from "@/lib/auth";
 import cloudinary from "@/lib/cloudinary";
 import { getServerSession } from "next-auth";
+import { SettingsFormData } from "@/lib/zod/schema";
 import prisma from "@/lib/global-prisma";
 import { MeetingType } from "@/lib/generated/prisma";
-import { SettingsFormData } from "@/lib/zod/schema";
 
 export async function saveUserSettings(userSettings: SettingsFormData) {
   const session = await getServerSession(authOptions);
@@ -31,11 +33,10 @@ export async function saveUserSettings(userSettings: SettingsFormData) {
   const updatedUser = await prisma.user.update({
     where: { id: session.user.id },
     data: {
+      name: userSettings.profileName,
       welcomeMessage: userSettings.welcomeMessage,
-      calendarConnectedAt: userSettings.connectedCalendar,
       googleCalendarConnected: userSettings.googleCalendarConnected,
       username: userSettings.username,
-      email: userSettings.profileEmail,
       meetingType: userSettings.meetingType as MeetingType,
       profilePicture: imageUrl,
     },

@@ -314,7 +314,7 @@ export const steps = [
 ];
 
 export const timezones = [
-  "Asia/Kolkata",
+  "Asia/Calcutta",
   "America/New_York",
   "America/Chicago",
   "America/Denver",

@@ -104,7 +104,7 @@ const AvailabilityPage = () => {
   useEffect(() => {
     if (userAvailability) {
       setAvailability(userAvailability.availability as AvailabilityMap);
-      console.log("User Availability: ", userAvailability.timezone);
+      console.log("User Availability timezone: ", userAvailability.timezone);
       setTimezone(userAvailability.timezone);
       setBufferTime(userAvailability.bufferTime.toString());
       setMaxBookings(userAvailability.maxBookings);

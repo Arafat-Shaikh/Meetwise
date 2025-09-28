@@ -34,7 +34,7 @@ export const settingsSchema = z.object({
   profileName: z.string().min(2, "Name must be at least 2 characters"),
   profileImage: z.string().optional(),
   profileEmail: z.string().email(),
-  meetingType: z.enum(["googleMeet", "phone", "inPerson"], {
+  meetingType: z.enum(["google_meet", "phone", "in_person"], {
     required_error: "Please select a meeting type",
   }),
   username: z
@@ -49,7 +49,6 @@ export const settingsSchema = z.object({
     .string()
     .min(10, "Welcome message must be at least 10 characters"),
   googleCalendarConnected: z.boolean(),
-  connectedCalendar: z.string().optional(),
 });
 export type SettingsFormData = z.infer<typeof settingsSchema>;
 

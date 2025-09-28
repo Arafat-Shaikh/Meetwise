@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown, Clock, Phone } from "lucide-react";
 import Headings from "./headings";
+import { useRouter } from "next/navigation";
 
 // interface HeroSectionProps {
 //   heroRef: RefObject<HTMLElement> | null;
@@ -27,32 +28,7 @@ const wordFadeUp = {
 };
 
 const HeroSection = () => {
-  // const getAnimatedHeading = (headingWords: string[]) => {
-  //   return (
-  //     <>
-  //       {headingWords.map((word, index) => (
-  //         <span
-  //           key={index}
-  //           className="inline-block overflow-hidden mr-3 lg:mr-4"
-  //         >
-  //           <motion.span
-  //             initial={{ y: "100%", opacity: 0 }}
-  //             whileInView={{ y: "0%", opacity: 1 }}
-  //             viewport={{ once: true }}
-  //             transition={{
-  //               duration: 1.2,
-  //               delay: index * 0.08,
-  //               ease: [0.25, 0.46, 0.45, 0.94],
-  //             }}
-  //             className="inline-block"
-  //           >
-  //             {word}
-  //           </motion.span>
-  //         </span>
-  //       ))}
-  //     </>
-  //   );
-  // };
+  const router = useRouter();
   return (
     <section className="relative overflow-hidden pt-16 pb-32">
       {/* floating particles  */}
@@ -134,6 +110,7 @@ const HeroSection = () => {
             >
               <Button
                 size={"lg"}
+                onClick={() => router.push("/availability")}
                 className="group bg-gradient-to-t from-white/70 via-white/80 to-white text-black hover:bg-opacity-90 transition-all duration-300 group relative overflow-hidden rounded-full hover:text-black"
               >
                 <span className="">Get Started</span>

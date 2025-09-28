@@ -106,7 +106,7 @@ model Booking {
 }
 
 enum MeetingType {
-  Google_Meet
-  Phone
-  In_Person
+  google_meet
+  phone
+  in_person
 }
