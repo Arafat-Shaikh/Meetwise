@@ -190,7 +190,8 @@ export default function BookingChart({ allBookings }: BookingChartProps) {
         <div className="mt-4 flex items-center justify-between text-sm text-muted-foreground">
           <span>Weekly booking overview</span>
           <span>
-            Total: {data.reduce((sum, item) => sum + item.bookings, 0)} bookings
+            Total: {data.reduce((sum, item) => sum + item.bookings, 0) || 0}{" "}
+            bookings
           </span>
         </div>
       </CardContent>

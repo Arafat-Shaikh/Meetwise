@@ -168,3 +168,19 @@ export function generateTimeSlots(
 
   return slots;
 }
+
+export function getAppointmentTimes(date: Date, duration: number) {
+  const startTime = date;
+  const endTime = addMinutes(date, duration);
+
+  // Format as "HH:mm" (24-hour) or "hh:mm a" (12-hour)
+  const formattedStart = formatTo12Hour(startTime);
+  const formattedEnd = formatTo12Hour(endTime);
+
+  return {
+    startTime,
+    endTime,
+    formattedStart,
+    formattedEnd,
+  };
+}
