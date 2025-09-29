@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import ShareBookingLinkModal from "./share-booking-link-modal";
 import { useState } from "react";
 import useUserData from "@/hooks/use-userData";
+import { useRouter } from "next/navigation";
 
 const QuickActions = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const userPublicName = useUserData().data?.username || "";
+  const router = useRouter();
   const publicLink =
     typeof window !== "undefined"
       ? `${window.location.origin}/${userPublicName}`
@@ -17,18 +19,21 @@ const QuickActions = () => {
       description: "Set your available time slots",
       icon: Calendar,
       color: "bg-teal-600 hover:bg-teal-700",
+      link: "/availability",
     },
     {
       title: "Book Appointment",
       description: "Manually schedule a meeting",
       icon: Plus,
       color: "bg-blue-600 hover:bg-blue-700",
+      link: `/${userPublicName}`,
     },
     {
       title: "Share Booking Link",
       description: "Send your booking page to clients",
       icon: Share2,
       color: "bg-purple-600 hover:bg-purple-700",
+      link: "",
     },
   ];
 
@@ -71,6 +76,7 @@ const QuickActions = () => {
           return (
             <Button
               key={index}
+              onClick={() => router.push(action.link)}
               className={`w-full h-auto p-3 sm:p-4 ${action.color} text-white flex items-start gap-2 sm:gap-3 justify-start text-left`}
             >
               <div className="p-1 bg-white/20 rounded flex-shrink-0">

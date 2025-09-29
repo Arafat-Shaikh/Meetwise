@@ -14,6 +14,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, addDays, subDays, startOfDay } from "date-fns";
+import { useMediaQuery } from "react-responsive";
 
 interface BookingData {
   day: string;
@@ -99,6 +100,8 @@ export default function BookingChart({ allBookings }: BookingChartProps) {
     return startOfDay(subDays(today, daysToSubtract));
   });
 
+  const isSmall = useMediaQuery({ maxWidth: 639 });
+
   const [data, setData] = useState(() =>
     generateBookingData(currentWeekStart, allBookings)
   );
@@ -121,22 +124,22 @@ export default function BookingChart({ allBookings }: BookingChartProps) {
     "MMM dd, yyyy"
   )}`;
 
-  console.log("allBookings:", allBookings);
-
   return (
     <Card className="w-full bg-neutral-850">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-        <CardTitle className="text-2xl font-bold">Booking Trends</CardTitle>
+        <CardTitle className="text-md md:text-2xl font-medium md:font-bold text-white">
+          Booking Trends
+        </CardTitle>
         <div className="flex items-center gap-4">
           <span className="text-muted-foreground text-sm font-medium">
             {dateRangeText}
           </span>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 text-white">
             <Button
               variant="ghost"
               size="sm"
               onClick={goToPreviousWeek}
-              className="h-8 w-8 p-0 hover:bg-nav-button-hover"
+              className="h-8 w-8 p-0 hover:bg-nav-button-hover hover:text-white/80"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -144,7 +147,7 @@ export default function BookingChart({ allBookings }: BookingChartProps) {
               variant="ghost"
               size="sm"
               onClick={goToNextWeek}
-              className="h-8 w-8 p-0 hover:bg-nav-button-hover"
+              className="h-8 w-8 p-0 hover:bg-nav-button-hover hover:text-white/80"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -152,8 +155,11 @@ export default function BookingChart({ allBookings }: BookingChartProps) {
         </div>
       </CardHeader>
       <CardContent>
-        <div className="h-80 w-full">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="h-80 w-full -ml-14 sm:-ml-0 mt-4">
+          <ResponsiveContainer
+            width={isSmall ? "130%" : "100%"}
+            height={isSmall ? "80%" : "85%"}
+          >
             <BarChart
               data={data}
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
