@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -105,6 +105,10 @@ export default function BookingChart({ allBookings }: BookingChartProps) {
   const [data, setData] = useState(() =>
     generateBookingData(currentWeekStart, allBookings)
   );
+
+  useEffect(() => {
+    setData(generateBookingData(currentWeekStart, allBookings));
+  }, [allBookings]);
 
   const goToPreviousWeek = () => {
     const newStart = subDays(currentWeekStart, 7);

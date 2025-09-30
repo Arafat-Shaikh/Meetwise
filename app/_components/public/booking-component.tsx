@@ -204,7 +204,7 @@ const BookingComponent = ({
               name="date"
               control={control}
               rules={{ required: "Date is required" }}
-              render={({ field, fieldState }) => (
+              render={({ field }) => (
                 <>
                   <Calendar
                     formatters={{

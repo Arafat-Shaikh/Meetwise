@@ -150,12 +150,33 @@ const Sidebar = () => {
           ))}
         </div>
         <div className="mt-auto px-3 space-y-4">
-          <Link
-            className="text-base hover:text-gray-600 bg-transparent transition-all duration-300 cursor-pointer py-2 px-6 font-semibold w-full inline-flex items-start gap-x-3"
-            href={`/${data?.username}`}
-          >
-            Public page <Copy className="h-3 w-3" />
-          </Link>
+          <div className="flex items-center gap-x-3 py-2 px-6 w-full">
+            <Link
+              className="text-base hover:text-gray-600 bg-transparent transition-all duration-300 cursor-pointer font-semibold inline-flex items-center"
+              href={`/${data?.username}`}
+              style={{ flex: 1 }}
+            >
+              Public page
+            </Link>
+            <div className="relative group">
+              <button
+                type="button"
+                className="p-1 rounded transition"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}/${data?.username}`
+                  );
+                }}
+                aria-label={`${window.location.origin}/${data?.username}`}
+              >
+                <Copy className="h-4 w-4 text-gray-400 group-hover:text-neutral-500 transition" />
+              </button>
+              <span className="absolute left-full top-1/2 -translate-y-1/2 ml-2 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
+                Copy link
+              </span>
+            </div>
+          </div>
           <Link
             className="text-lg bg-gradient-to-t from-black/10 to-gray-600/10 hover:bg-gray-700/10 transition-all duration-300 cursor-pointer py-2 px-6 rounded-full font-semibold w-full block"
             href={`settings`}

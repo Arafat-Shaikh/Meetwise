@@ -71,10 +71,6 @@ const TimePicker = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
-  console.log("value: " + value);
-  console.log("minTime: ", minTime);
-  console.log("maxTime:", maxTime);
-
   // Find current value index
   useEffect(() => {
     const index = timeOptions.findIndex((option) => option === value);
@@ -153,7 +149,7 @@ const TimePicker = ({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={`
-             bg-[#2e2d2d] hover:bg-[#1f1f1f] border border-gray-600 rounded-lg px-3 py-2 text-gray-100 text-sm font-medium transition-all duration-200 min-w-[90px]
+             bg-[#2e2d2d] hover:bg-[#1f1f1f] border border-gray-600 py-1.5 text-gray-100 text-sm font-medium transition-all duration-200 min-w-[80px] rounded-full
       
     
         `}

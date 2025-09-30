@@ -193,7 +193,7 @@ const AvailabilityPage = () => {
   console.log("Current Timezone: ", timezone);
 
   return (
-    <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-8 lg:p-10 lg:px-40 p-2 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
+    <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-8 lg:p-10 lg:px-40 p-2 px-1 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">
       <div className="rounded-lg py-2 gap-x-20">
         <h2 className="text-3xl text-white font-semibold mb-4">Availability</h2>
 
