@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { bookings, darkButtonStyles, dummyBookings } from "@/lib/const";
+import { bookings } from "@/lib/const";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,9 +23,11 @@ const AppointmentsPage = () => {
   const { data: userInfo } = useUserData();
   const router = useRouter();
 
-  console.log("Event Type:", eventType);
-  console.log("Loading Bookings:", isLoading);
-  console.log("Ranged Bookings:", rangedBookings);
+  // Calculate total and completed bookings
+  const totalBookings = rangedBookings?.allBookings?.length || 0;
+  const completedBookings =
+    rangedBookings?.allBookings?.filter((b) => new Date(b.date) < new Date())
+      .length || 0;
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -69,29 +71,33 @@ const AppointmentsPage = () => {
           {/* Stats: below on mobile, right on md+ */}
           <div
             // className="rounded-full h-[50px] flex justify-center items-center font-mono text-xs text-[#a1a1a1] bg-[linear-gradient(145deg,_#2e2d2d,_#212121)] shadow-[inset_5px_5px_8px_#1a1a1a,inset_-5px_-5px_10px_#1a1a1a,-2px_-6px_18px_#1b1d2b,6px_6px_18px_#1b1d2b]transition-all duration-[500ms] active:shadow-[1px_1px_13px_#12141c,-1px_-1px_33px_#2a2e45]active:text-[#d6d6d6]active:duration-[100ms]"
-            className={`flex flex-row md:flex-row md:items-center md:gap-x-20 justify-between mt-4 md:mt-0 ${darkButtonStyles} px-6 text-white md:justify-start`}
+            className={`flex flex-row md:flex-row md:items-center md:gap-x-20 justify-between mt-4 mx-4 md:mt-0 ${""} px-6 text-white md:justify-start`}
           >
             <p className={`inline-flex text-center gap-x-1 flex-col`}>
               <span className="text-lg lg:text-xl font-medium">
-                {rangedBookings?.nextMonth.length || 0}
+                {totalBookings}
               </span>
-              <span className="text-gray-500">Total</span>
+              <span className="text-gray-500 leading-4">Total</span>
             </p>
             <p className={`inline-flex gap-x-1 text-center flex-col`}>
-              <span className="text-lg lg:text-xl font-medium">400</span>
-              <span className="text-gray-500">Completed</span>
+              <span className="text-lg lg:text-xl font-medium">
+                {completedBookings}
+              </span>
+              <span className="text-gray-500 leading-4">Completed</span>
             </p>
+            {/* Cancelled section left blank for now */}
             <p className={`inline-flex text-center gap-x-1 flex-col`}>
-              <span className="text-lg lg:text-xl font-medium">113</span>
-              <span className="text-gray-500">Cancelled</span>
+              <span className="text-lg lg:text-xl font-medium">13</span>
+              <span className="text-gray-500 leading-4">Cancelled</span>
             </p>
           </div>
           {/* New button for md+ screens */}
           <div className="hidden md:block">
             <Button
               onClick={() => router.push(`/${userInfo?.username}`)}
-              className={`rounded-full bg-gradient-to-b from-white/90 via-white/70 to-white/40 border-black/60 border `}
+              className={` relative rounded-full bg-gradient-to-t from-neutral-300/10  to-neutral-700/10 border border-white/10`}
             >
+              <div className="bg-gradient-to-tr rounded-full absolute inset-0 from-emerald-200/10 to-emerald-300/10" />
               New <Plus className="h-3 w-3" />
             </Button>
           </div>
@@ -261,20 +267,3 @@ const AppointmentsPage = () => {
 };
 
 export default AppointmentsPage;
-
-// model Booking {
-//   id          String    @id @default(cuid())
-//   hostId      String    // The logged-in user who owns the calendar
-//   eventTypeId String
-//   attendeeEmail String
-//   attendeeName  String
-//   startTime   DateTime
-//   endTime     DateTime
-//   status      BookingStatus @default(SCHEDULED)
-//   location    String?
-//   notes       String?
-//   createdAt   DateTime  @default(now())
-
-//   host        User      @relation(fields: [hostId], references: [id])
-//   eventType   EventType @relation(fields: [eventTypeId], references: [id])
-// }

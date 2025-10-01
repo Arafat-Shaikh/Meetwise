@@ -5,7 +5,6 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useUserData from "@/hooks/use-userData";
-import { AnimatePresence } from "framer-motion";
 import { signOut } from "next-auth/react";
 
 interface SidebarLayoutProps {
@@ -185,7 +184,7 @@ const Sidebar = () => {
         isCollapsed ? "w-20" : "w-64"
       } lg:relative ${"-translate-x-full lg:translate-x-0 "}`}
     >
-      <div className="w-64 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent rounded-xl">
+      <div className="w-60 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent rounded-xl">
         <div className="px-4 py-3 text-2xl font-bold">
           <Link href="/" className="">
             Meetvise
