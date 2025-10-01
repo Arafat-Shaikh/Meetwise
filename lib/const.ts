@@ -289,21 +289,9 @@ export const steps = [
   },
   {
     id: 2,
-    title: "Calendar Connection",
+    title: "Integrations",
     description: "Connect your calendar",
     icon: Calendar,
-  },
-  {
-    id: 3,
-    title: "Integration Options",
-    description: "Choose your meeting tools",
-    icon: Video,
-  },
-  {
-    id: 4,
-    title: "Set Availability",
-    description: "When are you available?",
-    icon: Clock,
   },
   {
     id: 5,

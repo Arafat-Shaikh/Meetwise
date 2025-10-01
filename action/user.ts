@@ -53,13 +53,21 @@ export async function getUser() {
 }
 
 export async function checkUsernameExists(username: string) {
-  const exists = await prisma.user.findUnique({
-    where: {
-      username,
-    },
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const user = await prisma.user.findUnique({
+    where: { username },
   });
 
-  return !!exists;
+  if (!user) return false;
+
+  if (user.id === session.user.id) return false;
+
+  return true;
 }
 
 export async function saveOnboardingUserData(rawData: any) {
@@ -77,8 +85,6 @@ export async function saveOnboardingUserData(rawData: any) {
     console.error("Validation failed:", result.error);
     throw new Error("Invalid data provided");
   }
-
-  const timezone = "Asia/Kolkata";
 
   const data: OnboardingDataTypes = result.data;
 
@@ -109,8 +115,24 @@ export async function saveOnboardingUserData(rawData: any) {
       enabled
     );
 
-    await prisma.availability.create({
-      data: {
+    await prisma.availability.upsert({
+      where: {
+        day_userId: {
+          day: day as keyof typeof DayOfWeek,
+          userId: user.id,
+        },
+      },
+      update: {
+        enabled,
+        slots: {
+          deleteMany: {}, // clear old slots
+          create: utcSlots.map(({ startUtc, endUtc }) => ({
+            startTime: new Date(startUtc),
+            endTime: new Date(endUtc),
+          })),
+        },
+      },
+      create: {
         userId: user.id,
         day: day as keyof typeof DayOfWeek,
         enabled,
@@ -122,6 +144,20 @@ export async function saveOnboardingUserData(rawData: any) {
         },
       },
     });
+
+    // await prisma.availability.create({
+    //   data: {
+    //     userId: user.id,
+    //     day: day as keyof typeof DayOfWeek,
+    //     enabled,
+    //     slots: {
+    //       create: utcSlots.map(({ startUtc, endUtc }) => ({
+    //         startTime: new Date(startUtc),
+    //         endTime: new Date(endUtc),
+    //       })),
+    //     },
+    //   },
+    // });
   }
 
   return { success: true };

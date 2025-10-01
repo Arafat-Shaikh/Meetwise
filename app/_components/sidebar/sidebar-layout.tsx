@@ -59,7 +59,9 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="px-4 py-4 text-2xl font-bold border-b border-gray-800 flex items-center justify-between">
-                <h1 className="tracking-tight text-white">Meetwise</h1>
+                <Link href="/" className="tracking-tight text-white">
+                  Meetvise
+                </Link>
                 <button
                   className="text-gray-400 hover:text-white text-xl"
                   onClick={() => setMobileSidebarOpen(false)}
@@ -185,7 +187,9 @@ const Sidebar = () => {
     >
       <div className="w-64 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent rounded-xl">
         <div className="px-4 py-3 text-2xl font-bold">
-          <h1 className="">Meetwise</h1>
+          <Link href="/" className="">
+            Meetvise
+          </Link>
         </div>
         <div className="py-10 px-3 flex flex-col gap-y-2">
           {["Dashboard", "Appointments", "Availability"].map((item) => (

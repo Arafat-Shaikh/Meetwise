@@ -2,6 +2,7 @@
 
 import { getUniqueUsername } from "@/action/generate-username";
 import { checkUsernameExists, saveOnboardingUserData } from "@/action/user";
+import Loader from "@/app/_components/loader";
 import TimePicker, { convertTo24Hour } from "@/app/_components/time-picker";
 import { UploadPhotoButton } from "@/app/_components/upload-photo";
 import { Button } from "@/components/ui/button";
@@ -152,9 +153,9 @@ const OnboardingStepPage = () => {
     switch (step) {
       case 1:
         return await trigger(["username", "fullName", "timezone"]);
-      case 4:
+      case 2:
         return validateTimeSlots();
-      case 5:
+      case 3:
         return await trigger(["bio"]);
       default:
         return true;
@@ -162,9 +163,12 @@ const OnboardingStepPage = () => {
   };
 
   const handleNext = async () => {
+    if (currentStep === 3) {
+      setLoading(true);
+    }
     const isValid = await validateStep(currentStep);
     if (isValid) {
-      if (currentStep < 5) {
+      if (currentStep < 3) {
         router.push(`/onboarding/step/${currentStep + 1}`);
       } else {
         const finalData = getValues();
@@ -178,6 +182,9 @@ const OnboardingStepPage = () => {
           toast.error("Something went wrong");
         }
       }
+    }
+    if (currentStep === 3) {
+      setLoading(false);
     }
   };
 
@@ -315,15 +322,16 @@ const OnboardingStepPage = () => {
             <div className="text-center">
               <Calendar className="h-16 w-16 text-white mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-white mb-2">
-                Connect Your Calendar
+                Connect Integrations
               </h3>
               <p className="text-blue-100">
-                Sync with your Google Calendar to avoid double bookings and
-                manage your schedule seamlessly.
+                Sync with your Google Calendar and choose your meeting type.
               </p>
             </div>
 
-            <div className="bg-white/10 rounded-xl p-6 border border-white/20">
+            {/* Combined integrations box */}
+            <div className="bg-white/10 rounded-xl p-6 border border-white/20 space-y-6">
+              {/* Google Calendar toggle */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
                   <div className="h-10 w-10 bg-green-500 rounded-lg flex items-center justify-center">
@@ -350,293 +358,50 @@ const OnboardingStepPage = () => {
                       <span
                         className={`inline-block h-4 w-4 shadow-sm transform rounded-full bg-white transition-transform ${
                           field.value ? "translate-x-6" : "translate-x-1"
-                        } `}
+                        }`}
+                      />
+                    </button>
+                  )}
+                />
+              </div>
+              {/* Google Meet toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="h-10 w-10 bg-green-500 rounded-lg flex items-center justify-center">
+                    <Video className="h-5 w-5 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="text-white font-medium">Google Meet</h4>
+                    <p className="text-white/70 text-sm">
+                      Integrated with Google Calendar
+                    </p>
+                  </div>
+                </div>
+                <Controller
+                  name={`integrations.googleMeet`}
+                  control={control}
+                  render={({ field }) => (
+                    <button
+                      type="button"
+                      onClick={() => field.onChange(!field.value)}
+                      className={`relative inline-flex h-6 w-11 shadow-lg items-center rounded-full transition-colors ${
+                        field.value ? "bg-green-500" : "bg-white/20"
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 shadow-sm transform rounded-full bg-white transition-transform ${
+                          field.value ? "translate-x-6" : "translate-x-1"
+                        }`}
                       />
                     </button>
                   )}
                 />
               </div>
             </div>
-
-            {watchedData.connectCalendar && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                className="bg-green-300/10 border border-green-400/10 rounded-xl p-4"
-              >
-                <div className="flex items-center space-x-2">
-                  <Check className="h-5 w-5 text-green-200" />
-                  <span className="text-green-100">
-                    Calendar connection will be set up after onboarding
-                  </span>
-                </div>{" "}
-              </motion.div>
-            )}
           </motion.div>
         );
 
       case 3:
-        return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
-          >
-            <div className="text-center">
-              <Video className="h-16 w-16 text-white mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">
-                Meeting Integrations
-              </h3>
-              <p className="text-blue-100">
-                Choose which video conferencing tools you'd like to use for
-                meetings.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {[
-                {
-                  key: "googleMeet" as const,
-                  name: "Google Meet",
-                  description: "Integrated with Google Calendar",
-                  color: "bg-green-500",
-                },
-              ].map((integration) => (
-                <div
-                  key={integration.key}
-                  className="bg-white/10 rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div
-                        className={`h-10 w-10 ${integration.color} rounded-lg flex items-center justify-center`}
-                      >
-                        <Video className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <h4 className="text-white font-medium">
-                          {integration.name}
-                        </h4>
-                        <p className="text-blue-200 text-sm">
-                          {integration.description}
-                        </p>
-                      </div>
-                    </div>
-                    <Controller
-                      name={`integrations.${integration.key}`}
-                      control={control}
-                      render={({ field }) => (
-                        <button
-                          type="button"
-                          onClick={() => field.onChange(!field.value)}
-                          className={`relative inline-flex h-6 w-11 shadow-sm items-center rounded-full transition-colors ${
-                            field.value ? "bg-green-500" : "bg-white/20"
-                          }`}
-                        >
-                          <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                              field.value ? "translate-x-6" : "translate-x-1"
-                            }`}
-                          />
-                        </button>
-                      )}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        );
-
-      case 4:
-        return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="space-y-6"
-          >
-            <div className="text-center">
-              <Clock className="h-8 w-8 text-white mx-auto mb-4" />
-              {/* <h3 className="text-2xl font-semibold text-white mb-2">
-                Set Your Availability
-              </h3> */}
-              <p className="text-blue-100 text-lg">
-                Define ranges of time when you are available
-              </p>
-              <p className="text-blue-200 text-sm mt-2">
-                You can customize all of this later in the availability page.
-              </p>
-            </div>
-
-            <div className="space-y-2 border-0 rounded-xl p-4 bg-[#161a1d] border-white/20">
-              {weekDays.map((day, i) => (
-                <div key={day} className="">
-                  <div className="p-0">
-                    {/* day header with toggle  */}
-                    <div className="flex flex-col md:flex-row items-start  md:justify-between gap-y-4 md:space-x-4 mb-3">
-                      <div className="space-x-4">
-                        <button
-                          type="button"
-                          onClick={() => toggleDayAvailability(day)}
-                          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-all duration-200 ${
-                            watchedData.availability[day]?.enabled
-                              ? "bg-green-600/80"
-                              : "bg-white/20"
-                          }`}
-                        >
-                          <motion.span
-                            className="inline-block h-4 w-4 transform rounded-full bg-white"
-                            animate={{
-                              x: watchedData.availability[day]?.enabled
-                                ? 24
-                                : 4,
-                            }}
-                            transition={{
-                              type: "spring",
-                              stiffness: 500,
-                              damping: 30,
-                            }}
-                          />
-                        </button>
-                        <span
-                          className={`font-semibold text-lg min-w-[100px] ${
-                            watchedData.availability[day]?.enabled
-                              ? "text-white"
-                              : "text-white/60"
-                          } `}
-                        >
-                          {day}
-                        </span>
-                      </div>
-
-                      {/* time slots for enabled days  */}
-
-                      {watchedData.availability[day]?.enabled && (
-                        <div className="space-y-2">
-                          {watchedData.availability[day].timeSlots.map(
-                            (slot, index) => {
-                              const errorKey = `${day}-${index}`;
-                              const hasError = timeValidationErrors[errorKey];
-
-                              return (
-                                <motion.div
-                                  key={index}
-                                  initial={{ opacity: 0, scale: 0.95 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  exit={{ opacity: 0, scale: 0.95 }}
-                                  className="space-y-2"
-                                >
-                                  <div className="flex items-center gap-3">
-                                    <div className="flex items-center space-x-2 flex-1">
-                                      <div className="w-full sm:w-auto">
-                                        <Controller
-                                          name={`availability.${day}.timeSlots.${index}.startTime`}
-                                          control={control}
-                                          render={({ field }) => (
-                                            <TimePicker
-                                              value={field.value}
-                                              onChange={(value) => {
-                                                field.onChange(value);
-
-                                                if (
-                                                  timeValidationErrors[errorKey]
-                                                ) {
-                                                  const newErrors = {
-                                                    ...timeValidationErrors,
-                                                  };
-                                                  delete newErrors[errorKey];
-                                                  setTimeValidationErrors(
-                                                    newErrors
-                                                  );
-                                                }
-                                              }}
-                                            />
-                                          )}
-                                        />
-                                      </div>
-                                      <span className="text-white/60 font-medium px-1 flex-shrink-0">
-                                        -
-                                      </span>
-                                      <div className="w-full sm:w-auto">
-                                        <Controller
-                                          name={`availability.${day}.timeSlots.${index}.endTime`}
-                                          control={control}
-                                          render={({ field }) => (
-                                            <TimePicker
-                                              value={field.value}
-                                              onChange={(value) => {
-                                                field.onChange(value);
-
-                                                if (
-                                                  timeValidationErrors[errorKey]
-                                                ) {
-                                                  const newErrors = {
-                                                    ...timeValidationErrors,
-                                                  };
-                                                  delete newErrors[errorKey];
-                                                  setTimeValidationErrors(
-                                                    newErrors
-                                                  );
-                                                }
-                                              }}
-                                              minTime={slot.startTime}
-                                            />
-                                          )}
-                                        />
-                                      </div>
-                                    </div>
-                                    <div className="flex items-center justify-start space-x-2 flex-shrink-0">
-                                      {index === 0 ? (
-                                        <motion.button
-                                          type="button"
-                                          onClick={() => addTimeSlot(day)}
-                                          className="w-8 h-8 rounded-lg flex items-center justify-center text-white/80 hover:bg-white/10 transition-colors"
-                                          title="Add time slot"
-                                          whileHover={{ scale: 1.1 }}
-                                          whileTap={{ scale: 0.95 }}
-                                        >
-                                          <Plus className="h-4 w-4" />
-                                        </motion.button>
-                                      ) : (
-                                        <motion.button
-                                          type="button"
-                                          onClick={() =>
-                                            removeDaySlot(day, index)
-                                          }
-                                          className="text-white/80 hover:bg-red-500/30 p-2 rounded-lg"
-                                          whileHover={{ scale: 1.1 }}
-                                          whileTap={{ scale: 0.95 }}
-                                          title="remove a time slot"
-                                        >
-                                          <Trash className="h-4 w-4" />
-                                        </motion.button>
-                                      )}
-                                    </div>
-                                  </div>
-                                </motion.div>
-                              );
-                            }
-                          )}
-                        </div>
-                      )}
-                    </div>
-
-                    {/* show placeholder for disabled days  */}
-                    {!watchedData.availability[day]?.enabled && (
-                      <div className="ml-[76px] text-white/40 text-sm">
-                        Unavailable
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        );
-
-      case 5:
         return (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -724,10 +489,8 @@ const OnboardingStepPage = () => {
           </motion.div>
         );
     }
-    return <div>render step content</div>;
   };
-  // bg-[#151a1d]
-  // bg-gradient-to-br from-[#161a1d] via-[#212529] to-[#161a1d]
+
   return (
     <>
       <div className="min-h-screen bg-gradient-to-t pt-6 bg-[#151a1d]  relative overflow-hidden">
@@ -741,80 +504,101 @@ const OnboardingStepPage = () => {
           {/* progress bar  */}
 
           <div className="px-6 mb-8">
-            <div className="max-w-4xl mx-auto">
-              {/* mobile progress bar */}
-              <div className="md:hidden mb-6">
-                <div className="flex items-center justify-between text-white text-sm mb-3">
-                  <span className="font-medium">
-                    Step {currentStep} of {steps.length}
-                  </span>
-                </div>
-                <div className="relative">
-                  <div className="flex justify-between mt-2">
+            <div className="max-w-4xl w-full mx-auto flex flex-col items-center">
+              <div className="px-6 mb-8">
+                <div className="max-w-4xl w-full mx-auto flex flex-col items-center">
+                  {/* mobile progress bar */}
+                  <div className="md:hidden mb-6">
+                    <div className="flex items-center justify-between text-white text-sm mb-3">
+                      <span className="font-medium">
+                        Step {currentStep} of {steps.length}
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <div className="flex justify-between mt-2">
+                        {steps.map((step, index) => (
+                          <div
+                            key={step.id}
+                            className="flex flex-row items-center"
+                          >
+                            <div
+                              className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
+                                currentStep >= step.id ||
+                                currentStep === steps.length
+                                  ? "bg-white text-green-600 border-white shadow-lg"
+                                  : "border-white/40 text-white/60"
+                              }`}
+                            >
+                              {currentStep > step.id ? (
+                                <Check className="h-3 w-3" />
+                              ) : (
+                                <step.icon className="h-3 w-3" />
+                              )}
+                            </div>
+                            {steps.length - 1 !== index && (
+                              <div
+                                className={`w-14 h-0.5 ${
+                                  currentStep > index + 1
+                                    ? "bg-green-600/80"
+                                    : "bg-green-800/30"
+                                }`}
+                              />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* desktop progress bar */}
+                  <div className="hidden md:flex items-center justify-center relative mb-8 w-full max-w-2xl mx-auto">
                     {steps.map((step, index) => (
-                      <div key={step.id} className="flex flex-row items-center">
+                      <div key={step.id} className="flex items-center relative">
+                        {/* Step Circle */}
                         <div
-                          className={`w-7 h-7 rounded-full border-2 flex items-center justify-center transition-all duration-300 ${
-                            currentStep >= step.id
-                              ? "bg-white text-green-600 border-white shadow-lg"
-                              : "border-white/40 text-white/60"
-                          }`}
+                          className={`flex items-center justify-center w-10 h-10 rounded-full border-2 z-10
+                  ${
+                    currentStep >= step.id || currentStep === steps.length
+                      ? "bg-white text-green-600 border-white"
+                      : "border-white/30 text-white/60 bg-black"
+                  }`}
                         >
                           {currentStep > step.id ? (
-                            <Check className="h-3 w-3" />
+                            <Check className="h-5 w-5" />
                           ) : (
-                            <step.icon className="h-3 w-3" />
+                            <step.icon className="h-5 w-5" />
                           )}
                         </div>
-                        {steps.length - 1 !== index && (
-                          <div
-                            className={`w-14 h-0.5 ${
-                              currentStep > index + 1
-                                ? "bg-green-600/80"
-                                : "bg-green-800/30"
-                            }`}
-                          />
+
+                        {/* Connector Line (only if not last step) */}
+                        {index < steps.length - 1 && (
+                          <div className="relative h-0.5 w-32">
+                            {/* Base line */}
+                            <div className="absolute top-1/2 left-0 w-full h-0.5 bg-white/30" />
+                            {/* Progress line */}
+                            <div
+                              className={`absolute top-1/2 left-0 h-0.5 transition-colors duration-300 ${
+                                currentStep > step.id
+                                  ? "bg-white"
+                                  : "bg-transparent"
+                              }`}
+                              style={{ width: "100%" }}
+                            />
+                          </div>
                         )}
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
 
-              {/* desktop progress bar  */}
-              <div className="hidden md:flex items-center justify-between mb-4">
-                {steps.map((step, index) => (
-                  <div key={step.id} className="flex items-center">
-                    <div
-                      className={`flex items-center justify-center w-10 h-10 rounded-full transition-colors ${
-                        currentStep >= step.id
-                          ? "bg-white text-green-600 border-white"
-                          : "border-white/30 text-white/60"
-                      }`}
-                    >
-                      {currentStep > step.id ? (
-                        <Check className="h-5 w-5" />
-                      ) : (
-                        <step.icon className="h-5 w-5" />
-                      )}
-                    </div>
-                    {index < steps.length - 1 && (
-                      <div
-                        className={`w-40 h-0.5 mx-2 transition-colors ${
-                          currentStep > step.id ? "bg-white" : "bg-white/30"
-                        }`}
-                      />
-                    )}
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-white">
+                      {steps[currentStep - 1]?.title}
+                    </h2>
+                    <p className="text-blue-100 mt-1">
+                      {steps[currentStep - 1]?.description}
+                    </p>
                   </div>
-                ))}
-              </div>
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white">
-                  {steps[currentStep - 1]?.title}
-                </h2>
-                <p className="text-blue-100 mt-1">
-                  {steps[currentStep - 1]?.description}
-                </p>
+                </div>
               </div>
             </div>
           </div>
@@ -854,10 +638,10 @@ const OnboardingStepPage = () => {
                   )}
                   <Button
                     onClick={() => handleNext()}
-                    className="bg-gradient-to-t bg-white hover:bg-white/80 transition-all duration-200 rounded-full text-black shadow-sm border border-green-600/10"
+                    className="bg-gradient-to-t bg-white hover:bg-white/80 transition-all duration-200 rounded-full text-black shadow-sm border border-green-600/10 flex items-center justify-center"
                   >
-                    {currentStep === 5 ? "Finish Setup" : "Next"}
-                    {currentStep < 5 && (
+                    {currentStep === 3 ? `Finish Setup` : "Next"}
+                    {currentStep < 3 && (
                       <motion.span
                         className="ml-2 inline-flex"
                         initial={{ x: 0 }}
@@ -866,6 +650,11 @@ const OnboardingStepPage = () => {
                       >
                         <ArrowRight className="h-4 w-4" />
                       </motion.span>
+                    )}
+                    {currentStep === 3 && loading && (
+                      <span className="ml-2">
+                        <Loader borderColor="#22c55e" />
+                      </span>
                     )}
                   </Button>
                 </div>

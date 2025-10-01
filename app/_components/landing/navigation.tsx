@@ -42,7 +42,7 @@ const Navigation = ({ scrolled }: NavigationProps) => {
 
                 <Link
                   href={"/"}
-                  className="text-2xl font-bold bg-gradient-to-r from-white to-blue-200 bg-clip-text text-transparent"
+                  className="text-2xl font-bold bg-gradient-to-r from-white to-emerald-100 bg-clip-text text-transparent"
                 >
                   Meetvise
                 </Link>

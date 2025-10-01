@@ -15,7 +15,7 @@ const Footer = () => {
       {/* <div className="absolute inset-1 opacity-10 bg-gradient-to-t from-white to-black/80 rounded-xl shadow- pointer-events-none" /> */}
       <div className="container mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-4 text-white">
-          <div>
+          <div className="text-center">
             <motion.h3
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -34,7 +34,7 @@ const Footer = () => {
               clients.
             </motion.p>
           </div>
-          <div>
+          <div className="text-center">
             <motion.h4
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -68,7 +68,7 @@ const Footer = () => {
               )}
             </ul>
           </div>
-          <div>
+          <div className="text-center">
             <motion.h4
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -100,7 +100,7 @@ const Footer = () => {
               ))}
             </ul>
           </div>
-          <div>
+          <div className="text-center">
             <motion.h4
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}

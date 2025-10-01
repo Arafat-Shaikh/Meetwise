@@ -1,66 +1,62 @@
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import { ArrowRight, ChevronDown, Clock, Phone } from "lucide-react";
-import Headings from "./headings";
+import { ArrowRight, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-// interface HeroSectionProps {
-//   heroRef: RefObject<HTMLElement> | null;
-// }
-
-const container = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.08,
-      duration: 1,
-    },
-  },
-};
-
-const wordFadeUp = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
-  },
+type ParticleStyle = {
+  left: string;
+  top: string;
+  opacity: number;
 };
 
 const HeroSection = () => {
   const router = useRouter();
+  const [particleStyles, setParticleStyles] = useState<ParticleStyle[]>([]);
+  const [largeParticleStyles, setLargeParticleStyles] = useState<
+    ParticleStyle[]
+  >([]);
+
+  useEffect(() => {
+    const styles = [...Array(120)].map(() => ({
+      left: `${Math.random() * 60}%`,
+      top: `${Math.random() * 60}%`,
+      opacity: Math.random() * 0.6 + 0.2,
+    }));
+
+    const largeStyles = [...Array(20)].map(() => ({
+      left: `${Math.random() * 55}%`,
+      top: `${Math.random() * 55}%`,
+      opacity: Math.random() * 0.3 + 0.1,
+    }));
+
+    setParticleStyles(styles);
+    setLargeParticleStyles(largeStyles);
+  }, []);
   return (
     <section className="relative overflow-hidden pt-16 pb-32">
       {/* floating particles  */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(120)].map((_, i) => (
+        {particleStyles.map((style, i) => (
           <div
             key={i}
             className="absolute w-1 h-1 bg-white/40 rounded-full"
-            style={{
-              left: `${Math.random() * 60}%`,
-              top: `${Math.random() * 60}%`,
-              opacity: Math.random() * 0.6 + 0.2,
-            }}
+            style={style}
           />
         ))}
-        {[...Array(20)].map((_, i) => (
+        {largeParticleStyles.map((style, i) => (
           <div
             key={`large-${i}`}
             className="absolute w-1.5 h-1.5 bg-white/20 rounded-full"
-            style={{
-              left: `${Math.random() * 55}%`,
-              top: `${Math.random() * 55}%`,
-              opacity: Math.random() * 0.3 + 0.1,
-            }}
+            style={style}
           />
         ))}
       </div>
 
-      <div className="container mx-auto px-4 py-20 sm:px-6 lg:px-8 lg:py-28 relative z-10">
+      <div className="container mx-auto px-4 py-2 sm:py-20 sm:px-6 lg:px-8 lg:py-28 relative z-10">
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-8">
           <div className="flex flex-col sm:gap-y-10 justify-center">
-            <div>
+            <div className="">
               <motion.h2
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
@@ -103,7 +99,7 @@ const HeroSection = () => {
             </div>
 
             <motion.div
-              className="mt-10 flex flex-col sm:flex-row gap-4"
+              className="sm:mt-10 flex flex-col sm:flex-row gap-4 mt-16 items-center"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 1.4 }}
@@ -111,9 +107,9 @@ const HeroSection = () => {
               <Button
                 size={"lg"}
                 onClick={() => router.push("/availability")}
-                className="group bg-gradient-to-t from-white/70 via-white/80 to-white text-black hover:bg-opacity-90 transition-all duration-300 group relative overflow-hidden rounded-full hover:text-black"
+                className="group bg-gradient-to-t from-white/70 via-white/80 max-w-sm to-white text-black hover:bg-opacity-90 transition-all duration-300 group relative overflow-hidden rounded-full hover:text-black"
               >
-                <span className="">Get Started</span>
+                <span className="font-semibold">Get Started</span>
 
                 <motion.span
                   className="inline-block"
@@ -131,7 +127,7 @@ const HeroSection = () => {
               <Button
                 size={"lg"}
                 variant={"outline"}
-                className="hover:bg-white/20 transition border-gray-600 border hover:text-white duration-300 text-white bg-white/10 rounded-full"
+                className="hover:bg-white/20 transition hover:text-white max-w-sm duration-300 text-white bg-gradient-to-tr from-neutral-200/10 shadow-lg to-neutral-200/30 rounded-full border-none"
               >
                 See Demo
               </Button>
@@ -145,18 +141,18 @@ const HeroSection = () => {
             transition={{ duration: 0.2, delay: 0.4 }}
             whileHover={{ y: -5 }}
           >
-            <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 shadow-2xl space-y-1 shadow-white/10">
+            <div className="w-full max-w-lg rounded-2xl bg-white/10 backdrop-blur-md p-1 sm:mt-10 lg:mt-0 shadow-2xl space-y-1 shadow-white/10">
               <motion.div
                 initial={{ opacity: 0, x: 40, y: 20 }}
                 animate={{ opacity: 1, x: 0, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.6 }}
-                className="rounded-xl bg-gradient-to-br relative from-emerald-500 via-emerald-600 to-emerald-700 p-4 text-white"
+                className="rounded-xl bg-gradient-to-br relative from-emerald-500 via-emerald-600 to-emerald-700 py-3 px-4 sm:p-4 text-white"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-emerald-900 via-emerald-700 to-emerald-600 opacity-20" />
                 <h3 className="text-xl font-semibold">
                   Welcome to your calendar!
                 </h3>
-                <p className="mt-1 text-blue-100">
+                <p className="mt-1 text-neutral-100 leading-5 text-sm">
                   Events that your customers book will appear here.
                 </p>
               </motion.div>
