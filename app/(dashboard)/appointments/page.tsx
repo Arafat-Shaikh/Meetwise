@@ -15,7 +15,7 @@ import { useRouter } from "next/navigation";
 const tabs = ["Today", "This Week", "This Month"];
 
 const AppointmentsPage = () => {
-  const [eventType, setEventType] = useState<any>("Today");
+  const [eventType, setEventType] = useState<string>("Today");
   const { data: rangedBookings, isLoading } = useBookings();
   const [selectedBookings, setSelectedBookings] = useState<Booking[]>(
     rangedBookings?.today || []

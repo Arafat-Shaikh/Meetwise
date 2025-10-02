@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { calendar_v3, google } from "googleapis";
 
 type CreateCalendarEventParams = {

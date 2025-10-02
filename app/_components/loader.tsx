@@ -1,6 +1,7 @@
 import React from "react";
 
 const Loader = ({ borderColor }: { borderColor: string }) => {
+  console.log("Loader borderColor:", borderColor);
   return (
     <div role="status">
       <svg

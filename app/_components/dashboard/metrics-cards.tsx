@@ -1,5 +1,5 @@
 import { Booking } from "@/lib/generated/prisma";
-import { TrendingUp, Calendar, DollarSign, Users } from "lucide-react";
+import { TrendingUp, Calendar, Users } from "lucide-react";
 
 interface MetricsCardsProps {
   totalBookings?: Booking[];
@@ -7,7 +7,6 @@ interface MetricsCardsProps {
 }
 
 const MetricsCards = ({ totalBookings, allClients }: MetricsCardsProps) => {
-  console.log("Total Bookings in MetricsCards:", totalBookings); // Debugging line
   const metrics = [
     {
       title: "Total Bookings",

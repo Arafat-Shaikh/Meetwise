@@ -1,11 +1,4 @@
-import {
-  ArrowBigUpDashIcon,
-  BookDashed,
-  BookDashedIcon,
-  LucideBookDashed,
-  Plus,
-  X,
-} from "lucide-react";
+import { Plus, X } from "lucide-react";
 import TimePicker from "./time-picker";
 import { Day, weekDays } from "@/lib/const";
 import { AvailabilityMap } from "../(dashboard)/availability/page";
@@ -31,21 +24,12 @@ const AvailabilityScheduler = ({
   removeTimeSlot,
   updateTime,
 }: AvailabilitySchedulerProps) => {
-  // const handleSave = () => {
-  //   const enabledDays = availability.filter((day) => day.enabled);
-  //   console.log("Availability saved:", enabledDays);
-  //   toast({
-  //     title: "Availability Saved",
-  //     description: `Your availability has been set for ${enabledDays.length} days.`,
-  //   });
-  // };
-
   return (
     <div className="rounded-2xl border-[#2e2d2d]">
       <div className="space-y-1 bg-[#161a1d] border md:p-2 border-[#2e2d2d] rounded-xl overflow-hidden">
         {weekDays.map((day, i) => (
           <div
-            key={day}
+            key={day + i}
             className="flex items-start justify-between p-4 rounded-lg transition-all duration-200 md:mx-16"
           >
             <div className="flex flex-col items-start sm:flex-row sm:items-center gap-3 min-w-[100px] sm:min-w-[120px]">

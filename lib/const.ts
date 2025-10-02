@@ -1,13 +1,7 @@
-import {
-  Calendar,
-  Camera,
-  Clock,
-  Share2,
-  User,
-  UserPlus,
-  Video,
-} from "lucide-react";
+import { Calendar, Camera, Share2, User, UserPlus } from "lucide-react";
 import { CreateEventData, MultiStepFormData } from "./types";
+
+export const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
 export const darkButtonStyles =
   "rounded-full h-[50px] flex justify-center items-center font-mono text-xs text-[#a1a1a1] bg-[linear-gradient(145deg,_#2e2d2d,_#212121)] shadow-[inset_5px_5px_8px_#1a1a1a,inset_-5px_-5px_10px_#1a1a1a,-2px_-6px_18px_#1b1d2b,6px_6px_18px_#1b1d2b]transition-all duration-[500ms] active:shadow-[1px_1px_13px_#12141c,-1px_-1px_33px_#2a2e45]active:text-[#d6d6d6]active:duration-[100ms]";
@@ -393,6 +387,7 @@ export const getStartAndEndDateTime = ({
 
   const timeWithoutModifier = time.replace(/(am|pm)$/i, "").trim();
 
+  // eslint-disable-next-line prefer-const
   let [hours, minutes] = timeWithoutModifier.split(":").map(Number);
 
   if (modifier === "pm" && hours < 12) hours += 12;

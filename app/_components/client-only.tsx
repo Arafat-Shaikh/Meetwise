@@ -9,7 +9,7 @@ const ClientOnly = ({ children }: ClientOnlyProps) => {
 
   useEffect(() => {
     if (!isMounted) setIsMounted(true);
-  }, []);
+  }, [isMounted]);
 
   if (!isMounted) return null;
 

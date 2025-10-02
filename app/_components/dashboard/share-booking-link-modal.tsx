@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Copy, Mail, QrCode, MessageSquare } from "lucide-react";
+import { Copy, Mail, MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { QRCodeCanvas } from "qrcode.react";
 

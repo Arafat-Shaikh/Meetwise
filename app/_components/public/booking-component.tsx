@@ -13,9 +13,7 @@ import {
   Mail,
   User,
 } from "lucide-react";
-import useAvailability from "@/hooks/useAvailability";
 import { AvailabilityMap } from "@/app/(dashboard)/availability/page";
-import { formatTo12Hour, to24Hour } from "@/lib/test-utils";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -28,7 +26,7 @@ import {
   UseFormWatch,
 } from "react-hook-form";
 import { BookingFormData } from "./booking-form";
-import { fromZonedTime, toZonedTime } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 import { useParams } from "next/navigation";
 import InvalidUsername from "./invalid-username";
 import Loader from "../loader";
@@ -36,19 +34,6 @@ import CalendarLoader from "../calendar-loader";
 import usePublicAvailability from "@/hooks/use-public-availability";
 import useTimeSlots from "@/hooks/use-time-slots";
 import GoogleIcon from "@/app/icon/google-icon";
-
-type Booking = {
-  id: string;
-  userId: string;
-  clientName: string;
-  clientEmail: string;
-  duration: number;
-  date: Date;
-  title: string;
-  additionalNote: string;
-};
-
-const SLOT_DURATION = 15;
 
 type BookingComponentProps = {
   register: UseFormRegister<BookingFormData>;
@@ -84,8 +69,6 @@ const BookingComponent = ({
     clientTimeZone
   );
   const DURATION = 30;
-  console.log("userTimeSlots:", userTimeSlots);
-  console.log("availableTimeSlots:", availableTimeSlots);
 
   useEffect(() => {
     setValue("username", username.toString());
@@ -125,8 +108,7 @@ const BookingComponent = ({
     if (!selectedDate) return;
 
     if (userTimeSlots) {
-      console.log("userTimeSlots:", userTimeSlots);
-      setAvailableTimeSlots(userTimeSlots as any);
+      setAvailableTimeSlots(userTimeSlots as string[]);
     }
   }, [selectedDate, userTimeSlots]);
 
@@ -150,7 +132,7 @@ const BookingComponent = ({
     }
   };
 
-  const handleTimeSelect = (time: string) => {
+  const handleTimeSelect = () => {
     // Delay before showing confirmation
     setTimeout(() => {
       setShowConfirmation(true);
@@ -315,7 +297,7 @@ const BookingComponent = ({
                           variant={field.value === time ? "default" : "outline"}
                           onClick={() => {
                             field.onChange(time);
-                            handleTimeSelect(time);
+                            handleTimeSelect();
                           }}
                           className={`
                         h-10 text-base transition-all duration-300 rounded-full

@@ -1,6 +1,7 @@
 // Converts "9:00am" to "09:00", "2:30pm" to "14:30"
 export function to24Hour(time: string): string {
   const [timePart, meridian] = time.toLowerCase().split(/(am|pm)/);
+  // eslint-disable-next-line prefer-const
   let [hour, minute] = timePart.trim().split(":").map(Number);
   if (meridian === "pm" && hour !== 12) hour += 12;
   if (meridian === "am" && hour === 12) hour = 0;

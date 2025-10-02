@@ -1,11 +1,12 @@
 "use client";
 
-import { Copy, Menu, User, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { Copy, Menu, User } from "lucide-react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import useUserData from "@/hooks/use-userData";
 import { signOut } from "next-auth/react";
+import { baseUrl } from "@/lib/const";
 
 interface SidebarLayoutProps {
   children: React.ReactNode;
@@ -19,13 +20,17 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
   const { isLoading } = useUserData();
 
   // disable background scroll when mobile sidebar is open
-  if (typeof window !== "undefined") {
+  useEffect(() => {
     if (mobileSidebarOpen) {
       document.body.classList.add("overflow-hidden");
     } else {
       document.body.classList.remove("overflow-hidden");
     }
-  }
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [mobileSidebarOpen]);
 
   return (
     <>
@@ -105,10 +110,10 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
                       onClick={(e) => {
                         e.stopPropagation();
                         navigator.clipboard.writeText(
-                          `${window.location.origin}/${data?.username}`
+                          `${window?.location.origin}/${data?.username}`
                         );
                       }}
-                      aria-label={`${window.location.origin}/${data?.username}`}
+                      aria-label={`${baseUrl}/${data?.username}`}
                     >
                       <Copy className="h-4 w-4 text-gray-400 group-hover:text-neutral-500 transition" />
                     </button>
@@ -165,7 +170,7 @@ const SidebarLayout = ({ children }: SidebarLayoutProps) => {
 export default SidebarLayout;
 
 const Sidebar = () => {
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  // const [isCollapsed, setIsCollapsed] = useState(false);
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const pathname = usePathname();
   const { data, isLoading } = useUserData();
@@ -176,12 +181,12 @@ const Sidebar = () => {
     .pop()
     ?.toLocaleLowerCase();
 
-  console.log(showProfileMenu);
+  // removed console.log(showProfileMenu);
 
   return (
     <div
       className={`fixed inset-y-0 left-0 z-50 flex flex-col border-gray-800 transition-all duration-300 bg-gradient-to-t  ${
-        isCollapsed ? "w-20" : "w-64"
+        false ? "w-20" : "w-64"
       } lg:relative ${"-translate-x-full lg:translate-x-0 "}`}
     >
       <div className="w-60 text-gray-300 h-full flex flex-col my-10 mx-5 bg-transparent rounded-xl">
@@ -225,10 +230,10 @@ const Sidebar = () => {
                 onClick={(e) => {
                   e.stopPropagation();
                   navigator.clipboard.writeText(
-                    `${window.location.origin}/${data?.username}`
+                    `${window?.location.origin}/${data?.username}`
                   );
                 }}
-                aria-label={`${window.location.origin}/${data?.username}`}
+                aria-label={`${baseUrl}/${data?.username}`}
               >
                 <Copy className="h-4 w-4 text-gray-400 group-hover:text-neutral-500 transition" />
               </button>

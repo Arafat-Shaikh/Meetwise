@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/select";
 import { bufferOptions } from "@/lib/const";
 import { Settings } from "lucide-react";
-import React, { useState } from "react";
+import React from "react";
 
 interface BookingSettingsProps {
   bufferTime: string;

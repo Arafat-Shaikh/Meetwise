@@ -4,7 +4,6 @@ import { UseFormReturn } from "react-hook-form";
 import { SettingsFormData } from "@/lib/zod/schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Alert } from "@/components/ui/alert";
 import { AlertDescription } from "@/components/ui/alert";
 import { CheckCircle } from "lucide-react";
 

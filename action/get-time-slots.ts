@@ -45,12 +45,8 @@ export async function getTimeSlots(
   }
 
   const userZonedDate = toZonedTime(date, user.timezone);
-
   const dayRange = getDayRangeInUserTimezone(userZonedDate, user.timezone);
-
-  console.log("before assigning new access token");
   user.googleAccessToken = await getAccessTokenVerified(user);
-  console.log("after assigning new access token");
 
   const calendarService = new GoogleCalendarService(
     user.googleAccessToken!,
@@ -70,14 +66,6 @@ export async function getTimeSlots(
       start: event.start?.dateTime,
       end: event.end?.dateTime,
     }));
-
-  /**
-   * Converts the given date to the user's specified timezone.
-   *
-   * @param date - The original date to be converted.
-   * @param user.timezone - The IANA timezone string representing the user's timezone.
-   * @returns The date object adjusted to the user's timezone.
-   */
 
   const dayName = format(userZonedDate, "EEEE");
 

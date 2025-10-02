@@ -1,19 +1,13 @@
 import { testimonials } from "@/lib/const";
-import { AnimatePresence, easeIn, motion } from "framer-motion";
-import { Quote, Star, TestTube2 } from "lucide-react";
-import {
-  Dispatch,
-  RefObject,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Quote } from "lucide-react";
+import { useEffect, useState } from "react";
 
-interface TestimonialsSectionProps {
-  testimonialsRef: RefObject<HTMLDivElement>;
-  scrollContentRef: RefObject<HTMLDivElement>;
-  setHovered: (value: boolean) => void;
-}
+// interface TestimonialsSectionProps {
+//   testimonialsRef: RefObject<HTMLDivElement>;
+//   scrollContentRef: RefObject<HTMLDivElement>;
+//   setHovered: (value: boolean) => void;
+// }
 
 import { Variants } from "framer-motion";
 import Headings from "./headings";
@@ -92,11 +86,7 @@ export const sectionVariants: Variants = {
   },
 };
 
-const TestimonialsSection = ({
-  testimonialsRef,
-  scrollContentRef,
-  setHovered,
-}: TestimonialsSectionProps) => {
+const TestimonialsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 

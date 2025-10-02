@@ -3,12 +3,12 @@
 import { getUniqueUsername } from "@/action/generate-username";
 import { checkUsernameExists, saveOnboardingUserData } from "@/action/user";
 import Loader from "@/app/_components/loader";
-import TimePicker, { convertTo24Hour } from "@/app/_components/time-picker";
+import { convertTo24Hour } from "@/app/_components/time-picker";
 import { UploadPhotoButton } from "@/app/_components/upload-photo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { defaultFormData, steps, timezones, weekDays } from "@/lib/const";
+import { defaultFormData, steps, timezones } from "@/lib/const";
 import { MultiStepFormData } from "@/lib/types";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -18,9 +18,6 @@ import {
   Camera,
   Check,
   ChevronDown,
-  Clock,
-  Plus,
-  Trash,
   Video,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -37,13 +34,9 @@ const OnboardingStepPage = () => {
   const { data: session } = useSession();
 
   const [isTimezoneOpen, setIsTimezoneOpen] = useState(false);
-  const [timeValidationErrors, setTimeValidationErrors] = useState<{
-    [key: string]: string;
-  }>({});
 
   const {
     control,
-    handleSubmit,
     watch,
     setValue,
     getValues,
@@ -52,8 +45,6 @@ const OnboardingStepPage = () => {
   } = useForm<MultiStepFormData>({ defaultValues: defaultFormData });
 
   const watchedData = watch();
-  // console.log("availability for monday", watchedData.availability["Monday"]);
-  // console.log(timeValidationErrors);
 
   // detect timezone
   useEffect(() => {
@@ -61,7 +52,6 @@ const OnboardingStepPage = () => {
       setValue("fullName", session.user.name);
     }
     const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    console.log("Detected Timezone: ", detectedTimezone);
     setValue("timezone", detectedTimezone);
   }, [session?.user?.name, setValue]);
 
@@ -107,26 +97,6 @@ const OnboardingStepPage = () => {
     }
   };
 
-  const toggleDayAvailability = (day: string) => {
-    const currentAvailability = getValues(`availability.${day}`);
-    setValue(`availability.${day}.enabled`, !currentAvailability.enabled);
-  };
-
-  const addTimeSlot = (day: string) => {
-    const daySlots = getValues(`availability.${day}.timeSlots`);
-    console.log(daySlots);
-    setValue(`availability.${day}.timeSlots`, [
-      ...daySlots,
-      { startTime: "9:00am", endTime: "5:00pm" },
-    ]);
-  };
-
-  const removeDaySlot = (day: string, index: number) => {
-    const daySlotToRemove = getValues(`availability.${day}.timeSlots`);
-    const filteredSlots = daySlotToRemove.filter((item, i) => i !== index);
-    setValue(`availability.${day}.timeSlots`, filteredSlots);
-  };
-
   // "validate time slots here"
   const validateTimeSlots = () => {
     const errors: { [key: string]: string } = {};
@@ -145,7 +115,6 @@ const OnboardingStepPage = () => {
       }
     });
 
-    setTimeValidationErrors(errors);
     return Object.keys(errors).length === 0;
   };
 
@@ -437,7 +406,6 @@ const OnboardingStepPage = () => {
                   <UploadPhotoButton
                     loading={loading}
                     onImageSelect={async (file) => {
-                      console.log("Selected file:", file);
                       setLoading(true);
                       const formData = new FormData();
                       formData.append("file", file);

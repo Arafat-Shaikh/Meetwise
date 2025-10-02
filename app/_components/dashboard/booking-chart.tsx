@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { TooltipProps } from "recharts";
 import {
   BarChart,
   Bar,
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format, addDays, subDays, startOfDay } from "date-fns";
 import { useMediaQuery } from "react-responsive";
+import { Booking } from "@/lib/generated/prisma";
 
 interface BookingData {
   day: string;
@@ -25,28 +27,23 @@ interface BookingData {
 // Mock function to generate booking data for any date range
 const generateBookingData = (
   startDate: Date,
-  allBookings: any[]
+  allBookings: Booking[]
 ): BookingData[] => {
   const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const data: BookingData[] = [];
 
   for (let i = 0; i < 7; i++) {
     const currentDate = addDays(startDate, i);
-    console.log("Current date in loop: ", currentDate);
     const dayName =
       days[currentDate.getDay() === 0 ? 6 : currentDate.getDay() - 1];
-    console.log("Day name: ", dayName);
-    // Count bookings for this day
     const bookings = allBookings?.filter((booking) => {
       const bookingDate = new Date(booking.date);
-      console.log("Booking date in filter: ", bookingDate);
       return (
         bookingDate.getFullYear() === currentDate.getFullYear() &&
         bookingDate.getMonth() === currentDate.getMonth() &&
         bookingDate.getDate() === currentDate.getDate()
       );
     }).length;
-    console.log("Bookings count for ", dayName, ": ", bookings);
 
     data.push({
       day: dayName,
@@ -55,12 +52,14 @@ const generateBookingData = (
     });
   }
 
-  console.log("booking data: ", data);
-
   return data;
 };
 
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<number, string>) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
     return (
@@ -88,7 +87,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 interface BookingChartProps {
-  allBookings: any;
+  allBookings: Booking[];
 }
 
 export default function BookingChart({ allBookings }: BookingChartProps) {

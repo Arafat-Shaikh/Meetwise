@@ -43,15 +43,10 @@ export async function getBookingsByRange(timezoneParam?: string) {
     orderBy: { date: "asc" },
   });
 
-  console.log(tz);
   const convertedBookings = allBookings.map((b) => ({
     ...b,
     date: toZonedTime(b.date, tz),
   }));
-
-  for (let b of convertedBookings) {
-    console.log("Converted booking date: ", b.date);
-  }
 
   const result = {
     today: [] as typeof convertedBookings,
@@ -71,8 +66,6 @@ export async function getBookingsByRange(timezoneParam?: string) {
       result.nextMonth.push(b);
     }
   }
-
-  console.log("This is the result: ", result.allBookings);
 
   return result ?? { today: [], thisWeek: [], nextMonth: [], allBookings: [] };
 }

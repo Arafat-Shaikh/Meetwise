@@ -59,7 +59,6 @@ export const authOptions = {
     async jwt({ token, account }) {
       // persist the oauth access_token and refresh_token to the token right after signin
       if (account) {
-        console.log("Refresh token:", account.refresh_token);
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
         token.expiresAt = account.expires_at;
@@ -72,7 +71,7 @@ export const authOptions = {
 
       // access token has expired,  try to update it
       if (token.refreshToken) {
-        return await refreshAccessToken(token);
+        return await refreshAccessToken(token.refreshToken as string);
       }
 
       return token;
@@ -105,7 +104,7 @@ export const authOptions = {
   },
 } satisfies NextAuthOptions;
 
-export async function refreshAccessToken(token: any) {
+export async function refreshAccessToken(refreshToken: string) {
   try {
     const url = "https://oauth2.googleapis.com/token";
 
@@ -118,7 +117,7 @@ export async function refreshAccessToken(token: any) {
         client_id: process.env.GOOGLE_CLIENT_ID as string,
         client_secret: process.env.GOOGLE_CLIENT_SECRET as string,
         grant_type: "refresh_token",
-        refresh_token: token.refreshToken,
+        refresh_token: refreshToken,
       }),
     });
 
@@ -129,16 +128,15 @@ export async function refreshAccessToken(token: any) {
     }
 
     return {
-      ...token,
       accessToken: tokens.access_token,
       expiresAt: Math.floor(Date.now() / 1000 + tokens.expires_in),
-      refreshToken: tokens.refresh_token ?? token.refreshToken, //  fall back to old refresh token
+      refreshToken: tokens.refresh_token ?? refreshToken, //  fall back to old refresh token
     };
   } catch (error) {
     console.log("Error refreshing access token:", error);
 
     return {
-      ...token,
+      refreshToken,
       error: "RefreshAccessTokenError",
     };
   }

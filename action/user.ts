@@ -77,8 +77,6 @@ export async function saveOnboardingUserData(rawData: any) {
     throw new Error("Unauthorized");
   }
 
-  console.log("Raw data: ", rawData);
-
   const result = onboardingSchema.safeParse(rawData);
 
   if (!result.success) {
@@ -193,8 +191,6 @@ export async function saveUserAvailability(data: any) {
       bufferTime: bufferTime,
     },
   });
-
-  console.log(availability);
 
   for (const [day, { enabled, timeSlots }] of Object.entries(availability)) {
     const dayOfWeek = day as keyof typeof DayOfWeek;

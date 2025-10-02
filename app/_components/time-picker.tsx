@@ -2,16 +2,15 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
 
 // Generate time options in 15-minute intervals
 const generateTimeOptions = () => {
   const times: string[] = [];
   for (let hour = 0; hour < 24; hour++) {
     for (let minute = 0; minute < 60; minute += 15) {
-      const time24 = `${hour.toString().padStart(2, "0")}:${minute
-        .toString()
-        .padStart(2, "0")}`;
+      // const time24 = `${hour.toString().padStart(2, "0")}:${minute
+      //   .toString()
+      //   .padStart(2, "0")}`;
       const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       const ampm = hour < 12 ? "am" : "pm";
       const time12 = `${hour12}:${minute.toString().padStart(2, "0")}${ampm}`;
@@ -37,17 +36,17 @@ export const convertTo24Hour = (time12: string): string => {
   return `${hour24.toString().padStart(2, "0")}:${minutes}`;
 };
 
-const addMinutes = (time12: string, minutes: number): string => {
-  const time24 = convertTo24Hour(time12);
-  const [hours, mins] = time24.split(":").map(Number);
-  const totalMinutes = hours * 60 + mins + minutes;
-  const newHours = Math.floor(totalMinutes / 60) % 24;
-  const newMins = totalMinutes % 60;
-  const hour12 = newHours === 0 ? 12 : newHours > 12 ? newHours - 12 : newHours;
-  const ampm = newHours > 12 ? "am" : "pm";
+// const addMinutes = (time12: string, minutes: number): string => {
+//   const time24 = convertTo24Hour(time12);
+//   const [hours, mins] = time24.split(":").map(Number);
+//   const totalMinutes = hours * 60 + mins + minutes;
+//   const newHours = Math.floor(totalMinutes / 60) % 24;
+//   const newMins = totalMinutes % 60;
+//   const hour12 = newHours === 0 ? 12 : newHours > 12 ? newHours - 12 : newHours;
+//   const ampm = newHours > 12 ? "am" : "pm";
 
-  return `${hour12}:${newMins.toString().padStart(2, "0")}${ampm}`;
-};
+//   return `${hour12}:${newMins.toString().padStart(2, "0")}${ampm}`;
+// };
 
 // main component starts from here
 
@@ -122,9 +121,9 @@ const TimePicker = ({
       const min24 = convertTo24Hour(minTime);
       // 14:30pm
 
-      const minEndTime = addMinutes(minTime, 15);
+      // const minEndTime = addMinutes(minTime, 15);
       // 14:45pm
-      const minEnd24 = convertTo24Hour(minEndTime);
+      // const minEnd24 = convertTo24Hour(minEndTime);
 
       if (time24 <= min24) return true;
     }
@@ -138,9 +137,6 @@ const TimePicker = ({
   };
 
   const filteredOptions = timeOptions.filter((time) => !isTimeDisabled(time));
-
-  console.log(timeOptions);
-  console.log(filteredOptions);
 
   return (
     <div className="relative min-w-[90px]" ref={dropdownRef}>
@@ -172,7 +168,7 @@ const TimePicker = ({
             >
               {filteredOptions.map((time, index) => (
                 <button
-                  key={time}
+                  key={time + index}
                   type="button"
                   onClick={() => handleSelect(time)}
                   className={`

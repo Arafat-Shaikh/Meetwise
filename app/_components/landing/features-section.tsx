@@ -145,7 +145,6 @@ export default function FeaturesSection() {
   const containerRef = useRef(null);
   const isInView = useInView(containerRef, { once: true, margin: "-50px" });
   const [hoveredCard, setHoveredCard] = useState<number | null>(null);
-  const headingWords = "Premium Features".split(" ");
 
   return (
     <div id="features" className="min-h-screen overflow-hidden">

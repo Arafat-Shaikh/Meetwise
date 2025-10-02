@@ -1,14 +1,6 @@
 import React from "react";
+import { Calendar, MapPin, Phone, Video } from "lucide-react";
 import {
-  Calendar,
-  Copy,
-  ExternalLink,
-  MapPin,
-  Phone,
-  Video,
-} from "lucide-react";
-import {
-  Form,
   FormField,
   FormItem,
   FormLabel,
@@ -18,22 +10,11 @@ import {
 } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
 import { SettingsFormData } from "@/lib/zod/schema";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/hooks/use-toast";
 
 type BookingConfigurationProps = {
   form: UseFormReturn<SettingsFormData>;
-  copyBookingLink: () => void;
 };
-const BookingConfiguration = ({
-  form,
-  copyBookingLink,
-}: BookingConfigurationProps) => {
-  const { watch, setValue } = form;
-  const watchedBookingSlug = watch("username");
-
+const BookingConfiguration = ({ form }: BookingConfigurationProps) => {
   return (
     <div className="space-y-8">
       <div className="flex items-center gap-2">

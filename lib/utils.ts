@@ -6,7 +6,7 @@ import { dayToDateMap } from "./const";
 import { fromZonedTime } from "date-fns-tz";
 import { getServerSession } from "next-auth";
 import { authOptions } from "./auth";
-import { addDays, addMinutes, format, parse } from "date-fns";
+import { addMinutes, format, parse } from "date-fns";
 import { formatTo12Hour, to24Hour } from "./test-utils";
 
 export function cn(...inputs: ClassValue[]) {
@@ -125,25 +125,22 @@ export function getDayRangeInUserTimezone(date: Date, userTimezone: string) {
   return { timeMin: start, timeMax: end };
 }
 
+type BusySlot = {
+  start: Date;
+  end: Date;
+};
+
 export const filterBookedSlots = (
   slots: Date[],
-  bookings: any[],
+  bookings: BusySlot[],
   duration: number
 ) => {
   return slots.filter((slot) => {
     const slotEnd = addMinutes(slot, duration);
-    console.log("Checking slot:", slot, "to", slotEnd);
     return !bookings.some((booking) => {
       const bookingStart = booking.start;
       const bookingEnd = booking.end;
-      console.log(
-        "Against booking:",
-        bookingStart,
-        "to",
-        bookingEnd,
-        "-> Overlaps?",
-        slot < bookingEnd && bookingStart < slotEnd
-      );
+
       // Check if the slot overlaps with the booking
       return slot < bookingEnd && bookingStart < slotEnd;
       // 9:00am < 10:00am && 9:30am < 9:30am = false = keep this slot

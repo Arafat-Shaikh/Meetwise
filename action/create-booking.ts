@@ -16,9 +16,6 @@ export async function createBooking(data: BookingFormData) {
     throw new Error("Invalid booking data provided.");
   }
 
-  console.log("below is the booking data");
-  console.log(data);
-
   const user = await prisma.user.findUnique({
     where: { username: data.username },
     select: {
@@ -109,8 +106,6 @@ export async function createBooking(data: BookingFormData) {
     throw new Error("Failed to create calendar event");
   }
 
-  console.log(googleMeetLink);
-
   const userLocalDate = toZonedTime(new Date(data.date), user.timezone);
 
   // Combine date + timeSlot (e.g., '9:00am')
@@ -143,7 +138,6 @@ export async function createBooking(data: BookingFormData) {
       },
     });
 
-    console.log(booking);
     return { success: true, bookingId: booking.id };
   } catch (error) {
     console.error("Error creating booking:", error);
@@ -165,9 +159,9 @@ export async function getAccessTokenVerified(user: any) {
   };
 
   if (tokenExpired) {
-    const refreshed = await refreshAccessToken(tokens);
+    const refreshed = await refreshAccessToken(tokens.refreshToken);
 
-    if (refreshed.error) {
+    if ("error" in refreshed) {
       console.log(refreshed.error);
       throw new Error("Failed to refresh Google access token");
     }

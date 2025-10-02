@@ -6,7 +6,6 @@ import MetricsCards from "@/app/_components/dashboard/metrics-cards";
 import QuickActions from "@/app/_components/dashboard/quick-actions";
 import UpcomingAppointments from "@/app/_components/dashboard/upcoming-appointments";
 import useBookings from "@/hooks/use-bookings";
-import useUserData from "@/hooks/use-userData";
 import { Booking } from "@/lib/generated/prisma";
 import React from "react";
 
@@ -14,7 +13,7 @@ const DashboardPage = () => {
   const allBookings = useBookings();
 
   // Extract total bookings and unique clients (by email)
-  const totalBookings = allBookings.data?.allBookings;
+  const totalBookings = allBookings.data?.allBookings as Booking[];
   const allClients = Array.from(
     new Set(
       (allBookings.data?.allBookings || []).map(

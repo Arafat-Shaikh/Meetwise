@@ -7,7 +7,6 @@ import Headings from "./headings";
 const HowItWorksSection = () => {
   const headerRef = useRef(null);
   const headerInView = useInView(headerRef, { once: true, margin: "-100px" });
-  const headingWords = "How It Works".split(" ");
   return (
     <section
       id="how-it-works"

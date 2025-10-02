@@ -4,15 +4,14 @@ import ShareBookingLinkModal from "./share-booking-link-modal";
 import { useState } from "react";
 import useUserData from "@/hooks/use-userData";
 import { useRouter } from "next/navigation";
+import { baseUrl } from "@/lib/const";
 
 const QuickActions = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const userPublicName = useUserData().data?.username || "";
   const router = useRouter();
-  const publicLink =
-    typeof window !== "undefined"
-      ? `${window.location.origin}/${userPublicName}`
-      : `/${userPublicName}`;
+  const publicLink = `${baseUrl}/${userPublicName}`;
+
   const actions = [
     {
       title: "Create New Availability",

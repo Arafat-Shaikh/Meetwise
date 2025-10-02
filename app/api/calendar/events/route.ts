@@ -4,7 +4,7 @@ import { GoogleCalendarService } from "@/lib/googleCalendar";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, res: Response) {
+export async function GET() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {
@@ -25,7 +25,7 @@ export async function GET(req: Request, res: Response) {
   }
 }
 
-export async function POST(req: Request, res: Response) {
+export async function POST() {
   const session = await getServerSession(authOptions);
 
   if (!session || !session.accessToken) {

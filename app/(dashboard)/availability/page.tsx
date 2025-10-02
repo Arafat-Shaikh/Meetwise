@@ -7,7 +7,7 @@ import TimezoneSelector from "@/app/_components/timezone-selector";
 import { Button } from "@/components/ui/button";
 import useAvailability from "@/hooks/useAvailability";
 import useSaveAvailability from "@/hooks/useSaveAvailability";
-import { darkButtonStyles, Day, timezones } from "@/lib/const";
+import { Day, timezones } from "@/lib/const";
 
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -98,13 +98,9 @@ const AvailabilityPage = () => {
   const { data: userAvailability } = useAvailability();
   const { mutateAsync, isPending } = useSaveAvailability();
 
-  console.log(userAvailability?.availability?.Monday.timeSlots[0].startTime);
-  console.log(userAvailability?.availability?.Monday.timeSlots[0].endTime);
-
   useEffect(() => {
     if (userAvailability) {
       setAvailability(userAvailability.availability as AvailabilityMap);
-      console.log("User Availability timezone: ", userAvailability.timezone);
       setTimezone(userAvailability.timezone);
       setBufferTime(userAvailability.bufferTime.toString());
       setMaxBookings(userAvailability.maxBookings);
@@ -179,8 +175,6 @@ const AvailabilityPage = () => {
       advanceNotice,
     };
 
-    console.log("Saving availability data:", data);
-
     try {
       await mutateAsync(data);
       toast.success("Availability saved successfully");
@@ -189,8 +183,6 @@ const AvailabilityPage = () => {
       console.error(error);
     }
   };
-
-  console.log("Current Timezone: ", timezone);
 
   return (
     <div className="h-full w-full bg-[#151a1d] flex flex-col gap-y-8 lg:p-10 lg:px-40 p-2 px-1 sm:p-6 md:p-8 max-h-screen overflow-y-auto scrollbar-hide">

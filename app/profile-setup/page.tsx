@@ -1,11 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { getStartAndEndDateTime } from "@/lib/const";
-import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 const dummySchedulingData = {
   date: "2025-06-28",
@@ -17,11 +13,6 @@ const dummySchedulingData = {
 };
 
 const ProfileSetup = () => {
-  const router = useRouter();
-  const session = useSession();
-
-  console.log(session);
-
   const handleScheduleAppointment = async () => {
     const { startDateTime, endDateTime } = getStartAndEndDateTime({
       date: "2025-06-28",
@@ -38,8 +29,6 @@ const ProfileSetup = () => {
       description: dummySchedulingData.description,
     };
 
-    console.log(scheduleData);
-
     try {
       const response = await fetch(`/api/schedule`, {
         method: "POST",
@@ -51,7 +40,7 @@ const ProfileSetup = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
+        console.log("Scheduled successfully: ", data);
       } else {
         const error = await response.json();
         console.log("Failed to schedule: ", error);

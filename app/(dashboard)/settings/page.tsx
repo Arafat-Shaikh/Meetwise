@@ -4,28 +4,9 @@ import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Form } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Trash2, AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { SettingsFormData, settingsSchema } from "@/lib/zod/schema";
 import BookingConfiguration from "@/app/_components/settings/booking-configuration";
@@ -36,13 +17,9 @@ import useUserData from "@/hooks/use-userData";
 import PublicPageSettings from "@/app/_components/settings/public-page-settings";
 
 export default function SettingsPage() {
-  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
-  const [deleteConfirmText, setDeleteConfirmText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const userData = useUserData();
-
-  console.log("userData: ", userData.data);
 
   const form = useForm<SettingsFormData>({
     resolver: zodResolver(settingsSchema),
@@ -123,15 +100,13 @@ export default function SettingsPage() {
     setIsSubmitting(true);
 
     try {
-      console.log("user settings data: ", data);
-      const response = await saveUserSettings(data);
-      console.log("Save user settings response: ", response);
-
+      await saveUserSettings(data);
       toast({
         title: "Settings saved",
         description: "All your settings have been saved successfully.",
       });
     } catch (error) {
+      console.error(error);
       toast({
         title: "Error saving settings",
         description:
@@ -154,18 +129,6 @@ export default function SettingsPage() {
         : "Your Google Calendar has been connected successfully.",
       variant: newValue ? "destructive" : "default",
     });
-  };
-
-  const handleDeleteAccount = () => {
-    if (deleteConfirmText !== "DELETE") return;
-
-    toast({
-      title: "Account deleted",
-      description:
-        "Your account and all associated data have been permanently deleted.",
-      variant: "destructive",
-    });
-    setDeleteConfirmOpen(false);
   };
 
   const copyBookingLink = () => {
@@ -202,10 +165,7 @@ export default function SettingsPage() {
                 <Separator className="bg-gray-800" />
 
                 {/* booking configuration */}
-                <BookingConfiguration
-                  copyBookingLink={copyBookingLink}
-                  form={form}
-                />
+                <BookingConfiguration form={form} />
 
                 <Separator className="bg-gray-800" />
 
@@ -239,8 +199,6 @@ export default function SettingsPage() {
             </Card>
           </form>
         </Form>
-
-        {/*  account delete card */}
       </div>
     </div>
   );
