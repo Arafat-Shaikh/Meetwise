@@ -32,7 +32,6 @@ const OnboardingStepPage = () => {
   const currentStep = Number.parseInt(params.stepId as string);
   const [loading, setLoading] = useState(false);
   const { data: session } = useSession();
-
   const [isTimezoneOpen, setIsTimezoneOpen] = useState(false);
 
   const {
