@@ -8,6 +8,8 @@ import { Nunito_Sans } from "next/font/google";
 const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
   weight: ["400", "700"],
+  adjustFontFallback: false, // Add this line
+  display: "swap", // Optional but recommended
 });
 
 // const geistSans = localFont({
