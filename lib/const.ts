@@ -333,7 +333,7 @@ export const defaultFormData: MultiStepFormData = {
   timezone: "America/New_York",
   connectCalendar: true,
   integrations: {
-    googleMeet: false,
+    googleMeet: true,
   },
   availability: {
     Monday: {
