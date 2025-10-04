@@ -10,29 +10,6 @@ import { formatInTimeZone } from "date-fns-tz";
 import { convertTimeSlotsToUtc } from "@/lib/utils";
 import { google } from "googleapis";
 
-const mockBookings = [
-  {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "one@gmail.com",
-    clientName: "one",
-    duration: 30,
-    date: new Date("2025-07-28T05:00:00.000Z"),
-    title: "your-booking",
-    additionalNote: "yououououou",
-  },
-  {
-    id: "cmdjvomr80001s6li2wthgj2m",
-    userId: "cmdgcez3y000ms6skr8l4vw6k",
-    clientEmail: "admin@gmail.com",
-    clientName: "Arafat shaikh",
-    duration: 30,
-    date: new Date("2025-07-28T04:00:00.000Z"),
-    title: "your-booking",
-    additionalNote: "yououououou",
-  },
-];
-
 export async function getUser() {
   const session = await getServerSession(authOptions);
 
