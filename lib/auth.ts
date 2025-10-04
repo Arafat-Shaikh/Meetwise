@@ -1,3 +1,5 @@
+"use server";
+
 import { NextAuthOptions } from "next-auth";
 import prisma from "@/lib/global-prisma";
 import GoogleProvider from "next-auth/providers/google";

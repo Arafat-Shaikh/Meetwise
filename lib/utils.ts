@@ -1,3 +1,4 @@
+"use server";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import prisma from "@/lib/global-prisma";
