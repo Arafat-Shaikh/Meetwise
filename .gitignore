@@ -7,7 +7,6 @@
 .pnp.js
 .yarn/install-state.gz
 /prisma
-.env.production
 
 # testing
 /coverage
@@ -32,6 +31,7 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env*.production
 
 # vercel
 .vercel
